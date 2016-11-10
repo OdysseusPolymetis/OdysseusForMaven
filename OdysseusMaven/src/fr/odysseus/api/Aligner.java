@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -319,8 +318,6 @@ public class Aligner{
 	}
 
 	public HashMap<String, Set<String>> distribDictionary(Dicovek veks, HashSet<String>setMotsTexte) throws IOException{
-
-		DecimalFormat df = new DecimalFormat("0.0000");
 		HashMap<String, Set<String>> distribDictionary=new HashMap<String, Set<String>>();
 		int limit = 3;
 		List<SimRow> table;

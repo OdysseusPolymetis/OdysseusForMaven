@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,16 +33,7 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import org.simmetrics.StringDistance;
-import org.simmetrics.builders.StringDistanceBuilder;
-import org.simmetrics.metrics.CosineSimilarity;
-import org.simmetrics.metrics.EuclideanDistance;
 import org.simmetrics.metrics.GeneralizedJaccard;
-import org.simmetrics.metrics.HammingDistance;
-import org.simmetrics.metrics.Jaccard;
-import org.simmetrics.metrics.JaroWinkler;
-import org.simmetrics.metrics.StringDistances;
-
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 

@@ -6,8 +6,6 @@ import java.util.ArrayList;
 
 import java.util.regex.*;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class NamesPatternMatcher{
 	private String pattern;
 	private CharSequence content;
