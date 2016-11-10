@@ -89,7 +89,7 @@ public class CalculStats {
 		return distribDict;
 	}
 	public void initContentEditorPanes() throws IOException, BadLocationException, JDOMException{
-		repertoireSource=ListageRepertoire.listeRepertoire(new File("./Output/XML"));
+		repertoireSource=ListageRepertoire.listeRepertoire(new File("./outputFiles/xml"));
 		LinkedList<Element>listeDesRacines=new LinkedList<Element>();
 		LinkedList<String>listeDesNoms=new LinkedList<String>();
 
@@ -106,7 +106,7 @@ public class CalculStats {
 	public void insertHTML(LinkedList<Element>racines, LinkedList<String>fichiers) throws BadLocationException, IOException, JDOMException
 
 	{
-		Path path=Paths.get("./Dictionnaire/stopWords.txt");
+		Path path=Paths.get("./sourceFiles/sourceDictionaries/stopWords.txt");
 		List<String>stopWords=Files.readAllLines(path);
 
 //		EuclideanDistance<String>euclidian=new EuclideanDistance<>();
@@ -120,7 +120,7 @@ public class CalculStats {
 			String nomFichierEnCours=racines.get(i).getAttributeValue("name");
 			String nomCommun=nomFichierEnCours.substring(nomFichierEnCours.indexOf("Chant"));
 
-			File dir=new File("./Output/XML/");
+			File dir=new File("./outputFiles/xml/");
 			File[] filesEnCours = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return name.endsWith(nomCommun+".xml");
@@ -164,7 +164,7 @@ public class CalculStats {
 
 				String chantActuel=nomFichierEnCours.substring(nomFichierEnCours.indexOf("Chant"));
 				SAXBuilder sxb=new SAXBuilder();
-				Document documentSource=sxb.build(new File("./Source/GreekPunct/Odyssee1000"+chantActuel+".xml"));
+				Document documentSource=sxb.build(new File("./sourceFiles/sequences/greekPunct/Odyssee1000"+chantActuel+".xml"));
 				Element racineSource=documentSource.getRootElement();
 				Element IDSource=racineSource.getChild("ID"+counterID);
 				String []tagSource=IDSource.getAttributeValue("tag").split(" ");
@@ -264,7 +264,7 @@ public class CalculStats {
 				othersAndLeven[0]=stringbuild.toString();
 				othersAndLeven[1]=String.valueOf(percentDist);
 				tableauDeCorrespondances.put(lemmaAndForm, othersAndLeven);	
-				String sourceFileName=("./Output/HTML/"+racines.get(i).getAttributeValue("name").toLowerCase());
+				String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
 				String fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
 				for (Entry<String[], String[]>entry:tableauDeCorrespondances.entrySet()){
 
@@ -351,12 +351,12 @@ public class CalculStats {
 				counterID++;
 			} 
 
-			String sourceFileName=("./Output/HTML/"+racines.get(i).getAttributeValue("name").toLowerCase());
+			String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
 
 			String fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
 			String fileNamePath=fileName.replaceAll("_0", "_");
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream("./Output/HTML/"+fileNamePath+".html"), "UTF-8"));
+					new FileOutputStream("./outputFiles/html/"+fileNamePath+".html"), "UTF-8"));
 			writer.write("<section id=\""+fileName+"\" class=\"parallel\">");
 			for (String chunk:ids){
 				writer.write(chunk);

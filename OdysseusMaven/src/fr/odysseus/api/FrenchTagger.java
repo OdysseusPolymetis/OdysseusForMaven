@@ -56,7 +56,7 @@ public class FrenchTagger {
 			text=text.replaceAll("-", " - ");
 			text=text.replaceAll("\\s{2,}", " ");
 			lemmatizers.getNames(text, motsTags, tt, tagger);
-			motsTags.addAll(lemmatizers.getTags());
+			motsTags=lemmatizers.getTags();
 			
 			System.out.println("Stockage en XML du fichier "+fileName);
 			Element root = new Element("root");
@@ -69,11 +69,12 @@ public class FrenchTagger {
 		                list.add(new ArrayList<>());
 		                return list;
 		            },
-		            (list, s) -> {
+		            (subList, s) -> {
 		                if (s[2].contains("SENT")) {
-		                    list.add(new ArrayList<>());
-		                } else {
-		                    list.get(list.size() - 1).add(s);
+		                	subList.add(new ArrayList<>());
+		                } 
+		                else {
+		                    subList.get(subList.size() - 1).add(s);
 		                }
 		            },
 		            (list1, list2) -> {
@@ -81,14 +82,13 @@ public class FrenchTagger {
 		                list1.addAll(list2);
 		            });
 			
-			
-			for (List<String[]>sentence:sentences){
+			for (int counterSent=0;counterSent<sentences.size()-1;counterSent++){
 				Element sent=new Element("sentence");
 				Element punc=new Element("word");
 				punc.setAttribute("form", ".");
 				punc.setAttribute("lemma", ".");
 				punc.setAttribute("postag", "PUN");
-				for (String []word:sentence){
+				for (String []word:sentences.get(counterSent)){
 					if (!word[0].matches("-[LRB]{3,}-")){
 						Element mot=new Element("word");
 						mot.setAttribute("form",word[0]);

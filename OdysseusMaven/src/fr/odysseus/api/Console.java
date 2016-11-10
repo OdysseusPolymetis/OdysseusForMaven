@@ -19,22 +19,22 @@ public class Console {
 			File[] directories = fileTest.listFiles();
 			division.frenchBookDivision(directories);
 		}
-		System.out.println("Voulez-vous faire/refaire l'étiquetage ? (y/n)");
+		System.out.println("Voulez-vous faire/refaire l'étiquetage français ? (y/n)");
 		answer=sc.nextLine();
 		if (answer.equals("y")){
 			new FrenchTagger();
 		}
-		System.out.println("Voulez-vous faire/refaire les xml français ? (y/n)");
+		System.out.println("Voulez-vous faire/refaire les séquences français(es) ? (y/n)");
 		answer=sc.nextLine();
 		if (answer.equals("y")){
 			new CollectFrenchSequences();
 		}
-		System.out.println("Voulez-vous faire/refaire les xml latins ? (y/n)");
+		System.out.println("Voulez-vous faire/refaire les séquences latines ? (y/n)");
 		answer=sc.nextLine();
 		if (answer.equals("y")){
 			new LemmaLatin();
 		}
-		System.out.println("Voulez-vous faire/refaire les xml grecs ? (y/n)");
+		System.out.println("Voulez-vous faire/refaire les séquences grecques ? (y/n)");
 		answer=sc.nextLine();
 		if (answer.equals("y")){
 			new LemmaGreek();
