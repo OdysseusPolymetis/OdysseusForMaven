@@ -283,11 +283,11 @@ public class CalculStats {
 					}
 
 					StringBuilder sbForListHTML=new StringBuilder();
-//					System.out.println(tableauMotsEnAnalyseForms.length);
-//					System.out.println(tableauMotsEnAnalyseLemmas.length);
+					System.out.println(tableauMotsEnAnalyseForms.length);
+					System.out.println(tableauMotsEnAnalyseLemmas.length);
 					for(int l=0;l<tableauMotsEnAnalyseForms.length;l++){
-//System.out.println(tableauMotsEnAnalyseForms[l]);
-//System.out.println(tableauMotsEnAnalyseLemmas[l]);
+System.out.println(tableauMotsEnAnalyseForms[l]);
+System.out.println(tableauMotsEnAnalyseLemmas[l]);
 						if (tableauMotsEnAnalyseLemmas[l]!=""){
 							
 							distance=new LevenshteinDistance();

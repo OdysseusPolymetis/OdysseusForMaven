@@ -19,17 +19,20 @@ import org.jdom2.output.XMLOutputter;
 import fr.odysseus.utils.NamesPatternMatcher;
 
 public class CollectFrenchSequences {
-	final static String SOURCE="./sourceFiles/xml/FrenchXML/";
+	final static String SOURCE="./sourceFiles/xml/frenchXML/";
 	final static String TARGET="./sourceFiles/";
-	final static String DICOVEK="./sourceFiles/sourceDictionaries/RepertoireDicovek/";
+	final static String DICOVEK="./sourceFiles/sourceDictionaries/repertoireDicovek/";
+	final static String W2V="./sourceFiles/sourceDictionaries/word2Vec/";
+	final static String PIVOT="./sourceFiles/sequences/pivot/";
 	public CollectFrenchSequences() throws Exception{
 		System.out.println("Début du ramassage des tags et du séquençage");
-		File fileRoot=new File("./sourceFiles/xml/FrenchXML");
+		File fileRoot=new File(SOURCE);
 		File[] listeFilesChants=fileRoot.listFiles();
 		List<String>listNomsGrecsLemmaNForms=new ArrayList<String>();
 		HashSet<String>setNomsGrecsLemmaNForms=new HashSet<String>();
 		String blackList[]={ ""};
 		HashSet <String> namesCompleteSet=new HashSet<String>();
+		List<CharSequence>word2VecTraining=new ArrayList<>();
 
 		for (File file:listeFilesChants){
 			String fileName=file.getName().substring(0,file.getName().lastIndexOf("Chant"));
@@ -121,6 +124,7 @@ public class CollectFrenchSequences {
 			List<CharSequence> sequencesLemma = new ArrayList<CharSequence>();
 			sequencesLemma = namesMatcherLemma.getSequences();
 
+			word2VecTraining.addAll(sequencesLemma);
 
 
 			StringBuilder sbforms = new StringBuilder();
@@ -169,7 +173,7 @@ public class CollectFrenchSequences {
 				printWriterListNoms.println (nom);
 			}
 			printWriterListNoms.close ();
-			
+
 			File sequences = new File(TARGET+"/sequences/frenchSequences/Chant"+numChant+"/"+fileName+"Chant"+numChant+"NomsCoupe.txt");
 			sequences.getParentFile().mkdirs();
 			PrintWriter printSequences = new PrintWriter(sequences);
@@ -177,7 +181,7 @@ public class CollectFrenchSequences {
 				printSequences.println(sequence.toString());
 			}
 			printSequences.close ();
-			
+
 			File sequencesPrintLemma = new File(DICOVEK+"Chant"+numChant+"/"+fileName+"Chant"+numChant+"Lemma.txt");
 			sequencesPrintLemma.getParentFile().mkdirs();
 			PrintWriter printLemmatizedSequences = new PrintWriter(sequencesPrintLemma);
@@ -185,6 +189,21 @@ public class CollectFrenchSequences {
 				printLemmatizedSequences.println(sequence.toString());
 			}
 			printLemmatizedSequences.close ();
+
+			if (fileName.contains("Sommer")){
+				File pivotSequences = new File(PIVOT+"Chant"+numChant+"/"+fileName+"Chant"+numChant+"NomsCoupe.txt");
+				pivotSequences.getParentFile().mkdirs();
+				PrintWriter printPivotSequences = new PrintWriter(pivotSequences);
+				for (CharSequence sequence:sequencesForm){
+					printPivotSequences.println(sequence.toString());
+				}
+				printPivotSequences.close ();
+				XMLOutputter xmlPivot = new XMLOutputter();
+				xmlPivot.setFormat(Format.getPrettyFormat());
+				File filePivot = new File(PIVOT+"Chant"+numChant+"/"+fileName+"Chant"+numChant+"NomsCoupe.xml");
+				filePivot.getParentFile().mkdirs();
+				xmlPivot.output(doc, new FileWriter(filePivot));
+			}
 		}
 		File completeSet = new File(TARGET+"names/frenchNames/FrenchNames.txt");
 		completeSet.getParentFile().mkdirs();
@@ -194,6 +213,15 @@ public class CollectFrenchSequences {
 			printCompleteSet.println (nom);
 		}
 		printCompleteSet.close ();
+
+		File w2V = new File(W2V+"RepertoireW2V.txt");
+		w2V.getParentFile().mkdirs();
+		PrintWriter printW2V = new PrintWriter(w2V);
+
+		for (CharSequence nom:word2VecTraining){
+			printW2V.println (nom);
+		}
+		printW2V.close ();
 	}
 
 	public List<CharSequence> regroup (String previous, String next ,List<CharSequence>sequencesTexteADecouper, int index){

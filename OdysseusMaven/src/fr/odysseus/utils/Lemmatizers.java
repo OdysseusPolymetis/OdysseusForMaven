@@ -29,7 +29,7 @@ public class Lemmatizers {
 			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","Calypso", "Muse", "Mante", "Ope", "Ithaquois", 
 			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
 			"Sparte", "grecs", "Atlas", "Thon","Alcippé", "Océan", "zéphyr", "Iphthimé", "Halosydné",
-			"Sunion","Pergame","Ethiopiens","Mermeride","Havre"};
+			"Sunion","Pergame","Ethiopiens","Mermeride","Havre", "phénicien","Phénicien"};
 	
 //	String blackRegex[]={"\\b[A-ZÉÈÔa-zéèôê]+ez\\b","[A-Za-zÉéèêôî]*[-][a-z][-][a-zéêîôèà]*","\\b[A-Za-zéèôê]+oient\\b", "\\b[A-Za-zéèôê]+é\\b","\\b[A-Za-zéèôê]+ds\\b",
 //			"\\b[A-Za-zéèôê]+aient\\b","\\b[A-Za-zéèôê]+oivent\\b","\\b[A-Za-zéèôê]+èrent\\b","[A-ZÉÈÀÔ]{1}","\\b[A-Za-zéèôê]+ait\\b",
