@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -28,31 +29,35 @@ public class Lemmatizers {
 	String greenList[]={"Minerve","Saturne","Agamemnon","Eurymaque","Atrée","Oreste", "Egisthe", "Polybe","Neptune","Ethiopien","Nestor","Ilion","Polyphème", 
 			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","Calypso", "Muse", "Mante", "Ope", "Ithaquois", 
 			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
-			"Sparte", "grecs", "Atlas", "Thon","Alcippé", "Océan", "zéphyr", "Iphthimé", "Halosydné",
-			"Sunion","Pergame","Ethiopiens","Mermeride","Havre", "phénicien","Phénicien"};
-	
-//	String blackRegex[]={"\\b[A-ZÉÈÔa-zéèôê]+ez\\b","[A-Za-zÉéèêôî]*[-][a-z][-][a-zéêîôèà]*","\\b[A-Za-zéèôê]+oient\\b", "\\b[A-Za-zéèôê]+é\\b","\\b[A-Za-zéèôê]+ds\\b",
-//			"\\b[A-Za-zéèôê]+aient\\b","\\b[A-Za-zéèôê]+oivent\\b","\\b[A-Za-zéèôê]+èrent\\b","[A-ZÉÈÀÔ]{1}","\\b[A-Za-zéèôê]+ait\\b",
-//			"\\b[A-Za-zéèôê]+oit\\b","\\b[A-Za-zéèôê]+és\\b","[A-Za-zÉéâêç]+[-][a-zéêîôèà]*","[A-Z]+['][a-zéèàôî]","[Quq]+['][a-zéèàôî]","[a-z\\-]+II",
-//			"\\b[A-Za-zéèôê]+ois\\b","[JCDN]+'[A-Za-zéèôêù]+", };
-	
+			"Sparte", "grecs", "Atlas", "Thon","Alcippé", "Océan", "zéphyr", "Iphthimé", "Halosydné", "Sunion","Pergame","Ethiopiens","Mermeride",
+			"Havre", "phénicien","Phénicien", "Phéniciens"};
+
+//	String blackImpf[]={"Toutefois","Autrefois","Parfois"};
+	String impf[][]={{"aur","avoir"},{"couvr","couvrir"},{"dis", "dire"},{"éclair", "éclairer"},{"entour","entourer"},{"fais", "faire"},{"fall","falloir"},
+			{"flatter","flatter"},{"foul","fouler"},{"oser","oser"},{"pouv","pouvoir"},{"répar","réparer"},{"respir","respirer"},{"ser","être"},{"viendr","venir"},
+			{"vant", "vanter"},{"voul","vouloir"},{"voudr","vouloir"}};
+
 	String correc[][]={{"j","je","PRO:PER"},{"t","tu","PRO:PER"},{"l","le","DET:ART"},{"d","de","DET:ART"},{"c","cela","PRO:DEM"},{"aux","au","DET:ART"},
 			{"au","au","DET:ART"},{"aujourd","aujourd","NOM"},{"hui","hui","NOM"},{"et","et","KON"},{"sur","sur","PRP"},{"je","je","PRO:PER"},{"tu","tu","PRO:PER"},
 			{"il","il","PRO:PER"},{"on","on","PRO:PER"},{"elle","elle","PRO:PER"},{"nous","nous","PRO:PER"},{"vous","vous","PRO:PER"},{"ils","ils","PRO:PER"},
 			{"elles","elles","PRO:PER"}};
-	
+
 	Path dictionnaire = Paths.get(DICT+"DictionnaireGutenberg.txt");
 	Path blackList = Paths.get(DICT+"blackList.txt");
-	
+
 	public void setTags(List<String[]> motsTags) {
 		this.tags = motsTags;
 	}
-	
+
 	public List<String[]> getTags() {
 		return tags;
 	}
-	
+
 	public HashSet<String>getNames(String text, List <String[]>motsTags, TreeTaggerWrapper<String>tt, MaxentTagger tagger) throws IOException{
+		HashMap<String, String> mapImpf=new HashMap<String, String>();
+		for (int indexImpf=0; indexImpf<impf.length;indexImpf++){
+			mapImpf.put(impf[indexImpf][0], impf[indexImpf][1]);
+		}
 		List<String>motsDictionnaire = Files.readAllLines(dictionnaire);
 		List<String>motsBlackList = Files.readAllLines(blackList);
 		HashSet<String> setDesNomsStanford=new HashSet<String>();
@@ -62,13 +67,13 @@ public class Lemmatizers {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		PTBTokenizer ptbt = new PTBTokenizer(new StringReader(text),
 				new CoreLabelTokenFactory(), "");
-		
+
 		for (CoreLabel label; ptbt.hasNext(); ) {
 			label = (CoreLabel) ptbt.next();
 			String mot=label.word();
 			listeMotsSansEspace.add(mot);
 		}
-		
+
 		String []stanford=listeMotsSansEspace.toArray(new String[listeMotsSansEspace.size()]);
 		List<HasWord> sent = Sentence.toWordList(stanford);
 		List<TaggedWord> taggedSent = tagger.tagSentence(sent);
@@ -79,14 +84,12 @@ public class Lemmatizers {
 		}
 		tt.setHandler(new TokenHandler<String>() {
 			public void token(String token, String pos, String lemma) {
-				
+
 				String mot=token;
 				String motLower=mot.toLowerCase();
-				
-				
+
+
 				if (pos!=null){
-					
-//					boolean motIsInBlackReg = Arrays.asList(blackRegex).stream().anyMatch(p -> mot.matches(p));
 					if (pos.matches("NAM")&&mot!=""){
 						setDesNoms.add(mot);
 					}
@@ -97,7 +100,7 @@ public class Lemmatizers {
 						tagNLemma[1]=mot;
 						tagNLemma[0]=mot;
 					}
-					
+
 					else if (setDesNomsStanford.contains(token)&&!(motsDictionnaire.contains(motLower)|motsBlackList.contains(mot))){
 						setDesNoms.add(mot);
 						tagNLemma[2]="NAM";
@@ -107,9 +110,51 @@ public class Lemmatizers {
 					else if(pos.contains("NAM")&&(motsDictionnaire.contains(motLower)|motsBlackList.contains(mot))){
 						setDesNoms.remove(mot);
 						setDesNomsStanford.remove(mot);
-						tagNLemma[2]="Indef";
-						tagNLemma[1]=lemma;
-						tagNLemma[0]=mot;
+						String wordBoundary=" "+mot+" ";
+						if (wordBoundary.matches("\\s[A-ZÉa-zéèêëîïôöù]{2,}oi([ts]|(ent)|(ez))+\\s")){
+							String racine=wordBoundary.replaceAll("oi([ts]|(ent)|(ez))+\\s", "");
+							racine=racine.replaceAll("\\s", "").toLowerCase();	
+							if (mapImpf.containsKey(racine)){
+								tagNLemma[2]="VER:impf";
+								tagNLemma[1]=mapImpf.get(racine);
+								tagNLemma[0]=mot;
+								System.out.println("Je rentre dans la 1ère condition avec : ");
+								System.out.println(motLower);
+							}
+							else if(motsDictionnaire.contains(motLower.replaceAll("oi([ts]|(ent)|(ez))+", "er"))){
+								System.out.println("Je rentre dans la condition dictionnaire 1 avec : ");
+								System.out.println(motLower);
+								tagNLemma[2]="VER:impf";
+								tagNLemma[1]=motLower.replaceAll("oi([ts]|(ent)|(ez))+", "er");
+								tagNLemma[0]=mot;
+							}
+							else if(motsDictionnaire.contains(motLower.replaceAll("oi([ts]|(ent)|(ez))+", "oir"))){
+								System.out.println("Je rentre dans la condition dictionnaire 2 avec : ");
+								System.out.println(motLower);
+								tagNLemma[2]="VER:impf";
+								tagNLemma[1]=motLower.replaceAll("oi([ts]|(ent)|(ez))+", "oir");
+								tagNLemma[0]=mot;
+							}
+							else if(motsDictionnaire.contains(motLower.replaceAll("oi([ts]|(ent)|(ez))+", "oire"))){
+								System.out.println("Je rentre dans la condition dictionnaire 3 avec : ");
+								System.out.println(motLower);
+								tagNLemma[2]="VER:impf";
+								tagNLemma[1]=motLower.replaceAll("oi([ts]|(ent)|(ez))+", "oire");
+								tagNLemma[0]=mot;
+							}
+							else{
+								System.out.println("Je rentre dans la condition dictionnaire 4 avec : ");
+								System.out.println(mot);
+								tagNLemma[2]="Indef";
+								tagNLemma[1]=lemma.toLowerCase();
+								tagNLemma[0]=mot;	
+							}
+						}
+						else{
+							tagNLemma[2]="Indef";
+							tagNLemma[1]=lemma.toLowerCase();
+							tagNLemma[0]=mot;	
+						}				
 					}		
 					else{			
 						tagNLemma[2]=pos;
@@ -133,9 +178,9 @@ public class Lemmatizers {
 			e.printStackTrace();
 		}
 		tt.destroy();
-		
+
 		setTags(motsTags);
 		return setDesNoms;
-		
+
 	}
 }

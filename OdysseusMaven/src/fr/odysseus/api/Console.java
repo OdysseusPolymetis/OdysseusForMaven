@@ -3,8 +3,11 @@ package fr.odysseus.api;
 import java.io.File;
 import java.util.Scanner;
 
+/**
+ * main console where main parts of the program are called
+ */
 public class Console {
-
+	
 	final static String SOURCE="./sourceFiles/plainTxt";
 	public static void main(String[] args) throws Exception {
 
@@ -48,8 +51,8 @@ public class Console {
 		System.out.println("Voulez-vous faire/refaire une comparaison statistique ? (y/n)");
 		answer=sc.nextLine();
 		if (answer.equals("y")){
-			CalculStats calculs=new CalculStats();
-			calculs.initContentEditorPanes();
+			StatisticalComparison calculs=new StatisticalComparison();
+			calculs.automaticComparison();
 		}
 	
 		long endTime = System.currentTimeMillis();

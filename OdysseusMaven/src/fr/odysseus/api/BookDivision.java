@@ -14,23 +14,17 @@ import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-//import org.apache.commons.lang3.StringUtils;
-
-
-
-
+/**
+ * dividing all raw texts into seperate books and files
+ */
 public class BookDivision {
 
 	final static String OUT="./sourceFiles/plainTxtByBook/";
 	public void frenchBookDivision(File[] repertoire) throws Exception {
 		
-//		log.info("Début du découpage en chants de chaque texte français");
-		
 		for (File file:repertoire){
 			String path=file.getPath();;
 			String text=readFile(path, StandardCharsets.UTF_8);
-			//			System.out.println("Pour le fichier : "+path);
 			text=text.replaceAll("\\s0[a-z]*", "O");
 
 			String []tabTitre=text.split("\\n");
@@ -69,20 +63,7 @@ public class BookDivision {
 				sb.append(ligne+"\n");
 			}
 
-//			String tabText[]=sb.toString().split("Chant([0-9]+)");
-//			Pattern p3=Pattern.compile("Chant([0-9]+)");
-//			Matcher m3=p3.matcher(sb.toString());
-//			List<String>texteDeChaqueChant=new ArrayList();
 			String []texteDeChaqueChant=sb.toString().split("Chant([0-9]+)");
-//			while (m3.find()){
-////				System.out.println(m3.group());
-////				texteDeChaqueChant.add
-//			}
-			
-//			for (String chant : texteDeChaqueChant){
-////				System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-////				System.out.println(chant);
-//			}
 			
 			int i=0;
 			for (String chant:texteDeChaqueChant){
@@ -129,11 +110,8 @@ public class BookDivision {
 						Pattern p=Pattern.compile("([a-z]+)([A-Z]{1}[a-zéèêôûîùà]+)");
 						Matcher m=p.matcher(chant);
 						while (m.find()){
-//							System.out.println(m.group());
 							chant=chant.replaceAll("([a-z]+)([A-Z]{1}[a-zéèêôûîùà]+)", m.group(1)+" "+m.group(2));
-//							System.out.println(m.group(1)+" "+m.group(2));
 						}
-//						System.out.println(chant);
 						writer.write(chant);
 						
 						writer.close ();

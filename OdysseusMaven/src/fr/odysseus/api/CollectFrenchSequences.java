@@ -18,6 +18,9 @@ import org.jdom2.output.XMLOutputter;
 
 import fr.odysseus.utils.NamesPatternMatcher;
 
+/**
+ * gets all the attributes and rearrange them in suitable xml sequences for alignement
+ */
 public class CollectFrenchSequences {
 	final static String SOURCE="./sourceFiles/xml/frenchXML/";
 	final static String TARGET="./sourceFiles/";

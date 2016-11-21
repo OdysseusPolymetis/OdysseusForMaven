@@ -59,7 +59,7 @@
       <word form="paroles" lemma="parole" postag="NOM" />
       <word form=":" lemma=":" postag="PUN" />
       <word form="''" lemma="''" postag="NOM" />
-      <word form="Éveille" lemma="Éveille" postag="Indef" />
+      <word form="Éveille" lemma="éveille" postag="Indef" />
       <word form="-" lemma="-" postag="PUN" />
       <word form="toi" lemma="toi" postag="PRO:PER" />
       <word form="," lemma="," postag="PUN" />
@@ -128,7 +128,7 @@
       <word form="répondit" lemma="répondre" postag="VER:simp" />
       <word form=":" lemma=":" postag="PUN" />
       <word form="oc" lemma="oc" postag="ADV" />
-      <word form="Chère" lemma="Chère" postag="Indef" />
+      <word form="Chère" lemma="chère" postag="Indef" />
       <word form="nourrice" lemma="nourrice" postag="NOM" />
       <word form="," lemma="," postag="PUN" />
       <word form="les" lemma="le" postag="DET:ART" />
@@ -206,8 +206,8 @@
       <word form="ces" lemma="ce" postag="PRO:DEM" />
       <word form="fausses" lemma="faux" postag="ADJ" />
       <word form="nouvelles" lemma="nouvelle" postag="NOM" />
-      <word form="P" lemma="P" postag="NAM" />
-      <word form="Pourquoi" lemma="Pourquoi" postag="Indef" />
+      <word form="P" lemma="p" postag="Indef" />
+      <word form="Pourquoi" lemma="pourquoi" postag="Indef" />
       <word form="m" lemma="m" postag="VER:futu" />
       <word form="'" lemma="'" postag="PUN" />
       <word form="éveiller" lemma="éveiller" postag="VER:infi" />

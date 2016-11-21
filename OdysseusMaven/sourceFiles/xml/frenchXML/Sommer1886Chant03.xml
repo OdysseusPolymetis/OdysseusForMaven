@@ -3361,7 +3361,7 @@
     </sentence>
     <sentence>
       <word form="c" lemma="cela" postag="PRO:DEM" />
-      <word form="Vieillard" lemma="Vieillard" postag="Indef" />
+      <word form="Vieillard" lemma="vieillard" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="je" lemma="je" postag="PRO:PER" />
       <word form="ne" lemma="ne" postag="ADV" />
@@ -3650,7 +3650,7 @@
       <word form="dit" lemma="dire" postag="VER:pres" />
       <word form="qu" lemma="qu" postag="VER:pper" />
       <word form="'" lemma="'" postag="PUN" />
-      <word form="H" lemma="H" postag="NAM" />
+      <word form="H" lemma="h" postag="Indef" />
       <word form="." lemma="." postag="PUN" />
     </sentence>
     <sentence>
@@ -3910,7 +3910,7 @@
       <word form="un" lemma="un" postag="DET:ART" />
       <word form="grand" lemma="grand" postag="ADJ" />
       <word form="forfait" lemma="forfait" postag="NOM" />
-      <word form="Tandis" lemma="Tandis" postag="Indef" />
+      <word form="Tandis" lemma="tandis" postag="Indef" />
       <word form="que" lemma="que" postag="PRO:REL" />
       <word form="nous" lemma="nous" postag="PRO:PER" />
       <word form="achevions" lemma="achever" postag="VER:impf" />
@@ -5768,7 +5768,7 @@
       <word form="." lemma="." postag="PUN" />
     </sentence>
     <sentence>
-      <word form="Lorsqu" lemma="Lorsqu" postag="Indef" />
+      <word form="Lorsqu" lemma="lorsqu" postag="Indef" />
       <word form="'" lemma="'" postag="PUN" />
       <word form="ils" lemma="ils" postag="PRO:PER" />
       <word form="eurent" lemma="avoir" postag="VER:simp" />
@@ -6929,7 +6929,7 @@
       <word form="." lemma="." postag="PUN" />
     </sentence>
     <sentence>
-      <word form="Lorsqu" lemma="Lorsqu" postag="Indef" />
+      <word form="Lorsqu" lemma="lorsqu" postag="Indef" />
       <word form="'" lemma="'" postag="PUN" />
       <word form="ils" lemma="ils" postag="PRO:PER" />
       <word form="eurent" lemma="avoir" postag="VER:simp" />

@@ -20,6 +20,9 @@ import org.jdom2.output.XMLOutputter;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import fr.odysseus.utils.Lemmatizers;
 
+/**
+ * tags all raw text in French, using openNLP, TreeTagger, Stanford Tagger, and small local blacklists or greenlists (provided with the program)
+ */
 public class FrenchTagger {
 	final static String SOURCE="./sourceFiles/plainTxtByBook/";
 	final static String OUT="./sourceFiles/xml/frenchXML/";

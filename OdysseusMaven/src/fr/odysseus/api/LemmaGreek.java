@@ -19,14 +19,9 @@ import edu.unc.epidoc.transcoder.TransCoder;
 import fr.odysseus.utils.NamesPatternMatcher;
 
 /**
- * Le lemmatiseur permet :
- * 1. de récupérer les lemmes/formes grecques à partir du xml de Perseus
- * 2. de convertir du betacode à l'unicode
- * 3. de découper le texte intégral unicode en séquences unicode en fonction des noms grecs
- *
+ * gets all the attributes from Greek xml source files and rearrange them in suitable xml sequences for alignement
+ * also converts from betacode to unicode
  */
-
-
 public class LemmaGreek {
 
 	final static String SOURCE="./sourceFiles/xml/GreekXML/";

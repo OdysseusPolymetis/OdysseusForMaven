@@ -2,12 +2,6 @@
 <root>
   <book24>
     <sentence>
-      <word form="LES" lemma="le" postag="DET:ART" />
-      <word form="LIBATIONS" lemma="libation" postag="NOM" />
-      <word form="." lemma="." postag="PUN" />
-    </sentence>
-    <sentence>
-      <word form="/" lemma="/" postag="PUN" />
       <word form="Mercure" lemma="Mercure" postag="NAM" />
       <word form="Cyllénien" lemma="Cyllénien" postag="NAM" />
       <word form="évoque" lemma="évoquer" postag="VER:pres" />
@@ -168,7 +162,7 @@
       <word form="la" lemma="le" postag="DET:ART" />
       <word form="demeure" lemma="demeure" postag="NOM" />
       <word form="des" lemma="du" postag="PRP:det" />
-      <word form="Songes" lemma="Songes" postag="Indef" />
+      <word form="Songes" lemma="songes" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="et" lemma="et" postag="KON" />
       <word form="elles" lemma="elles" postag="PRO:PER" />
@@ -177,7 +171,7 @@
       <word form="à" lemma="à" postag="PRP" />
       <word form="la" lemma="le" postag="DET:ART" />
       <word form="prairie" lemma="prairie" postag="NOM" />
-      <word form="Asphodèle" lemma="Asphodèle" postag="Indef" />
+      <word form="Asphodèle" lemma="asphodèle" postag="Indef" />
       <word form="où" lemma="où" postag="PRO:REL" />
       <word form="résident" lemma="résider" postag="VER:pres" />
       <word form="les" lemma="le" postag="DET:ART" />
@@ -206,7 +200,7 @@
       <word form="," lemma="," postag="PUN" />
       <word form="fils" lemma="fil|fils" postag="NOM" />
       <word form="de" lemma="de" postag="PRP" />
-      <word form="Pelée" lemma="Pelée" postag="Indef" />
+      <word form="Pelée" lemma="pelée" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="celles" lemma="celui" postag="PRO:DEM" />
       <word form="de" lemma="de" postag="PRP" />
@@ -249,7 +243,7 @@
       <word form="illustre" lemma="illustre" postag="ADJ" />
       <word form="fils" lemma="fil|fils" postag="NOM" />
       <word form="de" lemma="de" postag="PRP" />
-      <word form="Pelée" lemma="Pelée" postag="Indef" />
+      <word form="Pelée" lemma="pelée" postag="Indef" />
       <word form="." lemma="." postag="PUN" />
     </sentence>
     <sentence>
@@ -472,10 +466,10 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Heureux" lemma="Heureux" postag="Indef" />
+      <word form="Heureux" lemma="heureux" postag="Indef" />
       <word form="fils" lemma="fil|fils" postag="NOM" />
       <word form="de" lemma="de" postag="PRP" />
-      <word form="Pelée" lemma="Pelée" postag="Indef" />
+      <word form="Pelée" lemma="pelée" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="Achille" lemma="Achille" postag="NAM" />
       <word form="semblable" lemma="semblable" postag="ADJ" />
@@ -747,7 +741,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Arrêtez" lemma="Arrêtez" postag="Indef" />
+      <word form="Arrêtez" lemma="arrêtez" postag="Indef" />
       <word form="-" lemma="-" postag="PUN" />
       <word form="vous" lemma="vous" postag="PRO:PER" />
       <word form="," lemma="," postag="PUN" />
@@ -798,7 +792,7 @@
       <word form="divin" lemma="divin" postag="ADJ" />
       <word form="fils" lemma="fil|fils" postag="NOM" />
       <word form="de" lemma="de" postag="PRP" />
-      <word form="Pelée" lemma="Pelée" postag="Indef" />
+      <word form="Pelée" lemma="pelée" postag="Indef" />
       <word form="." lemma="." postag="PUN" />
     </sentence>
     <sentence>
@@ -1681,7 +1675,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Glorieux" lemma="Glorieux" postag="Indef" />
+      <word form="Glorieux" lemma="glorieux" postag="Indef" />
       <word form="descendant" lemma="descendant" postag="NOM" />
       <word form="d" lemma="de" postag="DET:ART" />
       <word form="'" lemma="'" postag="PUN" />
@@ -2652,7 +2646,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Heureux" lemma="Heureux" postag="Indef" />
+      <word form="Heureux" lemma="heureux" postag="Indef" />
       <word form="fils" lemma="fil|fils" postag="NOM" />
       <word form="de" lemma="de" postag="PRP" />
       <word form="Laërte" lemma="Laërte" postag="NAM" />
@@ -2804,7 +2798,7 @@
     </sentence>
     <sentence>
       <word form="/" lemma="/" postag="PUN" />
-      <word form="Cependant" lemma="Cependant" postag="Indef" />
+      <word form="Cependant" lemma="cependant" postag="Indef" />
       <word form="Ulysse" lemma="Ulysse" postag="NAM" />
       <word form="et" lemma="et" postag="KON" />
       <word form="ses" lemma="son" postag="DET:POS" />
@@ -2874,7 +2868,7 @@
       <word form="Laërte" lemma="Laërte" postag="NAM" />
       <word form="étaitune" lemma="étaitune" postag="VER:pres" />
       <word form="vénérable" lemma="vénérable" postag="ADJ" />
-      <word form="Sicilienne" lemma="Sicilienne" postag="Indef" />
+      <word form="Sicilienne" lemma="sicilienne" postag="Indef" />
       <word form="qui" lemma="qui" postag="PRO:REL" />
       <word form="lui" lemma="lui" postag="PRO:PER" />
       <word form="prodiguait" lemma="prodiguer" postag="VER:impf" />
@@ -2915,7 +2909,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Entrez" lemma="Entrez" postag="Indef" />
+      <word form="Entrez" lemma="entrez" postag="Indef" />
       <word form="maintenant" lemma="maintenant" postag="ADV" />
       <word form="dans" lemma="dans" postag="PRP" />
       <word form="la" lemma="le" postag="DET:ART" />
@@ -3288,7 +3282,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Vieillard" lemma="Vieillard" postag="Indef" />
+      <word form="Vieillard" lemma="vieillard" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="je" lemma="je" postag="PRO:PER" />
       <word form="vois" lemma="voir" postag="VER:pres" />
@@ -3749,7 +3743,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Étranger" lemma="Étranger" postag="Indef" />
+      <word form="Étranger" lemma="étranger" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="tu" lemma="tu" postag="PRO:PER" />
       <word form="es" lemma="être" postag="VER:pres" />
@@ -4011,7 +4005,7 @@
     </sentence>
     <sentence>
       <word form="..." lemma="..." postag="PUN" />
-      <word form="Étranger" lemma="Étranger" postag="Indef" />
+      <word form="Étranger" lemma="étranger" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="réponds" lemma="répondre" postag="VER:pres" />
       <word form="encore" lemma="encore" postag="ADV" />
@@ -4106,7 +4100,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Vieillard" lemma="Vieillard" postag="Indef" />
+      <word form="Vieillard" lemma="vieillard" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="je" lemma="je" postag="PRO:PER" />
       <word form="te" lemma="te" postag="PRO:PER" />
@@ -4337,7 +4331,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Mon" lemma="Mon" postag="Indef" />
+      <word form="Mon" lemma="mon" postag="Indef" />
       <word form="père" lemma="père" postag="NOM" />
       <word form="," lemma="," postag="PUN" />
       <word form="c" lemma="cela" postag="PRO:DEM" />
@@ -4448,7 +4442,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Si" lemma="Si" postag="Indef" />
+      <word form="Si" lemma="si" postag="Indef" />
       <word form="vraiment" lemma="vraiment" postag="ADV" />
       <word form="tu" lemma="tu" postag="PRO:PER" />
       <word form="es" lemma="être" postag="VER:pres" />
@@ -4490,7 +4484,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Eh" lemma="Eh" postag="Indef" />
+      <word form="Eh" lemma="eh" postag="Indef" />
       <word form="bien" lemma="bien" postag="ADV" />
       <word form="." lemma="." postag="PUN" />
     </sentence>
@@ -4722,7 +4716,7 @@
     </sentence>
     <sentence>
       <word form="/" lemma="/" postag="PUN" />
-      <word form="Quand" lemma="Quand" postag="Indef" />
+      <word form="Quand" lemma="quand" postag="Indef" />
       <word form="le" lemma="le" postag="DET:ART" />
       <word form="vieux" lemma="vieux" postag="NOM" />
       <word form="Laërte" lemma="Laërte" postag="NAM" />
@@ -4752,7 +4746,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Puissant" lemma="Puissant" postag="Indef" />
+      <word form="Puissant" lemma="puissant" postag="Indef" />
       <word form="Jupiter" lemma="Jupiter" postag="NAM" />
       <word form="," lemma="," postag="PUN" />
       <word form="et" lemma="et" postag="KON" />
@@ -5046,7 +5040,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Puissant" lemma="Puissant" postag="Indef" />
+      <word form="Puissant" lemma="puissant" postag="Indef" />
       <word form="Jupiter" lemma="Jupiter" postag="NAM" />
       <word form="," lemma="," postag="PUN" />
       <word form="et" lemma="et" postag="KON" />
@@ -5207,7 +5201,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="la" lemma="le" postag="DET:ART" />
       <word form="vénérable" lemma="vénérable" postag="ADJ" />
-      <word form="Sicilienne" lemma="Sicilienne" postag="Indef" />
+      <word form="Sicilienne" lemma="sicilienne" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="leur" lemma="leur" postag="DET:POS" />
       <word form="mère" lemma="mère" postag="NOM" />
@@ -5289,7 +5283,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Vieillard" lemma="Vieillard" postag="Indef" />
+      <word form="Vieillard" lemma="vieillard" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="assieds" lemma="asseoir" postag="VER:pres" />
       <word form="-" lemma="-" postag="PUN" />
@@ -5364,7 +5358,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Cher" lemma="Cher" postag="Indef" />
+      <word form="Cher" lemma="cher" postag="Indef" />
       <word form="maître" lemma="maître" postag="NOM" />
       <word form="," lemma="," postag="PUN" />
       <word form="puisque" lemma="puisque" postag="KON" />
@@ -5453,7 +5447,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Vieillard" lemma="Vieillard" postag="Indef" />
+      <word form="Vieillard" lemma="vieillard" postag="Indef" />
       <word form="," lemma="," postag="PUN" />
       <word form="Pénélope" lemma="Pénélope" postag="NAM" />
       <word form="sait" lemma="savoir" postag="VER:pres" />
@@ -5944,7 +5938,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Habitants" lemma="Habitants" postag="Indef" />
+      <word form="Habitants" lemma="habitants" postag="Indef" />
       <word form="d" lemma="de" postag="DET:ART" />
       <word form="'" lemma="'" postag="PUN" />
       <word form="Ithaque" lemma="Ithaque" postag="NAM" />
@@ -6102,7 +6096,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Habitants" lemma="Habitants" postag="Indef" />
+      <word form="Habitants" lemma="habitants" postag="Indef" />
       <word form="d" lemma="de" postag="DET:ART" />
       <word form="'" lemma="'" postag="PUN" />
       <word form="Ithaque" lemma="Ithaque" postag="NAM" />
@@ -6644,7 +6638,7 @@
     </sentence>
     <sentence>
       <word form="/" lemma="/" postag="PUN" />
-      <word form="Lorsque" lemma="Lorsque" postag="Indef" />
+      <word form="Lorsque" lemma="lorsque" postag="Indef" />
       <word form="les" lemma="le" postag="DET:ART" />
       <word form="convives" lemma="convive" postag="NOM" />
       <word form="ont" lemma="avoir" postag="VER:pres" />
@@ -6669,7 +6663,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Que" lemma="Que" postag="Indef" />
+      <word form="Que" lemma="que" postag="Indef" />
       <word form="l" lemma="le" postag="DET:ART" />
       <word form="'" lemma="'" postag="PUN" />
       <word form="un" lemma="un" postag="NUM" />
@@ -6988,7 +6982,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Grands" lemma="Grands" postag="Indef" />
+      <word form="Grands" lemma="grands" postag="Indef" />
       <word form="dieux" lemma="dieu" postag="NOM" />
       <word form="." lemma="." postag="PUN" />
     </sentence>
@@ -7352,7 +7346,7 @@
       <word form=":" lemma=":" postag="PUN" />
       <word form="/" lemma="/" postag="PUN" />
       <word form="``" lemma="``" postag="NOM" />
-      <word form="Noble" lemma="Noble" postag="Indef" />
+      <word form="Noble" lemma="noble" postag="Indef" />
       <word form="fils" lemma="fil|fils" postag="NOM" />
       <word form="de" lemma="de" postag="PRP" />
       <word form="Laërte" lemma="Laërte" postag="NAM" />
