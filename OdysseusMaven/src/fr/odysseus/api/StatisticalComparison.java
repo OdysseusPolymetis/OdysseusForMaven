@@ -31,14 +31,19 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.simmetrics.metrics.GeneralizedJaccard;
+
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 import fr.odysseus.utils.LevenshteinDistance;
 import fr.odysseus.utils.ListageRepertoire;
 
+/**
+ * @author Marianne Reboul
+ */
+
 public class StatisticalComparison {
-	
+
 	File repertoireSource[]; /* directory for source xml aligned files */
 
 	/**
@@ -49,18 +54,18 @@ public class StatisticalComparison {
 	 */
 	public Element setRoot(File file) throws IOException, JDOMException {
 		/* directory for source xml aligned files */
-		
+
 		SAXBuilder sxb=new SAXBuilder();
 		Document doc=sxb.build(file);
 		Element racine=doc.getRootElement();
 		return racine;
 	}
-	
+
 	/**
 	 * called from the main console, getting all the roots from all the xml and comparing their elements
 	 */
 	public void automaticComparison() throws IOException, BadLocationException, JDOMException{
-		
+
 		repertoireSource=ListageRepertoire.listeRepertoire(new File("./outputFiles/xml")); /* creating source directory with all roots */
 		LinkedList<Element>listeDesRacines=new LinkedList<Element>();
 
@@ -70,7 +75,6 @@ public class StatisticalComparison {
 		}
 		insertHTML(listeDesRacines); /* generating html */
 	}
-
 
 	/**
 	 * inserts the data in html output file
@@ -83,8 +87,12 @@ public class StatisticalComparison {
 
 		GeneralizedJaccard<String>jaccard=new GeneralizedJaccard<>();
 		LevenshteinDistance distance=new LevenshteinDistance();
-		
+
 		for (int i=0; i<racines.size();i++){
+			int brightred=0;
+			int brightgreen=0;
+			int averagesyntax=0;
+			int totalNbOfWords=0;
 			String nomFichierEnCours=racines.get(i).getAttributeValue("name");
 			String nomCommun=nomFichierEnCours.substring(nomFichierEnCours.indexOf("Chant"));
 
@@ -98,7 +106,7 @@ public class StatisticalComparison {
 			int nombreDeFichiersAComparer=filesEnCours.length;
 
 			System.out.println(nomFichierEnCours);
-			
+
 			/* XPath process to get all the specific lemmas and forms we need to statistically compare them */
 			XPathExpression<Element> expr;
 			XPathExpression<Element> exprPrevious = null;
@@ -122,7 +130,7 @@ public class StatisticalComparison {
 			int counterID=1;
 
 			List<String>ids=new ArrayList<String>();
-			
+
 			for (Element ID:listIDs){
 				List<String>idsInHTMLFormat=new ArrayList<String>();
 				LinkedHashMap<String[], String[]>tableauDeCorrespondances=new LinkedHashMap<String[], String[]>();
@@ -147,7 +155,7 @@ public class StatisticalComparison {
 				listeTagTarget.remove("DET:ART");
 				listeTagTarget.remove("DET:POS");
 				listeTagTarget.remove("PRP:det");
-				
+
 				/* This part is not very efficient : 
 				 * TODO either modify data or find a quicker and more efficient way */
 				Collections.replaceAll(listeTagSource, "VER:impf", "VER");
@@ -196,6 +204,9 @@ public class StatisticalComparison {
 				else if (Math.abs(listeTagSource.size()-listeTagTarget.size())>5&&percentDist>1){
 					percentDist--;
 				}
+				if (percentDist>1){
+					averagesyntax++;
+				}
 
 				/* evaluate expression for all lemmas from previous or next alignment for counting */
 				expr = xFactory.compile("/file/ID"+(counterID)+"[@lemma]", Filters.element());
@@ -205,7 +216,7 @@ public class StatisticalComparison {
 				if (counterID<listIDs.size()){
 					exprNext=xFactory.compile("/file/ID"+(counterID+1)+"[@lemma]", Filters.element());
 				}
-				
+
 				for (Document docToTest:autresDocs){
 					List<Element> elementsToCompare=expr.evaluate(docToTest);
 					List<Element> elementsToComparePrevious=exprPrevious.evaluate(docToTest);
@@ -221,7 +232,7 @@ public class StatisticalComparison {
 						stringbuild.append(last.getAttributeValue("lemma")+" ");
 					}
 				}
-				
+
 				String lemmaAndForm[]=new String[2];
 				String othersAndLeven[]=new String[2];
 				lemmaAndForm[0]=ID.getAttributeValue("lemma");
@@ -231,8 +242,9 @@ public class StatisticalComparison {
 				tableauDeCorrespondances.put(lemmaAndForm, othersAndLeven);	
 				String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
 				String fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
-				
+
 				for (Entry<String[], String[]>entry:tableauDeCorrespondances.entrySet()){
+					
 					entry.getKey()[1]=entry.getKey()[1].replaceAll("[0-9]", "");
 					entry.getKey()[0]=entry.getKey()[0].replaceAll("[0-9]", "");
 					entry.getKey()[1]=entry.getKey()[1].replaceAll("\\s{2,}", " ");
@@ -242,19 +254,17 @@ public class StatisticalComparison {
 					String tableauMotsAComparer[]=entry.getValue()[0].split("\\s");
 					List<String>wordsonebyone=new ArrayList<String>();
 					StringBuilder chaineMotsTarget=new StringBuilder();
-					
+
 					for (String comp:tableauMotsAComparer){
 						chaineMotsTarget.append(comp+" ");
 					}
 
 					StringBuilder sbForListHTML=new StringBuilder();
-					System.out.println(tableauMotsEnAnalyseForms.length);
-					System.out.println(tableauMotsEnAnalyseLemmas.length);
 					
 					for(int l=0;l<tableauMotsEnAnalyseForms.length;l++){
-						System.out.println(tableauMotsEnAnalyseForms[l]);
-						System.out.println(tableauMotsEnAnalyseLemmas[l]);
-						
+						int brightRedWord=0;
+						int brightGreenWord=0;
+
 						if (tableauMotsEnAnalyseLemmas[l]!=""){
 							distance=new LevenshteinDistance();
 							int count=0;
@@ -267,7 +277,8 @@ public class StatisticalComparison {
 								Pattern p=Pattern.compile(tableauMotsEnAnalyseLemmas[l],Pattern.LITERAL|Pattern.CASE_INSENSITIVE);
 								Matcher m=p.matcher(word);
 								int levDist=distance.computeLevenshteinDistance(word, tableauMotsEnAnalyseLemmas[l]);
-								
+								//								float levDist=distance.compare(word, tableauMotsEnAnalyseLemmas[l]);
+
 								if (m.find()&&!stopWords.contains(tableauMotsEnAnalyseLemmas[l].toLowerCase())&&word.length()>1){
 									count++;
 								}
@@ -275,16 +286,18 @@ public class StatisticalComparison {
 									count++;
 								}
 							}
-							
+
 							/* counting occurences and making the counting relative (5 categories) */
 							if (count>0){
 								int countScore=(((count+1)*5)/nombreDeFichiersAComparer);
-								
+
 								if(countScore>5){
 									countArrondi=5;
+									brightGreenWord++;
 								}
 								else if (countScore<1) {
 									countArrondi=countScore+2;
+									
 								}
 								else{
 									countArrondi=countScore+1;
@@ -292,6 +305,7 @@ public class StatisticalComparison {
 							}
 							else if(count==0&&tableauMotsEnAnalyseLemmas[l].length()>3&&!stopWords.contains(tableauMotsEnAnalyseLemmas[l])){
 								countArrondi=1;
+								brightRedWord++;
 							}
 							else{
 								countArrondi=0;
@@ -300,19 +314,24 @@ public class StatisticalComparison {
 							tableauMotsEnAnalyseForms[l]=tableauMotsEnAnalyseForms[l].replaceAll("_N", "");
 							wordsonebyone.add("<mark class=\"freq"+countArrondi+"\">"+tableauMotsEnAnalyseForms[l]+"</mark>");
 						}
+						brightred+=brightRedWord;
+						brightgreen+=brightGreenWord;
 					}
-
+					
+					totalNbOfWords+=tableauMotsEnAnalyseForms.length;
+					
 					for (String word:wordsonebyone){
 						sbForListHTML.append(word+ " ");
 					}
-
+					
 					idsInHTMLFormat.add(sbForListHTML.toString());
 				}
+				
 				StringBuilder division=new StringBuilder();
 
 				/* converting to html */
 				division.append("\n<div class=\"chunk syn"+percentDist+"\" id=\""+fileName+"-"+counterID+"\"><b>"+counterID+" </b>");
-				
+
 				for (String id:idsInHTMLFormat){
 					division.append(id+" ");
 				}
@@ -320,6 +339,10 @@ public class StatisticalComparison {
 				ids.add(division.toString());
 				counterID++;
 			} 
+			
+			brightgreen=(brightgreen*100)/totalNbOfWords;
+			brightred=(brightred*100)/totalNbOfWords;
+			averagesyntax=(averagesyntax*100)/listeElementsActuels.size();
 
 			String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
 
@@ -327,8 +350,10 @@ public class StatisticalComparison {
 			String fileNamePath=fileName.replaceAll("_0", "_");
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream("./outputFiles/html/"+fileNamePath+".html"), "UTF-8"));
-			writer.write("<section id=\""+fileName+"\" class=\"parallel\">");
-			
+			writer.write("<section id=\""+fileName+"\" class=\"parallel\" title=\"Statistiques générales : \nHaute Fréquence : "+brightgreen+" ;\nBasse Fréquence : "
+					+brightred+" ;\nProximité Syntaxique : "+averagesyntax+"\">");
+//			writer.write("\n<details  green=\""+brightgreen+"\" red=\""+brightred+"\" syntax=\""+averagesyntax+"\">");
+
 			for (String chunk:ids){
 				writer.write(chunk);
 			}

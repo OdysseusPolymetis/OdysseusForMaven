@@ -28,9 +28,9 @@ public class Lemmatizers {
 	final static String DICT="./sourceFiles/sourceDictionaries/";
 	String greenList[]={"Minerve","Saturne","Agamemnon","Eurymaque","Atrée","Oreste", "Egisthe", "Polybe","Neptune","Ethiopien","Nestor","Ilion","Polyphème", 
 			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","Calypso", "Muse", "Mante", "Ope", "Ithaquois", 
-			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
+			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie","éthiopien", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
 			"Sparte", "grecs", "Atlas", "Thon","Alcippé", "Océan", "zéphyr", "Iphthimé", "Halosydné", "Sunion","Pergame","Ethiopiens","Mermeride",
-			"Havre", "phénicien","Phénicien", "Phéniciens"};
+			"Havre", "phénicien","Phénicien", "Phéniciens","Phrygiens","Phrygien", "Nègres","Nègre","Panachéens","Laertes","Egiste"};
 
 //	String blackImpf[]={"Toutefois","Autrefois","Parfois"};
 	String impf[][]={{"aur","avoir"},{"couvr","couvrir"},{"dis", "dire"},{"éclair", "éclairer"},{"entour","entourer"},{"fais", "faire"},{"fall","falloir"},
