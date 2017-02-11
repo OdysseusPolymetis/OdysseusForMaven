@@ -11,5 +11,5 @@ Such changes are still in the ToDos list but will be done very soon.
 
   Here are some expected results <a href="https://odysseuspolymetis.github.io/paralogos/">here</a>.
 
-####### Articles on the topic
+###### Articles on the topic
 <a href="http://dh2016.adho.org/abstracts/370">DH2016</a>
