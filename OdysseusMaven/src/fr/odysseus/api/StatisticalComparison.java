@@ -312,7 +312,16 @@ public class StatisticalComparison {
 							}
 							tableauMotsEnAnalyseForms[l]=tableauMotsEnAnalyseForms[l].replaceAll("_B", "");
 							tableauMotsEnAnalyseForms[l]=tableauMotsEnAnalyseForms[l].replaceAll("_N", "");
-							wordsonebyone.add("<mark class=\"freq"+countArrondi+"\">"+tableauMotsEnAnalyseForms[l]+"</mark>");
+							if (countArrondi==6|countArrondi==5){
+								wordsonebyone.add("<mark class=\"freq"+countArrondi+" high\">"+tableauMotsEnAnalyseForms[l]+"</mark>");
+							}
+							else if (countArrondi==1){
+								wordsonebyone.add("<mark class=\"freq"+countArrondi+" low\">"+tableauMotsEnAnalyseForms[l]+"</mark>");
+							}
+							else {
+								wordsonebyone.add("<mark class=\"freq"+countArrondi+"\">"+tableauMotsEnAnalyseForms[l]+"</mark>");
+							}
+							
 						}
 						brightred+=brightRedWord;
 						brightgreen+=brightGreenWord;
