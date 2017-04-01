@@ -11,6 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,102 +26,74 @@ public class BookDivision {
 	public void frenchBookDivision(File[] repertoire) throws Exception {
 		
 		for (File file:repertoire){
+			HashMap<String, String>numText=new HashMap<String, String>();
 			String path=file.getPath();;
 			String text=readFile(path, StandardCharsets.UTF_8);
 			text=text.replaceAll("\\s0[a-z]*", "O");
 
-			String []tabTitre=text.split("\\n");
-			int index=0;
-			for (String nombre:tabTitre){
-				Pattern p1= Pattern.compile(".*(Chant [A-Z]+)");
-				Matcher m1=p1.matcher(nombre);
-				Pattern p2=Pattern.compile("\\b.*[A-Z]+\\b");
-				Matcher m2=p2.matcher(nombre);
-				while (m1.find()){
-
-					if (nombre.length()<13){
-//												System.out.println("Cas 1 : "+m1.group());	
-						String chiffreRomain=m1.group().substring(6);
-//												System.out.println(decode(chiffreRomain));
-						nombre=nombre.replace(m1.group(), "Chant"+String.valueOf(decode(chiffreRomain)));
-						tabTitre[index]=nombre.replace(m1.group(), nombre);
-
-					}
-				}
-
-
-				while (m2.find()){
-					if (nombre.length()<7){
-//												System.out.println(text);
-//												System.out.println("Cas 2 : "+m2.group());
-						tabTitre[index]=nombre.replace(m2.group(), "Chant"+String.valueOf(decode(m2.group())));
-						//						System.out.println("Chant"+String.valueOf(decode(m2.group())));
-					}
-				}
-				index++;
-			}  
-			StringBuilder sb= new StringBuilder();
-
-			for (String ligne:tabTitre){
-				sb.append(ligne+"\n");
-			}
-
-			String []texteDeChaqueChant=sb.toString().split("Chant([0-9]+)");
+			List<String>numsChants=new ArrayList<String>();
+			Pattern p= Pattern.compile("Chant[0-9]+");
+			Matcher m=p.matcher(text);
 			
-			int i=0;
-			for (String chant:texteDeChaqueChant){
-				if (i>0){
-					Writer writer;
-					if (chant!=""||chant.matches("\\n")){
-						String nomDeBaseDuFichier=path.substring(path.lastIndexOf("Txt")+3, path.indexOf(".txt"));
-						if (i<10){
-							Path pathToFile = Paths.get(OUT+"Chant0"+(i)+"/");
-							File filePerBook =new File(OUT+"Chant0"+(i)+"/"+nomDeBaseDuFichier+"Chant0"+(i)+".txt");
-							if (!filePerBook.getParentFile().isDirectory()){
-								Files.createDirectories(pathToFile);
-							}
-							writer = new BufferedWriter(new OutputStreamWriter(
-								    new FileOutputStream(OUT+"Chant0"+(i)+"/"+nomDeBaseDuFichier+"Chant0"+(i)+".txt"), "UTF-8"));
-						}
-						else{
-							Path pathToFile = Paths.get(OUT+"Chant"+(i)+"/");
-							File filePerBook =new File(OUT+"Chant"+(i)+"/"+nomDeBaseDuFichier+"Chant"+(i)+".txt");
-							if (!filePerBook.getParentFile().isDirectory()){
-								Files.createDirectories(pathToFile);
-							}
-							writer = new BufferedWriter(new OutputStreamWriter(
-								    new FileOutputStream(OUT+"Chant"+(i)+"/"+nomDeBaseDuFichier+"Chant"+(i)+".txt"), "UTF-8"));
-						}
-						
-						
-						
-						
-						chant=chant.replaceAll("[*]", "");
-						chant=chant.replaceAll("[0-9]*", "");
-						chant=chant.replace("\\", "");
-						chant=chant.replace("■","");
-						chant=chant.replace("((", "«");
-						chant=chant.replace("))", "»");
-						chant=chant.replaceAll("\\­"," - ");
-						chant=chant.replaceFirst("\\n", "");
-						chant=chant.replaceAll("\\n", " / ");
-						chant=chant.replaceAll("[\\s\\xA0\\t\\n\\x0B\\f\\r]+", " ");
-						chant=chant.replace(" / / ", " / ");
-						chant=chant.replace("Pallas-Minerve", "Pallas - Minerve");
-						chant=chant.replace("Minerve-Pallas", "Minerve - Pallas");
-						chant=chant.replaceAll("Pallas Athéné", "Pallas_Athéné");
-						Pattern p=Pattern.compile("([a-z]+)([A-Z]{1}[a-zéèêôûîùà]+)");
-						Matcher m=p.matcher(chant);
-						while (m.find()){
-							chant=chant.replaceAll("([a-z]+)([A-Z]{1}[a-zéèêôûîùà]+)", m.group(1)+" "+m.group(2));
-						}
-						writer.write(chant);
-						
-						writer.close ();
-						
+			while (m.find()){
+				numsChants.add(m.group());
+			}
+			String []texteParChant=text.split("Chant[0-9]+");
+			System.out.println("Division en cours : "+file.getName());
+			int index=1;
+			for (String nombre:numsChants){
+				 numText.put(nombre, texteParChant[index]);
+				 index++;
+			}  
+			
+			for (String titleChant:numText.keySet()){
+				String nomDeBaseDuFichier=file.getName().substring(0, file.getName().indexOf(".txt"));
+				String numChant=titleChant.substring(5);
+				int intNum=Integer.valueOf(numChant);
+				Writer writer;
+				if (Integer.valueOf(numChant)<10){
+					Path pathToFile = Paths.get(OUT+"Chant0"+(intNum)+"/");
+					File filePerBook =new File(OUT+"Chant0"+(intNum)+"/"+nomDeBaseDuFichier+"Chant0"+(intNum)+".txt");
+					if (!filePerBook.getParentFile().isDirectory()){
+						Files.createDirectories(pathToFile);
 					}
+					writer = new BufferedWriter(new OutputStreamWriter(
+						    new FileOutputStream(OUT+"Chant0"+(intNum)+"/"+nomDeBaseDuFichier+"Chant0"+(intNum)+".txt"), "UTF-8"));
 				}
-				i++;
+				else{
+					Path pathToFile = Paths.get(OUT+"Chant"+(intNum)+"/");
+					File filePerBook =new File(OUT+"Chant"+(intNum)+"/"+nomDeBaseDuFichier+"Chant"+(intNum)+".txt");
+					if (!filePerBook.getParentFile().isDirectory()){
+						Files.createDirectories(pathToFile);
+					}
+					writer = new BufferedWriter(new OutputStreamWriter(
+						    new FileOutputStream(OUT+"Chant"+(intNum)+"/"+nomDeBaseDuFichier+"Chant"+(intNum)+".txt"), "UTF-8"));
+				}
+				String chant=numText.get(titleChant);
+				chant=chant.replaceAll("[*]", "");
+				chant=chant.replaceAll("[0-9]*", "");
+				chant=chant.replace("\\", "");
+				chant=chant.replace("■","");
+				chant=chant.replace("((", "«");
+				chant=chant.replace("))", "»");
+				chant=chant.replace("&lt;&lt;", "''");
+				chant=chant.replace("<<", "''");
+				chant=chant.replace(">>", "''");
+				chant=chant.replaceAll("\\­"," - ");
+				chant=chant.replaceFirst("\\n", "");
+				chant=chant.replaceAll("\\n", " / ");
+				chant=chant.replaceAll("[\\s\\xA0\\t\\n\\x0B\\f\\r]+", " ");
+				chant=chant.replace(" / / ", " / ");
+				chant=chant.replace("Pallas-Minerve", "Pallas - Minerve");
+				chant=chant.replace("Minerve-Pallas", "Minerve - Pallas");
+				chant=chant.replaceAll("Pallas Athéné", "Pallas_Athéné");
+				Pattern pCorrect=Pattern.compile("([a-z]+)([A-Z]{1}[a-zéèêôûîùà]+)");
+				Matcher mCorrect=pCorrect.matcher(chant);
+				while (mCorrect.find()){
+					chant=chant.replaceAll("([a-z]+)([A-Z]{1}[a-zéèêôûîùà]+)", mCorrect.group(1)+" "+mCorrect.group(2));
+				}
+				writer.write(chant);
+				writer.close();
 			}
 		}
 	}

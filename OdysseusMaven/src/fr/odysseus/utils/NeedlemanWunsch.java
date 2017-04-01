@@ -15,6 +15,8 @@ import org.jdom2.Document;
 import org.simmetrics.metrics.JaroWinkler;
 import org.simmetrics.metrics.MongeElkan;
 
+import alix.fr.Occ;
+import alix.fr.Tokenizer;
 import fr.odysseus.utils.dictionary.GrPhoneTransformer;
 import fr.odysseus.dataModels.NWRecord;
 
@@ -63,7 +65,7 @@ public class NeedlemanWunsch {
 	}
 
 
-	public LinkedList<NWRecord> PerformAlignment(String[] chunksSrc, String[] chunksTrg, String[] chunksLemmaTrg, String[] chunksTagTrg, 
+	public LinkedList<NWRecord> PerformAlignment(String[] chunksLemmaSrc, String[] chunksLemTrg, String[] chunksTxtTrg, String[] chunksTagTrg, 
 			HashMap<String, Set<String>> dictionary,HashMap<String, Set<String>> distdictionary, HashMap<String, Integer>srcFrequency,
 			HashMap<String, Integer>trgFrequency) {
 		this.setDictionary(dictionary);
@@ -73,31 +75,31 @@ public class NeedlemanWunsch {
 		setGapPenality(-2.0);
 		LinkedList<NWRecord> alignments = new LinkedList<NWRecord>();
 
-		int n = chunksSrc.length;
-		int m = chunksTrg.length;
+		int n = chunksLemmaSrc.length;
+		int m = chunksLemTrg.length;
 		double[][] simMatrix = new double[n][m];
 		double[][] pathMatrix = new double[n + 1][m + 1];
 
-		fillSimMatrix(simMatrix, chunksSrc, chunksTrg);
+		fillSimMatrix(simMatrix, chunksLemmaSrc, chunksLemTrg);
 
-		fillPathMatrix(pathMatrix, simMatrix, chunksSrc, chunksTrg);
+		fillPathMatrix(pathMatrix, simMatrix, chunksLemmaSrc, chunksLemTrg);
 
-		alignments = makeAlignment(simMatrix, pathMatrix, chunksSrc, chunksTrg, chunksLemmaTrg, chunksTagTrg);
+		alignments = makeAlignment(simMatrix, pathMatrix, chunksLemmaSrc, chunksLemTrg, chunksTxtTrg, chunksTagTrg);
 
 		return alignments;
 	}
 
 	private LinkedList<NWRecord> makeAlignment(double[][] simMatrix,
-			double[][] pathMatrix, String[] chunksSrc, String[] chunksTrg, String[] chunksLemmaTrg, String[] chunksTagTrg) {
+			double[][] pathMatrix, String[] chunksLemSrc, String[] chunksLemTrg, String[] chunksTxtTrg, String[] chunksTagTrg) {
 
 		LinkedList<NWRecord> alignResults = new LinkedList<NWRecord>();
 		LinkedList<String> tmpMatchSrc = new LinkedList<String>();
-		LinkedList<String> tmpMatchTrg = new LinkedList<String>();
+		LinkedList<String> tmpMatchLemTrg = new LinkedList<String>();
 		LinkedList<Double> tmpMatchScore = new LinkedList<Double>();
-		LinkedList<String> tmpMatchLemma = new LinkedList<String>();
+		LinkedList<String> tmpMatchTxtTrg = new LinkedList<String>();
 		LinkedList<String> tmpMatchTag = new LinkedList<String>();
-		int i = chunksSrc.length;
-		int j = chunksTrg.length;
+		int i = chunksLemSrc.length;
+		int j = chunksLemTrg.length;
 
 		while (i > 0 && j > 0) {
 
@@ -107,20 +109,20 @@ public class NeedlemanWunsch {
 
 			if (score == scoreDiagInv + simMatrix[i - 1][j - 1]) {
 
-				tmpMatchSrc.add(chunksSrc[i - 1]);
-				tmpMatchTrg.add(chunksTrg[j - 1]);
+				tmpMatchSrc.add(chunksLemSrc[i - 1]);
+				tmpMatchLemTrg.add(chunksLemTrg[j - 1]);
 				tmpMatchScore.add(score);
-				tmpMatchLemma.add(chunksLemmaTrg[j - 1]);
+				tmpMatchTxtTrg.add(chunksTxtTrg[j - 1]);
 				tmpMatchTag.add(chunksTagTrg[j - 1]);
 
 				i = i - 1;
 				j = j - 1;
 
 			} else if (score == scoreLeft + getGapPenality()) {
-				tmpMatchSrc.add(chunksSrc[i - 1]);
+				tmpMatchSrc.add(chunksLemSrc[i - 1]);
 
-				tmpMatchTrg.add(gapChar);
-				tmpMatchLemma.add(gapChar);
+				tmpMatchLemTrg.add(gapChar);
+				tmpMatchTxtTrg.add(gapChar);
 				tmpMatchTag.add(gapChar);
 				tmpMatchScore.add(score);
 
@@ -128,8 +130,8 @@ public class NeedlemanWunsch {
 			} else {
 
 				tmpMatchSrc.add(gapChar);
-				tmpMatchTrg.add(chunksTrg[j - 1]);
-				tmpMatchLemma.add(chunksLemmaTrg[j - 1]);
+				tmpMatchLemTrg.add(chunksLemTrg[j - 1]);
+				tmpMatchTxtTrg.add(chunksTxtTrg[j - 1]);
 				tmpMatchTag.add(chunksTagTrg[j - 1]);
 				tmpMatchScore.add(score);
 				j = j - 1;
@@ -137,9 +139,9 @@ public class NeedlemanWunsch {
 		}
 
 		while (i > 0) {
-			tmpMatchSrc.add(chunksSrc[i - 1]);
-			tmpMatchTrg.add(gapChar);
-			tmpMatchLemma.add(gapChar);
+			tmpMatchSrc.add(chunksLemSrc[i - 1]);
+			tmpMatchLemTrg.add(gapChar);
+			tmpMatchTxtTrg.add(gapChar);
 			tmpMatchTag.add(gapChar);
 			tmpMatchScore.add(0.0);
 			i = i - 1;
@@ -147,19 +149,19 @@ public class NeedlemanWunsch {
 
 		while (j > 0) {
 			tmpMatchSrc.add(gapChar);
-			tmpMatchTrg.add(chunksTrg[j - 1]);
-			tmpMatchLemma.add(chunksLemmaTrg[j - 1]);
+			tmpMatchLemTrg.add(chunksLemTrg[j - 1]);
+			tmpMatchTxtTrg.add(chunksTxtTrg[j - 1]);
 			tmpMatchTag.add(chunksTagTrg[j - 1]);
 			tmpMatchScore.add(0.0);
 			j = j - 1;
 		}
 
-		for (int k = tmpMatchTrg.size() - 1; k >= 0; k--) {
+		for (int k = tmpMatchLemTrg.size() - 1; k >= 0; k--) {
 			NWRecord record = new NWRecord();
 			record.setSrc(tmpMatchSrc.get(k));
-			record.setTrg(tmpMatchTrg.get(k));
+			record.setLemma(tmpMatchLemTrg.get(k));
 			record.setScore(tmpMatchScore.get(k));
-			record.setLemma(tmpMatchLemma.get(k));
+			record.setTrg(tmpMatchTxtTrg.get(k));
 			record.setTag(tmpMatchTag.get(k));
 			alignResults.add(record);
 		}
@@ -207,102 +209,107 @@ public class NeedlemanWunsch {
 		Set<String> possibleTradux = new HashSet<>();
 		List<String> findTradux = new ArrayList<>();
 		if (src.length()>0 && trg.length()>0) {
-			String[] srcToks=null;
-			String [] trgToks=null;
-			if (src.contains(" ")&&!src.matches("\\s+")){
-				srcToks=src.split("\\s");
-			}
-			else{
-				srcToks=new String[1];
-				srcToks[0]=src;
-				
-			}
-			if (trg.contains(" ")&&!trg.matches("\\s+")){
-				trgToks=trg.split("\\s");
-			}
-			else{
-				trgToks=new String[1];
-				trgToks[0]=trg;
-			}
-			
-			if (Collections.disjoint(Arrays.asList(srcToks), dictionary.keySet())==false){
-				List<String>tmp=new ArrayList<String>(Arrays.asList(srcToks));
-				tmp.retainAll(dictionary.keySet());
-				for (String tok : tmp) {
-					Set<String>valuesToKey=dictionary.get(tok);
-					for (String value:valuesToKey){
-						possibleTradux.add(value);
-					}
-				}
-			}
-			
-			if (srcToks[0].contains(trgToks[0])||trgToks[0].contains(srcToks[0])){
-				if (!dictionary.containsKey(srcToks[0])&&dictionary.containsKey(trgToks[0])){
-					possibleTradux.add(srcToks[0]);
-					possibleTradux.add(trgToks[0]);
-				}
-				else if (dictionary.containsKey(srcToks[0])){
-					dictionary.get(srcToks[0]).add(trgToks[0]);
-				}
-				else if (dictionary.containsKey(trgToks[0])){
-					dictionary.get(trgToks[0]).add(srcToks[0]);
-				}
+			List<String> srcToks=new ArrayList<String>();
+			List<String> trgToks=new ArrayList<String>();
+
+			Tokenizer toks = new Tokenizer(src);
+			Occ occ=new Occ();
+
+			while ( toks.token(occ) ) {
+				srcToks.add(occ.orth().toString());
 			}
 
-			if (!distribDict.equals(null)||!distribDict.isEmpty()) {
-				if (Collections.disjoint(Arrays.asList(srcToks), distribDict.keySet())==false){
-					List<String>tmp=new ArrayList<String>(Arrays.asList(srcToks));
-					tmp.retainAll(distribDict.keySet());
+			Tokenizer toksTrg = new Tokenizer(trg);
+			Occ occTrg=new Occ();
+
+			while ( toksTrg.token(occTrg) ) {
+				trgToks.add(occTrg.orth().toString());
+			}
+
+			if (!trgToks.isEmpty()&&!srcToks.isEmpty()){
+				String trgFirst=trgToks.get(0);
+				String srcFirst=srcToks.get(0);
+
+				if (Collections.disjoint(srcToks, dictionary.keySet())==false){
+					List<String>tmp=new ArrayList<String>(srcToks);
+					tmp.retainAll(dictionary.keySet());
 					for (String tok : tmp) {
-						Set<String>valuesToKey=distribDict.get(tok);
+						Set<String>valuesToKey=dictionary.get(tok);
 						for (String value:valuesToKey){
 							possibleTradux.add(value);
 						}
 					}
 				}
-			}
 
-			if (Math.abs(srcToks.length-trgToks.length)<5){
-				similarityScore+=0.5;
-			}
+				if (srcFirst.contains(trgFirst)||trgFirst.contains(srcFirst)){
+					if (!dictionary.containsKey(srcFirst)&&dictionary.containsKey(trgFirst)){
+						possibleTradux.add(srcFirst);
+						possibleTradux.add(trgFirst);
+					}
+					else if (dictionary.containsKey(srcFirst)){
+						dictionary.get(srcFirst).add(trgFirst);
+					}
+					else if (dictionary.containsKey(trgFirst)){
+						dictionary.get(trgFirst).add(srcFirst);
+					}
+				}
 
-			
-			
-			
-			if (srcToks.length>0&&trgToks.length>0){
-				
-				if (srcFrequency.keySet().contains(srcToks[0])&&trgFrequency.keySet().contains(trgToks[0])
-						&&(dictionary.containsKey(srcToks[0])|dictionary.containsKey(trgToks[0]))){
-					if (srcFrequency.get(srcToks[0])<10&&trgFrequency.get(trgToks[0])<10){
-						if (dictionary.containsKey(srcToks[0])){
-							
-							if (dictionary.get(srcToks[0]).contains(trgToks[0])){
-								similarityScore+=2;
-							}
-						}
-						else if (dictionary.containsKey(trgToks[0])){
-							if (dictionary.get(trgToks[0]).contains(srcToks[0])){
-								similarityScore+=2;
+				if (!distribDict.equals(null)||!distribDict.isEmpty()) {
+					if (Collections.disjoint(Arrays.asList(srcToks), distribDict.keySet())==false){
+						List<String>tmp=new ArrayList<String>(srcToks);
+						tmp.retainAll(distribDict.keySet());
+						for (String tok : tmp) {
+							Set<String>valuesToKey=distribDict.get(tok);
+							for (String value:valuesToKey){
+								possibleTradux.add(value);
 							}
 						}
 					}
 				}
-			}
 
-			MongeElkan monge=new MongeElkan(new JaroWinkler());
-			float simMonge=monge.compare(new ArrayList<String>(Arrays.asList(srcToks)), new ArrayList<String>(Arrays.asList(trgToks)));
-			if (simMonge>0.8){
-				similarityScore+=2;
-			}
+				if (Math.abs(srcToks.size()-trgToks.size())<5){
+					similarityScore+=0.5;
+				}
 
-			for (String trad : possibleTradux) {
-				if (trg.contains(trad)&&!"".equals(trg)) {
-					findTradux.add(trad);
-					similarityScore += 1.0;
+
+
+
+				if (srcToks.size()>0&&trgToks.size()>0){
+
+					if (srcFrequency.keySet().contains(srcFirst)&&trgFrequency.keySet().contains(trgFirst)
+							&&(dictionary.containsKey(srcFirst)|dictionary.containsKey(trgFirst))){
+						if (srcFrequency.get(srcFirst)<10&&trgFrequency.get(trgFirst)<10){
+							if (dictionary.containsKey(srcFirst)){
+
+								if (dictionary.get(srcFirst).contains(trgFirst)){
+									similarityScore+=2;
+								}
+							}
+							else if (dictionary.containsKey(trgFirst)){
+								if (dictionary.get(trgFirst).contains(srcFirst)){
+									similarityScore+=2;
+								}
+							}
+						}
+					}
+				}
+
+				MongeElkan monge=new MongeElkan(new JaroWinkler());
+				float simMonge=monge.compare(srcToks, trgToks);
+				if (simMonge>0.8){
+					similarityScore+=2;
+				}
+
+				for (String trad : possibleTradux) {
+					if (trg.contains(trad)&&!"".equals(trg)) {
+						findTradux.add(trad);
+						similarityScore += 1.0;
+					}
 				}
 			}
+			
 		}
-		
+
 		return similarityScore;
 	}
 	private boolean check(String src) {

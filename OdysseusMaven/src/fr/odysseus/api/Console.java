@@ -26,7 +26,7 @@ public class Console {
 		System.out.println("Voulez-vous faire/refaire l'étiquetage français ? (y/n)");
 		answer=sc.nextLine();
 		if (answer.equals("y")){
-			new FrenchTagger();
+			FrenchTagger.lemmaWithAlix();
 		}
 		
 		System.out.println("Voulez-vous faire/refaire les séquences français(es) ? (y/n)");

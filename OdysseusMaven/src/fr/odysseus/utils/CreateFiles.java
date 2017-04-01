@@ -108,10 +108,12 @@ public class CreateFiles {
 	public static void createXMLFromNWRecordListByBook(String name, List<NWRecord>listeDeNWR, boolean greekOrNot){
 			Element racine = new Element("file");
 			racine.setAttribute("name", name);
-			int counter=1;
+			int counter=0;
 			for (NWRecord record:listeDeNWR){
+				System.out.println(counter +" : "+record.getSrc());
+				System.out.println(counter +" : "+record.getTrg());
 				Element ID = new Element("ID"+String.valueOf(counter));
-				if (greekOrNot=true){
+				if (greekOrNot==true){
 					ID.setAttribute(new Attribute ("text",record.getLemma()));
 					ID.setAttribute(new Attribute ("lemma", record.getTrg()));
 				}

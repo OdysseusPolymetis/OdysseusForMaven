@@ -243,6 +243,9 @@ public class StatisticalComparison {
 				String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
 				String fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
 
+				System.out.println("les lemmes : "+lemmaAndForm[0]);
+				System.out.println("les formes : "+lemmaAndForm[1]);
+				
 				for (Entry<String[], String[]>entry:tableauDeCorrespondances.entrySet()){
 					
 					entry.getKey()[1]=entry.getKey()[1].replaceAll("[0-9]", "");

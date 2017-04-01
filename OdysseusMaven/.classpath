@@ -32,5 +32,12 @@
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/stanford-postagger.jar"/>
 	<classpathentry kind="lib" path="lib/transcoder-1.2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-codecs-5.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-5.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-misc-5.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/saxon9-dom.jar"/>
+	<classpathentry kind="lib" path="lib/saxon9.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.11.2.jar"/>
+	<classpathentry kind="lib" path="lib/univocity-parsers-2.0.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

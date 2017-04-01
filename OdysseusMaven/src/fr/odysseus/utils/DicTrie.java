@@ -10,7 +10,8 @@ import java.util.List;
 
 import org.apache.lucene.analysis.util.CharArraySet;
 
-import fr.odysseus.dataModels.IntObjectMap;
+import alix.util.IntObjectMap;
+
 
 
 /**

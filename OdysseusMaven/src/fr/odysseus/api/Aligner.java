@@ -20,11 +20,10 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import alix.fr.Occ;
+import alix.fr.Tokenizer;
 import fr.odysseus.dataModels.ResourceCollection;
-import fr.odysseus.muthovek.Dicovek.SimRow;
-import fr.odysseus.dataModels.Lexik;
-import fr.odysseus.muthovek.Dicovek;
-import fr.odysseus.dataModels.Tokenizer;
 import fr.odysseus.dataModels.NWRecord;
 import fr.odysseus.utils.CreateFiles;
 import fr.odysseus.utils.Frequency;
@@ -36,6 +35,7 @@ public class Aligner{
 
 	public static final String SOURCE_HOME=".";
 	static final String SEQUENCESFR="./sourceFiles/sequences/frenchSequences/";
+	static final String SEQUENCESLAT="./sourceFiles/sequences/latinSequences/";
 	static final String PUNCT="./sourceFiles/sequences/greekPunct/";
 	static final String PIVOT="./sourceFiles/sequences/pivot/";
 	static final String NAMESFR="./sourceFiles/names/frenchNames/";
@@ -115,9 +115,9 @@ public class Aligner{
 				return new File(current, name).isDirectory();
 			}
 		});
-		Dicovek veks = new Dicovek(5, 5, Lexik.STOPLIST);
-
-		veks.walk(DICOVEK);
+//		Dicovek veks = new Dicovek(5, 5, Lexik.STOPLIST);
+//
+//		veks.walk(DICOVEK);
 		
 
 		HashSet <String> setMotsTexte=new HashSet<String>();
@@ -148,19 +148,22 @@ public class Aligner{
 						path = Paths.get( SEQUENCESFR+"Chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".txt");
 					}
 					String text = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+					
 					Tokenizer toks = new Tokenizer(text);
-					while( toks.read() ) {	
-						setMotsTexte.add(toks.getString());
+					Occ occ=new Occ();
+					while ( toks.token(occ) ) {
+						setMotsTexte.add(occ.orth().toString());
 					}
 				}
 			}
 		} 
-//		setDistribDict(distribDictionary(veks, setMotsTexte));
+
+		
 		WordToVec vec=new WordToVec();
 		setDistribDict(vec.wordToVec(setMotsTexte, W2V+"RepertoireW2V.txt", W2V+"WordToVek.txt"));
 
 		CreateFiles.saveDistribDictToCSV(getDistribDict(), OUTPUTDICT);
-		LinkedHashSet<List<NWRecord>>setDesRecords=new LinkedHashSet<List<NWRecord>>();
+//		LinkedHashSet<List<NWRecord>>setDesRecords=new LinkedHashSet<List<NWRecord>>();
 		for (int compteurFichiers = 0; compteurFichiers < directories.length; compteurFichiers++) {
 			int indexChant = compteurFichiers + 1;
 			File dir=null;
@@ -180,15 +183,23 @@ public class Aligner{
 				ResourceCollection myTexts = ResourceCollection.newInstance();
 				if (indexChant<10){
 					myTexts.addText("sequencesFrancaises", SEQUENCESFR+"Chant0" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addText("sequencesLatines", SEQUENCESLAT+"Chant0" + indexChant + "/" + "OdysseeLat1000Chant0"+ indexChant + "NomsCoupe.xml");
 					myTexts.addAtt("sequencesFrancaisesLemmes", "lemma", SEQUENCESFR+"Chant0" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addAtt("sequencesLatinesLemmes", "lemma", SEQUENCESLAT+"Chant0" + indexChant + "/" + "OdysseeLat1000Chant0"+ indexChant + "NomsCoupe.xml");
 					myTexts.addAtt("sequencesFrancaisesTags", "tag", SEQUENCESFR+"Chant0" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
-					myTexts.add("sequencesGrecques", PIVOT+"Chant0" + indexChant + "/" + "Sommer1886Chant0" + indexChant + "NomsCoupe.txt");
+					myTexts.addAtt("sequencesLatinesTags", "tag", SEQUENCESLAT+"Chant0" + indexChant + "/" + "OdysseeLat1000Chant0"+ indexChant + "NomsCoupe.xml");
+					myTexts.addAtt("sequencesGrecquesLemmes","lemma", PIVOT+"Chant0" + indexChant + "/" + "Sommer1886Chant0" + indexChant + "NomsCoupe.xml");
+					myTexts.addText("sequencesGrecques", PIVOT+"Chant0" + indexChant + "/" + "Sommer1886Chant0" + indexChant + "NomsCoupe.xml");
 				}
 				else{
 					myTexts.addText("sequencesFrancaises", SEQUENCESFR+"Chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addText("sequencesLatines", SEQUENCESLAT+"Chant" + indexChant + "/" + "OdysseeLat1000Chant"+ indexChant + "NomsCoupe.xml");
 					myTexts.addAtt("sequencesFrancaisesLemmes", "lemma", SEQUENCESFR+"Chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addAtt("sequencesLatinesLemmes", "lemma", SEQUENCESLAT+"Chant" + indexChant + "/" + "OdysseeLat1000Chant"+ indexChant + "NomsCoupe.xml");
 					myTexts.addAtt("sequencesFrancaisesTags", "tag", SEQUENCESFR+"Chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
-					myTexts.add("sequencesGrecques", PIVOT+"Chant" + indexChant + "/" + "Sommer1886Chant" + indexChant + "NomsCoupe.txt");
+					myTexts.addAtt("sequencesLatinesTags", "tag", SEQUENCESLAT+"Chant" + indexChant + "/" + "OdysseeLat1000Chant"+ indexChant + "NomsCoupe.xml");
+					myTexts.addAtt("sequencesGrecquesLemmes","lemma", PIVOT+"Chant" + indexChant + "/" + "Sommer1886Chant" + indexChant + "NomsCoupe.xml");
+					myTexts.addText("sequencesGrecques", PIVOT+"Chant" + indexChant + "/" + "Sommer1886Chant" + indexChant + "NomsCoupe.xml");
 				}
 				
 				String nomFichier = StringUtils.substringBefore(file.getName(), "Noms");
@@ -200,10 +211,22 @@ public class Aligner{
 				boolean greekOrNot=false;
 				if (file.getName().contains("Odyssee1000")){
 					greekOrNot=true;
+					System.out.println("j'analyse le grec");
 				}
-				nouvelleListe=firstAlignment(file, myTexts, getDictionary(), greekOrNot);
-
-				setDesRecords.add(nouvelleListe);
+				boolean latinOrNot=false;
+				if (file.getName().contains("Lat1000")){
+					latinOrNot=true;
+				}
+				
+				nouvelleListe=firstAlignment(file, myTexts, getDictionary(), greekOrNot, latinOrNot);
+//				int index=1;
+//				for (NWRecord rec:nouvelleListe){
+//					System.out.println(index +" : "+rec.getSrc());
+//					System.out.println(index +" : "+rec.getTrg());
+//					index++;
+//				}
+//
+//				setDesRecords.add(nouvelleListe);
 				if (file.getName().contains("Odyssee1000")){
 					CreateFiles.createXMLFromNWRecordListByBook(PUNCT+file.getName(), nouvelleListe, greekOrNot);
 				}
@@ -212,7 +235,7 @@ public class Aligner{
 		}
 	}
 
-	public LinkedList<NWRecord> firstAlignment(File file, ResourceCollection myTexts, HashMap<String, Set<String>> dictionary, boolean greekOrNot) throws Exception {
+	public LinkedList<NWRecord> firstAlignment(File file, ResourceCollection myTexts, HashMap<String, Set<String>> dictionary, boolean greekOrNot, boolean latinOrNot) throws Exception {
 		NeedlemanWunsch nw= new NeedlemanWunsch();
 		String fileName=file.getName().substring(0, file.getName().indexOf("NomsCoupe"));
 		String numChant=fileName.substring(fileName.indexOf("Chant")+5);
@@ -224,17 +247,21 @@ public class Aligner{
 		Path pathSrc=Paths.get(NAMESFR+"Sommer1886Chant"+numChant+".txt");
 		List<String> noms = Files.readAllLines(pathTrg, StandardCharsets.UTF_8);
 		List<String> nomsGr = Files.readAllLines(pathSrc, StandardCharsets.UTF_8);
-		
 		setSrcFrequency(Frequency.frequency(nomsGr));
 		setTrgFrequency(Frequency.frequency(noms));
 		LinkedList<NWRecord> maListe=new LinkedList<NWRecord>();
-		if (greekOrNot=true){
+		if (greekOrNot==true){
+			System.out.println("je rentre dans la condition du grec");
 			maListe = nw.PerformAlignment(myTexts.getLines("sequencesGrecques"), myTexts.getLemmaLines("sequencesFrancaisesLemmes"),myTexts.getTextLines("sequencesFrancaises"),
 					 myTexts.getTagLines("sequencesFrancaisesTags"), getDictionary(), getDistribDict(), getSrcFrequency(), getTrgFrequency());
 		}
+		else if (latinOrNot==true){
+			maListe = nw.PerformAlignment(myTexts.getLines("sequencesGrecques"), myTexts.getTextLines("sequencesLatines"),myTexts.getLemmaLines("sequencesLatinesLemmes"),
+					 myTexts.getTagLines("sequencesLatinesTags"), getDictionary(), getDistribDict(), getSrcFrequency(), getTrgFrequency());
+		}
 		else{
-			maListe = nw.PerformAlignment(myTexts.getLines("sequencesGrecques"), myTexts.getTextLines("sequencesFrancaises"),
-					myTexts.getLemmaLines("sequencesFrancaisesLemmes"), myTexts.getTagLines("sequencesFrancaisesTags"), getDictionary(), getDistribDict(), getSrcFrequency(),getTrgFrequency());
+			maListe = nw.PerformAlignment(myTexts.getLemmaLines("sequencesGrecquesLemmes"), myTexts.getLemmaLines("sequencesFrancaisesLemmes"),
+					myTexts.getTextLines("sequencesFrancaises"), myTexts.getTagLines("sequencesFrancaisesTags"), getDictionary(), getDistribDict(), getSrcFrequency(),getTrgFrequency());
 		}
 		
 		long endTime = System.currentTimeMillis();
@@ -275,77 +302,77 @@ public class Aligner{
 //				System.out.println("je réorganise en 4");
 			}
 		}
-		LinkedList<NWRecord> lastList = new LinkedList<NWRecord>();
-		lastList.addAll(nouvelleListe);
-		for (int j = 1; j < lastList.size()-1; j++) {
-			String motSourceActuel=lastList.get(j).getSrc().split(" ")[0];
-			String motSourceIndicePlus=lastList.get(j+1).getSrc().split(" ")[0];
-			String motSourceIndiceMoins=lastList.get(j-1).getSrc().split(" ")[0];
-			String motTarget=lastList.get(j+1).getTrg().split(" ")[0];
-			
-			if(j < lastList.size()&& lastList.get(j).getTrg().equals("^")&&dictionary.containsKey(motSourceActuel)&&motSourceActuel.contains(motTarget)
-					&&!motSourceIndicePlus.contains(motTarget)&&!motSourceIndiceMoins.contains(motTarget)){
-				if (dictionary.get(motSourceActuel).contains(motTarget)||motSourceActuel.contains(motTarget)){
-					System.out.println("je rentre dans la première condition avec "+motSourceActuel+ " à l'indice "+j);
-					lastList.get(j).setTrg(lastList.get(j + 1).getTrg());
-					lastList.get(j).setLemma(lastList.get(j + 1).getLemma());
-					lastList.get(j).setTag(lastList.get(j + 1).getTag());
-					lastList.get(j+1).setTrg("^");
-					lastList.get(j+1).setLemma("^");
-					lastList.get(j+1).setTag("^");
-					j++;
-				}
-			}
-			else {
-				motTarget=lastList.get(j-1).getTrg().split(" ")[0];
-				motSourceIndicePlus=lastList.get(j-1).getSrc().split(" ")[0];
-				if(dictionary.containsKey(motSourceActuel)&& lastList.get(j).getTrg().equals("^")&&motSourceActuel.contains(motTarget)
-						&&!motSourceIndicePlus.contains(motTarget)&&!motSourceIndiceMoins.contains(motTarget)){
-					if (dictionary.get(motSourceActuel).contains(motTarget)||motSourceActuel.contains(motTarget)){
-						System.out.println("je rentre dans la deuxième condition avec "+motSourceActuel+ " à l'indice "+j);
-						lastList.get(j).setTrg(lastList.get(j - 1).getTrg());
-						lastList.get(j).setLemma(lastList.get(j - 1).getLemma());
-						lastList.get(j).setTag(lastList.get(j - 1).getTag());
-						lastList.get(j-1).setTrg("^");
-						lastList.get(j-1).setLemma("^");
-						lastList.get(j-1).setTag("^");
-//						j--;
-					}
-				}
-			}
-		}
-		return lastList;
+//		LinkedList<NWRecord> lastList = new LinkedList<NWRecord>();
+//		lastList.addAll(nouvelleListe);
+//		for (int j = 1; j < lastList.size()-1; j++) {
+//			String motSourceActuel=lastList.get(j).getSrc().split(" ")[0];
+//			String motSourceIndicePlus=lastList.get(j+1).getSrc().split(" ")[0];
+//			String motSourceIndiceMoins=lastList.get(j-1).getSrc().split(" ")[0];
+//			String motTarget=lastList.get(j+1).getTrg().split(" ")[0];
+//			
+//			if(j < lastList.size()&& lastList.get(j).getTrg().equals("^")&&dictionary.containsKey(motSourceActuel)&&motSourceActuel.contains(motTarget)
+//					&&!motSourceIndicePlus.contains(motTarget)&&!motSourceIndiceMoins.contains(motTarget)){
+//				if (dictionary.get(motSourceActuel).contains(motTarget)||motSourceActuel.contains(motTarget)){
+//					System.out.println("je rentre dans la première condition avec "+motSourceActuel+ " à l'indice "+j);
+//					lastList.get(j).setTrg(lastList.get(j + 1).getTrg());
+//					lastList.get(j).setLemma(lastList.get(j + 1).getLemma());
+//					lastList.get(j).setTag(lastList.get(j + 1).getTag());
+//					lastList.get(j+1).setTrg("^");
+//					lastList.get(j+1).setLemma("^");
+//					lastList.get(j+1).setTag("^");
+//					j++;
+//				}
+//			}
+//			else {
+//				motTarget=lastList.get(j-1).getTrg().split(" ")[0];
+//				motSourceIndicePlus=lastList.get(j-1).getSrc().split(" ")[0];
+//				if(dictionary.containsKey(motSourceActuel)&& lastList.get(j).getTrg().equals("^")&&motSourceActuel.contains(motTarget)
+//						&&!motSourceIndicePlus.contains(motTarget)&&!motSourceIndiceMoins.contains(motTarget)){
+//					if (dictionary.get(motSourceActuel).contains(motTarget)||motSourceActuel.contains(motTarget)){
+//						System.out.println("je rentre dans la deuxième condition avec "+motSourceActuel+ " à l'indice "+j);
+//						lastList.get(j).setTrg(lastList.get(j - 1).getTrg());
+//						lastList.get(j).setLemma(lastList.get(j - 1).getLemma());
+//						lastList.get(j).setTag(lastList.get(j - 1).getTag());
+//						lastList.get(j-1).setTrg("^");
+//						lastList.get(j-1).setLemma("^");
+//						lastList.get(j-1).setTag("^");
+////						j--;
+//					}
+//				}
+//			}
+//		}
+		return nouvelleListe;
 	}
 
-	public HashMap<String, Set<String>> distribDictionary(Dicovek veks, HashSet<String>setMotsTexte) throws IOException{
-		HashMap<String, Set<String>> distribDictionary=new HashMap<String, Set<String>>();
-		int limit = 3;
-		List<SimRow> table;
-		for (String mot:setMotsTexte) {
-			Set<String> vecteursCorrespondants = new HashSet<String>();
-			if (mot == null || "".equals(mot)) {
-				System.exit(0);
-			}
-			table = veks.syns(mot);
-			if ( table == null ) continue;
-			for (SimRow row:table) {
-				String vecteurUnique="";
-				if (vecteursCorrespondants.size()<5){
-					vecteurUnique=row.term;
-					
-					if (!row.term.equals(mot)){
-						vecteursCorrespondants.add(vecteurUnique);
-					}
-				}
-				if (--limit == 0 ) break;
-			}
-			if (!vecteursCorrespondants.isEmpty()){
-				distribDictionary.put(mot, vecteursCorrespondants);
-			}
-		}
-		setDistribDict(distribDictionary);
-		return distribDictionary;
-	}
+//	public HashMap<String, Set<String>> distribDictionary(Dicovek veks, HashSet<String>setMotsTexte) throws IOException{
+//		HashMap<String, Set<String>> distribDictionary=new HashMap<String, Set<String>>();
+//		int limit = 3;
+//		List<SimRow> table;
+//		for (String mot:setMotsTexte) {
+//			Set<String> vecteursCorrespondants = new HashSet<String>();
+//			if (mot == null || "".equals(mot)) {
+//				System.exit(0);
+//			}
+//			table = veks.syns(mot);
+//			if ( table == null ) continue;
+//			for (SimRow row:table) {
+//				String vecteurUnique="";
+//				if (vecteursCorrespondants.size()<5){
+//					vecteurUnique=row.term;
+//					
+//					if (!row.term.equals(mot)){
+//						vecteursCorrespondants.add(vecteurUnique);
+//					}
+//				}
+//				if (--limit == 0 ) break;
+//			}
+//			if (!vecteursCorrespondants.isEmpty()){
+//				distribDictionary.put(mot, vecteursCorrespondants);
+//			}
+//		}
+//		setDistribDict(distribDictionary);
+//		return distribDictionary;
+//	}
 	
 	static String readFile(String path, Charset encoding) 
 			throws IOException 

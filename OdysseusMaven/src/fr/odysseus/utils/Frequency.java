@@ -24,17 +24,19 @@ public class Frequency {
 
 		return mapFrequency;
 	}
-	
+
 	public static HashMap<String, Integer> frequency(List<String> noms){
 		HashMap<String, Integer> frequencyMap=new HashMap<String, Integer>();
-		
 		for (String nom:noms){
-			int occurrences = Collections.frequency(noms, nom);
-			frequencyMap.put(nom, occurrences);
+			
+			if (frequencyMap.containsKey(nom)){
+				frequencyMap.put(nom, frequencyMap.get(nom) + 1);
+			} else {
+				frequencyMap.put(nom, 1);
+			}
 		}
 		
 		return frequencyMap;
-		
 	}
-	
+
 }
