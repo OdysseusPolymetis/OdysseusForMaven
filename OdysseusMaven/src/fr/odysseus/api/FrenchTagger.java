@@ -11,8 +11,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import org.annolab.tt4j.TreeTaggerWrapper;
+import org.apache.commons.io.FileUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
@@ -32,11 +34,13 @@ public class FrenchTagger {
 	HashMap <String, String[]>tags;
 	final static String DICT="./sourceFiles/sourceDictionaries/";
 	static String greenList[]={"Minerve","Saturne","Agamemnon","Eurymaque","Atrée","Oreste", "Egisthe", "Polybe","Neptune","Ethiopien","Nestor","Ilion","Polyphème", 
-			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","Calypso", "Muse", "Mante", "Ope", "Ithaquois", 
+			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","cyclope", "cyclopes","Calypso", "Muse", "Mante", "Ope", "Ithaquois", 
 			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie","éthiopien", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
 			"Sparte", "grecs", "Atlas", "Thon","Alcippé", "Océan", "zéphyr", "Iphthimé", "Halosydné", "Sunion","Pergame","Ethiopiens","Mermeride",
-			"Havre", "phénicien","Phénicien", "Phéniciens","Phrygiens","Phrygien", "Nègres","Nègre","Panachéens","Laertes","Egiste","argiens","argien"};
-	static String bugAlix[]={"d","l","t","animerai","ressaisirait"};
+			"Havre", "phénicien","Phénicien", "Phéniciens","Phrygiens","Phrygien", "Nègres","Nègre","Panachéens","Laertes","Egiste","argiens","argien","Argus",
+			"Argos","Harpyes","Harpye","Harpies","Harpie","Mycène","Mentor","Vulcain","Spartiate","Spartiates","Myrmidons","Myrmidon","Pléiades",
+			"Amphitryon","Œdipe","Oedipe","Sirènes","Sirène","Crétois"};
+	static String bugAlix[]={"Indignez"};
 	static String punctLemma[]={",",";",":","!","?",".","(",")","\"","'","/"};
 	
 	static String corresp [][]={
@@ -200,7 +204,8 @@ public class FrenchTagger {
 	
 	public static void lemmaWithAlix() throws IOException{
 		System.out.println("Début du Tagging");
-				
+		HashSet<String> motsDictionnaire = new HashSet<String>(FileUtils.readLines(new File(DICT+"DictionnaireGutenberg.txt")));
+		HashSet<String> motsBlackList = new HashSet<String>(FileUtils.readLines(new File(DICT+"blackList.txt")));
 				HashMap <String, String>mapCorresp=new HashMap<String, String>();
 				for (String elem[]:corresp){
 					mapCorresp.put(elem[0], elem[1]);
@@ -230,7 +235,20 @@ public class FrenchTagger {
 							monOcc[1]=occ.orth().toString();
 							monOcc[2]="NAM";
 						}
+						else if((motsDictionnaire.contains(occ.orth().toString().toLowerCase())|motsBlackList.contains(occ.orth().toString()))
+								&&occ.tag().toString().contains("NAME")){
+							monOcc[2]="Indef";
+						}
 						else{
+							if (mapCorresp.containsKey(occ.tag().toString())){
+								monOcc[2]=mapCorresp.get(occ.tag().toString());
+							}
+							else{
+								monOcc[2]=occ.tag().toString();
+							}
+							if(occ.graph().toString().contains("_")){
+								monOcc[2]="NAM";
+							}
 							
 							if(Arrays.asList(punctLemma).contains(occ.orth().toString())){
 								monOcc[1]=occ.orth().toString();
@@ -238,13 +256,6 @@ public class FrenchTagger {
 							
 							if(occ.lem().toString().length()<1){
 								monOcc[1]=occ.orth().toString();
-							}
-							
-							if (mapCorresp.containsKey(occ.tag().toString())){
-								monOcc[2]=mapCorresp.get(occ.tag().toString());
-							}
-							else{
-								monOcc[2]=occ.tag().toString();
 							}
 						}
 						motsTags.add(monOcc);

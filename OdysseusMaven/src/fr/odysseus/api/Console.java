@@ -50,7 +50,7 @@ public class Console {
 		System.out.println("Voulez-vous faire/refaire un alignement ? (y/n)");
 		answer=sc.nextLine();
 		if (answer.equals("y")){
-			Aligner align= new Aligner();
+			AligningProcess align= new AligningProcess();
 			align.proceedToGlobalAlignment();
 		}
 		

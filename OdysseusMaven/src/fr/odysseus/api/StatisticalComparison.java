@@ -7,13 +7,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +21,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.text.BadLocationException;
 
+import org.apache.commons.io.FileUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -82,13 +81,15 @@ public class StatisticalComparison {
 	 */
 	public void insertHTML(LinkedList<Element>racines) throws BadLocationException, IOException, JDOMException
 	{
-		Path path=Paths.get("./sourceFiles/sourceDictionaries/stopWords.txt");
-		List<String>stopWords=Files.readAllLines(path); /* listing all stopwords */
+		HashSet<String> stopWords = new HashSet<String>(FileUtils.readLines(new File("./sourceFiles/sourceDictionaries/stopWords.txt"))); /* listing all stopwords */
 
 		GeneralizedJaccard<String>jaccard=new GeneralizedJaccard<>();
 		LevenshteinDistance distance=new LevenshteinDistance();
-
+		
 		for (int i=0; i<racines.size();i++){
+			
+			long startTimeXPath = System.currentTimeMillis();
+			
 			int brightred=0;
 			int brightgreen=0;
 			int averagesyntax=0;
@@ -120,6 +121,11 @@ public class StatisticalComparison {
 					autresDocs.add(jdomDoc);
 				}	 
 			}
+			
+			long endTimeXPath = System.currentTimeMillis();
+			System.out.println("****************");
+			System.out.println("XPATH : " +((endTimeXPath-startTimeXPath)/1000) );
+			System.out.println("****************");
 
 			List<Element>listeElementsActuels=racines.get(i).getChildren(); /* words and lemmas of the file currently studied */
 
@@ -131,7 +137,10 @@ public class StatisticalComparison {
 
 			List<String>ids=new ArrayList<String>();
 
+			long startTimeIDs = System.currentTimeMillis();
 			for (Element ID:listIDs){
+//				long startTimeRep = System.currentTimeMillis();
+				
 				List<String>idsInHTMLFormat=new ArrayList<String>();
 				LinkedHashMap<String[], String[]>tableauDeCorrespondances=new LinkedHashMap<String[], String[]>();
 
@@ -169,8 +178,15 @@ public class StatisticalComparison {
 				Collections.replaceAll(listeTagTarget, "VER:pres", "VER");
 				Collections.replaceAll(listeTagTarget, "VER:infi", "VER");
 
+//				long endTimeRep = System.currentTimeMillis();
+//				System.out.println("****************");
+//				System.out.println("ReplacementTags : " +((endTimeRep-startTimeRep)/100) );
+//				System.out.println("****************");
+				
 				int percentDist=0;
 
+//				long startTimeJaccard = System.currentTimeMillis();
+				
 				Multiset <String>vecteurSource=HashMultiset.create(listeTagSource); /* multisets for Generalized Jaccard */
 				Multiset <String>vecteurTarget=HashMultiset.create(listeTagTarget);
 
@@ -207,8 +223,15 @@ public class StatisticalComparison {
 				if (percentDist>1){
 					averagesyntax++;
 				}
+				
+//				long endTimeJaccard = System.currentTimeMillis();
+//				System.out.println("****************");
+//				System.out.println("Jaccard : " +((endTimeJaccard-startTimeJaccard)/100) );
+//				System.out.println("****************");
 
 				/* evaluate expression for all lemmas from previous or next alignment for counting */
+				
+				
 				expr = xFactory.compile("/file/ID"+(counterID)+"[@lemma]", Filters.element());
 				if (counterID>0){
 					exprPrevious=xFactory.compile("/file/ID"+(counterID-1)+"[@lemma]", Filters.element());
@@ -243,13 +266,13 @@ public class StatisticalComparison {
 				String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
 				String fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
 
-				System.out.println("les lemmes : "+lemmaAndForm[0]);
-				System.out.println("les formes : "+lemmaAndForm[1]);
+//				System.out.println("les lemmes : "+lemmaAndForm[0]);
+//				System.out.println("les formes : "+lemmaAndForm[1]);
+				
+//				long startTimeIDsCount = System.currentTimeMillis();
 				
 				for (Entry<String[], String[]>entry:tableauDeCorrespondances.entrySet()){
 					
-					entry.getKey()[1]=entry.getKey()[1].replaceAll("[0-9]", "");
-					entry.getKey()[0]=entry.getKey()[0].replaceAll("[0-9]", "");
 					entry.getKey()[1]=entry.getKey()[1].replaceAll("\\s{2,}", " ");
 					entry.getKey()[0]=entry.getKey()[0].replaceAll("\\s{2,}", " ");
 					String tableauMotsEnAnalyseLemmas[]=entry.getKey()[0].split("\\s");
@@ -265,10 +288,13 @@ public class StatisticalComparison {
 					StringBuilder sbForListHTML=new StringBuilder();
 					
 					for(int l=0;l<tableauMotsEnAnalyseForms.length;l++){
+						String form=tableauMotsEnAnalyseForms[l];
+						String lemma=tableauMotsEnAnalyseLemmas[l];
 						int brightRedWord=0;
 						int brightGreenWord=0;
 
-						if (tableauMotsEnAnalyseLemmas[l]!=""){
+						if (lemma!=""){
+							
 							distance=new LevenshteinDistance();
 							int count=0;
 							int countArrondi=0;
@@ -276,16 +302,19 @@ public class StatisticalComparison {
 
 							/* comparing word of current file to other words in same alignment ID in other files
 							 * they may match (find()) or have a sufficiently low levenshtein distance to be considered as the same word */
+							
+							
+							
 							for (String word:wordsChainToCompare){
-								Pattern p=Pattern.compile(tableauMotsEnAnalyseLemmas[l],Pattern.LITERAL|Pattern.CASE_INSENSITIVE);
+								
+								Pattern p=Pattern.compile(lemma,Pattern.LITERAL|Pattern.CASE_INSENSITIVE);
 								Matcher m=p.matcher(word);
-								int levDist=distance.computeLevenshteinDistance(word, tableauMotsEnAnalyseLemmas[l]);
-								//								float levDist=distance.compare(word, tableauMotsEnAnalyseLemmas[l]);
+								int levDist=distance.computeLevenshteinDistance(word, lemma);
 
-								if (m.find()&&!stopWords.contains(tableauMotsEnAnalyseLemmas[l].toLowerCase())&&word.length()>1){
+								if (m.find()&&!stopWords.contains(lemma.toLowerCase())&&word.length()>1){
 									count++;
 								}
-								else if (levDist<3&&word.length()>4&&!stopWords.contains(tableauMotsEnAnalyseLemmas[l].toLowerCase())){
+								else if (levDist<3&&word.length()>4&&!stopWords.contains(lemma.toLowerCase())){
 									count++;
 								}
 							}
@@ -306,23 +335,39 @@ public class StatisticalComparison {
 									countArrondi=countScore+1;
 								}
 							}
-							else if(count==0&&tableauMotsEnAnalyseLemmas[l].length()>3&&!stopWords.contains(tableauMotsEnAnalyseLemmas[l])){
+							else if(count==0&&lemma.length()>3&&!stopWords.contains(lemma)){
 								countArrondi=1;
 								brightRedWord++;
 							}
 							else{
 								countArrondi=0;
 							}
-							tableauMotsEnAnalyseForms[l]=tableauMotsEnAnalyseForms[l].replaceAll("_B", "");
-							tableauMotsEnAnalyseForms[l]=tableauMotsEnAnalyseForms[l].replaceAll("_N", "");
+							form=form.replaceAll("_B", "");
+							form=form.replaceAll("_N", "");
+							StringBuilder buildHtml=new StringBuilder();
 							if (countArrondi==6|countArrondi==5){
-								wordsonebyone.add("<mark class=\"freq"+countArrondi+" high\">"+tableauMotsEnAnalyseForms[l]+"</mark>");
+								buildHtml.append("<mark class=\"freq");
+								buildHtml.append(countArrondi);
+								buildHtml.append(" high\">");
+								buildHtml.append(form);
+								buildHtml.append("</mark>");
+								wordsonebyone.add(buildHtml.toString());
 							}
 							else if (countArrondi==1){
-								wordsonebyone.add("<mark class=\"freq"+countArrondi+" low\">"+tableauMotsEnAnalyseForms[l]+"</mark>");
+								buildHtml.append("<mark class=\"freq");
+								buildHtml.append(countArrondi);
+								buildHtml.append(" low\">");
+								buildHtml.append(form);
+								buildHtml.append("</mark>");
+								wordsonebyone.add(buildHtml.toString());
 							}
 							else {
-								wordsonebyone.add("<mark class=\"freq"+countArrondi+"\">"+tableauMotsEnAnalyseForms[l]+"</mark>");
+								buildHtml.append("<mark class=\"freq");
+								buildHtml.append(countArrondi);
+								buildHtml.append("\">");
+								buildHtml.append(form);
+								buildHtml.append("</mark>");
+								wordsonebyone.add(buildHtml.toString());
 							}
 							
 						}
@@ -335,9 +380,13 @@ public class StatisticalComparison {
 					for (String word:wordsonebyone){
 						sbForListHTML.append(word+ " ");
 					}
-					
 					idsInHTMLFormat.add(sbForListHTML.toString());
 				}
+				
+//				long endTimeIDsCount = System.currentTimeMillis();
+//				System.out.println("****************");
+//				System.out.println("IDsCount : " +((endTimeIDsCount-startTimeIDsCount)/100) );
+//				System.out.println("****************");
 				
 				StringBuilder division=new StringBuilder();
 
@@ -352,6 +401,11 @@ public class StatisticalComparison {
 				counterID++;
 			} 
 			
+			long endTimeIDs = System.currentTimeMillis();
+			System.out.println("****************");
+			System.out.println("ID analysis : " +((endTimeIDs-startTimeIDs)/1000) );
+			System.out.println("****************");
+			
 			brightgreen=(brightgreen*100)/totalNbOfWords;
 			brightred=(brightred*100)/totalNbOfWords;
 			averagesyntax=(averagesyntax*100)/listeElementsActuels.size();
@@ -364,7 +418,6 @@ public class StatisticalComparison {
 					new FileOutputStream("./outputFiles/html/"+fileNamePath+".html"), "UTF-8"));
 			writer.write("<section id=\""+fileName+"\" class=\"parallel\" title=\"Statistiques générales : \nHaute Fréquence : "+brightgreen+" ;\nBasse Fréquence : "
 					+brightred+" ;\nProximité Syntaxique : "+averagesyntax+"\">");
-//			writer.write("\n<details  green=\""+brightgreen+"\" red=\""+brightred+"\" syntax=\""+averagesyntax+"\">");
 
 			for (String chunk:ids){
 				writer.write(chunk);

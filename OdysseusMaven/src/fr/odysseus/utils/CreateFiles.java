@@ -105,22 +105,17 @@ public class CreateFiles {
 	}
 	
 	
-	public static void createXMLFromNWRecordListByBook(String name, List<NWRecord>listeDeNWR, boolean greekOrNot){
+	public static void createXMLFromNWRecordListByBook(String name, List<NWRecord>listeDeNWR){
 			Element racine = new Element("file");
 			racine.setAttribute("name", name);
-			int counter=0;
-			for (NWRecord record:listeDeNWR){
-				System.out.println(counter +" : "+record.getSrc());
-				System.out.println(counter +" : "+record.getTrg());
+			int counter=1;
+			for (int i=1;i<listeDeNWR.size();i++){
+				NWRecord record=listeDeNWR.get(i);
 				Element ID = new Element("ID"+String.valueOf(counter));
-				if (greekOrNot==true){
-					ID.setAttribute(new Attribute ("text",record.getLemma()));
-					ID.setAttribute(new Attribute ("lemma", record.getTrg()));
-				}
-				else{
+				
 					ID.setAttribute(new Attribute ("text", record.getTrg()));
 					ID.setAttribute(new Attribute ("lemma", record.getLemma()));
-				}
+				
 				
 				ID.setAttribute(new Attribute("tag",record.getTag()));
 				racine.addContent(ID);
@@ -128,7 +123,7 @@ public class CreateFiles {
 			}
 			Document document = new Document(racine);
 			XMLBuilder builder=new XMLBuilder();
-			builder.enregistre(name+".xml", document);
+			builder.enregistre(name, document);
 	}
 	
 	public static void saveDistribDictToCSV (HashMap<String, Set<String>> distribDict, String folderPath) throws IOException{
