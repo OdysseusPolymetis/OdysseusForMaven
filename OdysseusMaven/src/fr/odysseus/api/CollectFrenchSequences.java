@@ -210,10 +210,10 @@ public class CollectFrenchSequences {
 		}
 		File completeSet = new File(TARGET+"names/frenchNames/FrenchNames.txt");
 		completeSet.getParentFile().mkdirs();
-		PrintWriter printCompleteSet = new PrintWriter(completeSet);
+		FileWriter printCompleteSet = new FileWriter(completeSet, false);
 
 		for (String nom:namesCompleteSet){
-			printCompleteSet.println (nom);
+			printCompleteSet.write (nom+"\n");
 		}
 		printCompleteSet.close ();
 

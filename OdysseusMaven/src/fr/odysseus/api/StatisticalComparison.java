@@ -65,13 +65,14 @@ public class StatisticalComparison {
 	 */
 	public void automaticComparison() throws IOException, BadLocationException, JDOMException{
 
-		repertoireSource=ListageRepertoire.listeRepertoire(new File("./outputFiles/xml")); /* creating source directory with all roots */
+		repertoireSource=ListageRepertoire.listeRepertoire(new File("./sourceFiles/sequences/greekPunct/")); /* creating source directory with all roots */
 		LinkedList<Element>listeDesRacines=new LinkedList<Element>();
 
 		for( int i = 0; i < repertoireSource.length; i++ ) {
 			Element racine=setRoot(repertoireSource[i]);
 			listeDesRacines.add(racine);
 		}
+		System.out.println(listeDesRacines.size());
 		insertHTML(listeDesRacines); /* generating html */
 	}
 
@@ -101,7 +102,7 @@ public class StatisticalComparison {
 			/* making sure we only take the .xml extensions into account */
 			File[] filesEnCours = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					return name.endsWith(nomCommun+".xml");
+					return name.endsWith(nomCommun);
 				}
 			});
 			int nombreDeFichiersAComparer=filesEnCours.length;
@@ -147,7 +148,7 @@ public class StatisticalComparison {
 				List<Element>total=new ArrayList<Element>();
 				StringBuilder stringbuild=new StringBuilder();
 
-				String chantActuel=nomFichierEnCours.substring(nomFichierEnCours.indexOf("Chant"));
+				String chantActuel=nomFichierEnCours.substring(nomFichierEnCours.indexOf("Chant"), nomFichierEnCours.indexOf("Chant")+7);
 				SAXBuilder sxb=new SAXBuilder();
 				Document documentSource=sxb.build(
 						new File("./sourceFiles/sequences/greekPunct/Odyssee1000"+chantActuel+".xml")); /* File to compare Greek syntax */
@@ -262,9 +263,16 @@ public class StatisticalComparison {
 				lemmaAndForm[1]=ID.getAttributeValue("text");
 				othersAndLeven[0]=stringbuild.toString();
 				othersAndLeven[1]=String.valueOf(percentDist);
-				tableauDeCorrespondances.put(lemmaAndForm, othersAndLeven);	
+				tableauDeCorrespondances.put(lemmaAndForm, othersAndLeven);
 				String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
-				String fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
+				String fileName="";
+				if (sourceFileName.contains("odyssee")){
+					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf(".xml"));
+				}
+				else {
+					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
+				}
+				
 
 //				System.out.println("les lemmes : "+lemmaAndForm[0]);
 //				System.out.println("les formes : "+lemmaAndForm[1]);
@@ -342,7 +350,7 @@ public class StatisticalComparison {
 							else{
 								countArrondi=0;
 							}
-							form=form.replaceAll("_B", "");
+							form=form.replaceAll("blk", "");
 							form=form.replaceAll("_N", "");
 							StringBuilder buildHtml=new StringBuilder();
 							if (countArrondi==6|countArrondi==5){
@@ -411,8 +419,14 @@ public class StatisticalComparison {
 			averagesyntax=(averagesyntax*100)/listeElementsActuels.size();
 
 			String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
-
-			String fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
+			String fileName="";
+			if (sourceFileName.contains("odyssee")){
+				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf(".xml"));
+			}
+			else {
+				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
+			}
+			
 			String fileNamePath=fileName.replaceAll("_0", "_");
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream("./outputFiles/html/"+fileNamePath+".html"), "UTF-8"));

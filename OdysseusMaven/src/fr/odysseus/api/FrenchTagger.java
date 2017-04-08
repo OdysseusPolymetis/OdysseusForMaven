@@ -37,9 +37,11 @@ public class FrenchTagger {
 			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","cyclope", "cyclopes","Calypso", "Muse", "Mante", "Ope", "Ithaquois", 
 			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie","éthiopien", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
 			"Sparte", "grecs", "Atlas", "Thon","Alcippé", "Océan", "zéphyr", "Iphthimé", "Halosydné", "Sunion","Pergame","Ethiopiens","Mermeride",
-			"Havre", "phénicien","Phénicien", "Phéniciens","Phrygiens","Phrygien", "Nègres","Nègre","Panachéens","Laertes","Egiste","argiens","argien","Argus",
+			"Havre", "phénicien","Phénicien", "Phéniciens","Phrygiens","Phrygien", "Nègres","Nègre","Panachéens","Laertes","Egiste","argiens","argien","argienne","argiennes",
+			"Argus",
 			"Argos","Harpyes","Harpye","Harpies","Harpie","Mycène","Mentor","Vulcain","Spartiate","Spartiates","Myrmidons","Myrmidon","Pléiades",
-			"Amphitryon","Œdipe","Oedipe","Sirènes","Sirène","Crétois"};
+			"Amphitryon","Œdipe","Oedipe","Sirènes","Sirène","Crétois","Furies","Furie","Égyptien","Égyptiens","Élide","Géants","Géant","troyen","troyens",
+			"Troyen","Troyens","Grâces","Cassandre","Hypérion","Naïades","Corbeau","Ciel","Doriens","Muses"};
 	static String bugAlix[]={"Indignez"};
 	static String punctLemma[]={",",";",":","!","?",".","(",")","\"","'","/"};
 	
@@ -227,15 +229,21 @@ public class FrenchTagger {
 					Tokenizer tok=new Tokenizer(text);
 					Occ occ=new Occ();
 					while ( tok.token(occ) ) {
+						if(occ.graph().toString().contains("'ah")){
+							System.out.println("XXXXXXXXXXXXXXXXXX");
+							System.out.println(occ.graph().toString());
+							System.out.println(occ.lem().toString());
+							System.out.println("XXXXXXXXXXXXXXXXXX");
+						}
 						String monOcc[]=new String[3];
 						monOcc[0]=occ.graph().toString();
 						monOcc[1]=occ.lem().toString();
 						
 						if (Arrays.asList(greenList).contains(occ.graph().toString())||Arrays.asList(greenList).contains(occ.lem().toString())){
-							monOcc[1]=occ.orth().toString();
+							monOcc[1]=occ.graph().toString();
 							monOcc[2]="NAM";
 						}
-						else if((motsDictionnaire.contains(occ.orth().toString().toLowerCase())|motsBlackList.contains(occ.orth().toString()))
+						else if((motsDictionnaire.contains(occ.graph().toString().toLowerCase())|motsBlackList.contains(occ.graph().toString()))
 								&&occ.tag().toString().contains("NAME")){
 							monOcc[2]="Indef";
 						}
@@ -251,11 +259,11 @@ public class FrenchTagger {
 							}
 							
 							if(Arrays.asList(punctLemma).contains(occ.orth().toString())){
-								monOcc[1]=occ.orth().toString();
+								monOcc[1]=occ.graph().toString();
 							}
 							
 							if(occ.lem().toString().length()<1){
-								monOcc[1]=occ.orth().toString();
+								monOcc[1]=occ.graph().toString();
 							}
 						}
 						motsTags.add(monOcc);

@@ -15,11 +15,14 @@ public class CloseMatcher {
 	static final String NAMES="./sourceFiles/names/";
 	
 	String correc[][]={{"Arcésios","Ἀρκεισιάδης"},{"Argus","Ἀργειφόντης"},{"Argiens","Grecs"},{"Aurore","Ἠώς","soleil"},{"Diane","Ἄρτεμις"},{"dieu_qui_ébranle_la_terre","Ἐννοσίγαιος"},
-	{"dieu_puissant_qui_ébranle_la_terre","Neptune"},{"Eumee","Εὔμαιος"},{"gisthe","Égysthe","Egyste"},{"Hercule","Ἡράκλειος"},{"Ilion","Τροία"},
-	{"Jupiter","Ζεύς"},{"Menelas","Μενέλαος","Menelas"},{"Mercure","Ἑρμῆς","Hermès"},{"Mermeros","Mermeride","Mermere"},{"Minerve","Ἀθήνη"},{"Neptune","Ποσειδεών"},
+	{"dieu_puissant_qui_ébranle_la_terre","Neptune"},{"Eumee","Εὔμαιος","Συβώτης"},{"Euryclée","Εὐρύκλεια"},{"gisthe","Égysthe","Egyste"},{"Harpyes","Ἅρπυιαι"},
+	{"Hercule","Ἡράκλειος"},{"Ilion","Τροία"},{"Ilithye","Εἰλειθυίης"},
+	{"Ithaque","Γαῖα"},
+	{"Jupiter","Ζεύς"},{"Liodes","Λειῶδες"},
+	{"Menelas","Μενέλαος","Menelas"},{"Mercure","Ἑρμῆς","Hermès"},{"Mermeros","Mermeride","Mermere"},{"Minerve","Ἀθήνη"},{"Neptune","Ποσειδεών"},
 	{"Océan","Πόντος","Ὠκεανός"},{"Parnese","Παρνασός"},{"Personne_N","Οὖτις"},{"Pheacien","Φαίαξ"},{"Phemios","Phemin"},{"Pisenor","Πεισήνωρ"},{"Pisistrate","Πεισίστρατος"},
 	{"Polypheme","Πολύφημος"},{"Pramne","Πράμνειος"},{"Rhexenor","Ῥηξήνωρ"},{"soleil","Ἠέλιος"},{"Telemaque","Thelemacque","Τηλέμαχος"},{"Thoosa","Thoote"},
-	{"Ulysse","Ὀδυσσεύς"},{"Venus","Ἀφροδίτη"}};
+	{"Ulysse","Ὀδυσσεύς"},{"Venus","Ἀφροδίτη"},{"Vulcain","Ἥφαιστος"}};
 	
 	private HashMap<String, Set<String>> dictionary;
 	public CloseMatcher() {

@@ -14,7 +14,7 @@ import org.apache.lucene.store.NIOFSDirectory;
 public class LuceneIndexMaker {
 	//final static File fileDict=new File("/home/federico/shit/grc.dic");
 	//final static File dirDict=new File("/home/federico/shit/lucene_index_grc");
-	final static File fileDict=new File("./Source/TousNomsFrancais/NomsFrancais.txt");
+	final static File fileDict=new File("./sourceFiles/names/frenchNames/FrenchNames.txt");
 	final static File dirDict=new File("./lucene_index_fr");
 	IndexWriterConfig iwc;
 	SpellChecker spellchecker;

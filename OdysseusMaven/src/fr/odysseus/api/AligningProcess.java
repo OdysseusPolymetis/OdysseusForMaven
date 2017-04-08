@@ -192,11 +192,11 @@ public class AligningProcess{
 				Aligner aligner=new Aligner();
 				aligner.setDistribDict(getDistribDict());
 				aligner.setDictionary(getDictionary());
-				aligner.setSrcFrequency(getSrcFrequency());
 				aligner.setTrgFrequency(getTrgFrequency());
 				
 				String fileBaseName=file.getName().substring(0, file.getName().indexOf("NomsCoupe"));
 				nouvelleListe=aligner.alignment(fileBaseName,NAMESFR, myTexts, getDictionary(), "sequencesFrancaises");
+				System.out.println(aligner.getSrcFrequency());
 				CreateFiles.createXMLFromNWRecordListByBook(OUTPUT+"xml/"+file.getName(), nouvelleListe);
 				if (doneOnce==false){
 					nouvelleListeGrecque=aligner.alignment("Odyssee1000Chant"+indexChant,NAMESGR, myTexts, getDictionary(), "sequencesGrecques");

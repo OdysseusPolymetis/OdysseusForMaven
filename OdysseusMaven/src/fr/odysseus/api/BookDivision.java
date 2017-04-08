@@ -90,7 +90,7 @@ public class BookDivision {
 				Pattern pCorrect=Pattern.compile("([a-z]+)([A-Z]{1}[a-zéèêôûîùà]+)");
 				Matcher mCorrect=pCorrect.matcher(chant);
 				while (mCorrect.find()){
-					chant=chant.replaceAll("([a-z]+)([A-Z]{1}[a-zéèêôûîùà]+)", mCorrect.group(1)+" "+mCorrect.group(2));
+					chant=chant.replaceAll(mCorrect.group(), mCorrect.group(1)+" "+mCorrect.group(2));
 				}
 				writer.write(chant);
 				writer.close();
