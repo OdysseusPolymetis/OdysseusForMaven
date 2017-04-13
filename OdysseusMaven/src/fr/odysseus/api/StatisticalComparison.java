@@ -65,7 +65,7 @@ public class StatisticalComparison {
 	 */
 	public void automaticComparison() throws IOException, BadLocationException, JDOMException{
 
-		repertoireSource=ListageRepertoire.listeRepertoire(new File("./sourceFiles/sequences/greekPunct/")); /* creating source directory with all roots */
+		repertoireSource=ListageRepertoire.listeRepertoire(new File("./outputFiles/xml/")); /* creating source directory with all roots */
 		LinkedList<Element>listeDesRacines=new LinkedList<Element>();
 
 		for( int i = 0; i < repertoireSource.length; i++ ) {
@@ -112,7 +112,9 @@ public class StatisticalComparison {
 			/* XPath process to get all the specific lemmas and forms we need to statistically compare them */
 			XPathExpression<Element> expr;
 			XPathExpression<Element> exprPrevious = null;
+			XPathExpression<Element> exprPreviousBefore = null;
 			XPathExpression<Element> exprNext= null;
+			XPathExpression<Element> exprNextBefore= null;
 			List<Document>autresDocs=new ArrayList<Document>();
 			for (int counterAutresDocs=0; counterAutresDocs<repertoireSource.length;counterAutresDocs++){	  
 				if (counterAutresDocs!=i&&repertoireSource[counterAutresDocs].getName().contains(nomCommun)){
@@ -234,17 +236,39 @@ public class StatisticalComparison {
 				
 				
 				expr = xFactory.compile("/file/ID"+(counterID)+"[@lemma]", Filters.element());
-				if (counterID>0){
+				if (counterID>1){
+					exprPreviousBefore=xFactory.compile("/file/ID"+(counterID-2)+"[@lemma]", Filters.element());
+				}
+				else if (counterID>0){
 					exprPrevious=xFactory.compile("/file/ID"+(counterID-1)+"[@lemma]", Filters.element());
 				}
-				if (counterID<listIDs.size()){
+				if (counterID<listIDs.size()+1){
+					exprNextBefore=xFactory.compile("/file/ID"+(counterID+2)+"[@lemma]", Filters.element());
+				}
+				else if (counterID<listIDs.size()){
 					exprNext=xFactory.compile("/file/ID"+(counterID+1)+"[@lemma]", Filters.element());
 				}
 
 				for (Document docToTest:autresDocs){
 					List<Element> elementsToCompare=expr.evaluate(docToTest);
-					List<Element> elementsToComparePrevious=exprPrevious.evaluate(docToTest);
-					List<Element> elementsToCompareNext=exprNext.evaluate(docToTest);
+					List<Element> elementsToComparePrevious=new ArrayList();
+					List<Element> elementsToCompareNext=new ArrayList();
+					if (exprPrevious!=null){
+						elementsToComparePrevious.addAll(exprPrevious.evaluate(docToTest));
+					}
+					
+					if (exprPreviousBefore!=null){
+						elementsToComparePrevious.addAll(exprPreviousBefore.evaluate(docToTest));
+					}
+					
+					if (exprNext!=null){
+						elementsToCompareNext.addAll(exprNext.evaluate(docToTest));
+					}
+					
+					if (exprNextBefore!=null){
+						elementsToCompareNext.addAll(exprNextBefore.evaluate(docToTest));
+					}
+					
 					total.addAll(elementsToCompareNext);
 					total.addAll(elementsToComparePrevious);
 					total.addAll(elementsToCompare);
