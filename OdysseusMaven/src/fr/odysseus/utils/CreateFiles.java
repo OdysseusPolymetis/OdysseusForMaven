@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +127,7 @@ public class CreateFiles {
 			builder.enregistre(name, document);
 	}
 	
-	public static void saveDistribDictToCSV (HashMap<String, Set<String>> distribDict, String folderPath) throws IOException{
+	public static void saveDistribDictToCSV (HashMap<String, Set<String>> hashMap, String folderPath) throws IOException{
 		Path path = Paths.get(folderPath);
 		
 		
@@ -141,9 +142,9 @@ public class CreateFiles {
 		writer.append("Clé\t");
 		writer.append("Siminymes\t");
 		writer.append('\n');
-		for (String key:distribDict.keySet()){
+		for (String key:hashMap.keySet()){
 			StringBuilder sb=new StringBuilder();
-			for (String values:distribDict.get(key)){
+			for (String values:hashMap.get(key)){
 				sb.append(values+ " ");
 			}
 			writer.append(key+"\t");

@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.simmetrics.metrics.Levenshtein;
@@ -26,7 +27,7 @@ public class CloseMatcher {
 	
 	private HashMap<String, Set<String>> dictionary;
 	public CloseMatcher() {
-		dictionary = new HashMap<String, Set<String>>();
+		dictionary = new HashMap<String,Set<String>>();
 	}
 	public static CloseMatcher getInstance(){
 		return new CloseMatcher();
@@ -37,7 +38,7 @@ public class CloseMatcher {
 		tc.setConverter("UnicodeC");
 		int numMatches = 0;
 		SimilarWordFinder swf = new SimilarWordFinder();
-		Set<String> similarWords = swf.getSimilarWords(word);
+		HashSet<String> similarWords = swf.getSimilarWords(word);
 		Levenshtein lev=new Levenshtein();
 		
 		for (String tok:greek){

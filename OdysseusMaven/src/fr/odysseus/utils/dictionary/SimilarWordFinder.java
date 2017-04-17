@@ -4,7 +4,7 @@ package fr.odysseus.utils.dictionary;
 import java.io.File;
 
 import java.util.Arrays;
-
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -41,9 +41,9 @@ public class SimilarWordFinder {
 			System.out.println(res);
 		}
 	}
-	public Set<String> getSimilarWords(String srcWord) throws Exception{
+	public HashSet<String> getSimilarWords(String srcWord) throws Exception{
 //		System.err.println("getSimilarWords");
-		Set<String> similarWords = new TreeSet<String>();
+		HashSet<String> similarWords = new HashSet<String>();
 		String[] resultWorlds = spellChecker.suggestSimilar(srcWord, 2, 0.5f);
 		similarWords.addAll(Arrays.asList(resultWorlds));
 		return similarWords;

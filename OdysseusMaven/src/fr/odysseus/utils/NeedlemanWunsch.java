@@ -28,6 +28,7 @@ public class NeedlemanWunsch {
 	private double gapPenality;
 	private GrPhoneTransformer phonetransformer;
 	private HashMap<String, Set<String>> dictionary;
+	public HashMap<String, HashSet<String>> grFrDict;
 	public HashMap<String, Set<String>> distribDict;
 	public HashMap<String, Integer> srcFrequency;
 	public HashMap<String, Integer> trgFrequency;
@@ -51,6 +52,10 @@ public class NeedlemanWunsch {
 
 	public void setDictionary(HashMap<String, Set<String>> dictionary) {
 		this.dictionary = dictionary;
+	}
+	
+	public void setGrFr(HashMap<String, HashSet<String>> dictionary) {
+		this.grFrDict = dictionary;
 	}
 
 	public void setDistribDictionary(HashMap<String, Set<String>> distdictionary) {
@@ -206,8 +211,7 @@ public class NeedlemanWunsch {
 			return similarityScore;
 		}
 
-		Set<String> possibleTradux = new HashSet<>();
-		List<String> findTradux = new ArrayList<>();
+		HashSet<String> possibleTradux = new HashSet<>();
 		if (src.length()>0 && trg.length()>0) {
 			List<String> srcToks=new ArrayList<String>();
 			List<String> trgToks=new ArrayList<String>();
@@ -241,34 +245,50 @@ public class NeedlemanWunsch {
 					}
 				}
 
-				if (srcFirst.contains(trgFirst)||trgFirst.contains(srcFirst)){
-					if (!dictionary.containsKey(srcFirst)&&dictionary.containsKey(trgFirst)){
-						possibleTradux.add(srcFirst);
-						possibleTradux.add(trgFirst);
-					}
-					else if (dictionary.containsKey(srcFirst)){
-						dictionary.get(srcFirst).add(trgFirst);
-					}
-					else if (dictionary.containsKey(trgFirst)){
-						dictionary.get(trgFirst).add(srcFirst);
+//				if (srcFirst.contains(trgFirst)||trgFirst.contains(srcFirst)){
+//					if (!dictionary.containsKey(srcFirst)&&dictionary.containsKey(trgFirst)){
+//						possibleTradux.add(srcFirst);
+//						possibleTradux.add(trgFirst);
+//					}
+//					else if (dictionary.containsKey(srcFirst)){
+//						dictionary.get(srcFirst).add(trgFirst);
+//					}
+//					else if (dictionary.containsKey(trgFirst)){
+//						dictionary.get(trgFirst).add(srcFirst);
+//					}
+//				}
+
+				if (distribDict!=null) {
+					if (!distribDict.isEmpty()){
+						if (Collections.disjoint(Arrays.asList(srcToks), distribDict.keySet())==false){
+							List<String>tmp=new ArrayList<String>(srcToks);
+							tmp.retainAll(distribDict.keySet());
+							for (String tok : tmp) {
+								Set<String>valuesToKey=distribDict.get(tok);
+								for (String value:valuesToKey){
+									possibleTradux.add(value);
+								}
+							}
+						}
 					}
 				}
-
-				if (!distribDict.equals(null)||!distribDict.isEmpty()) {
-					if (Collections.disjoint(Arrays.asList(srcToks), distribDict.keySet())==false){
-						List<String>tmp=new ArrayList<String>(srcToks);
-						tmp.retainAll(distribDict.keySet());
-						for (String tok : tmp) {
-							Set<String>valuesToKey=distribDict.get(tok);
-							for (String value:valuesToKey){
-								possibleTradux.add(value);
+				if (grFrDict!=null) {
+					if (!grFrDict.isEmpty()){
+						if (Collections.disjoint(Arrays.asList(srcToks), grFrDict.keySet())==false){
+							List<String>tmp=new ArrayList<String>(srcToks);
+							tmp.retainAll(grFrDict.keySet());
+							for (String tok : tmp) {
+								Set<String>valuesToKey=grFrDict.get(tok);
+								for (String value:valuesToKey){
+									possibleTradux.add(value);
+								}
 							}
 						}
 					}
 				}
 
 				if (Math.abs(srcToks.size()-trgToks.size())<5){
-					similarityScore+=0.5;
+					similarityScore+=1;
 				}
 
 
@@ -299,10 +319,9 @@ public class NeedlemanWunsch {
 				if (simMonge>0.8){
 					similarityScore+=2;
 				}
-
+				
 				for (String trad : possibleTradux) {
 					if (trg.contains(trad)&&!"".equals(trg)) {
-						findTradux.add(trad);
 						similarityScore += 1.0;
 					}
 				}

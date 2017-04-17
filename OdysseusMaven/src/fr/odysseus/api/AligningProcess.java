@@ -1,7 +1,11 @@
 package fr.odysseus.api;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,11 +39,13 @@ public class AligningProcess{
 	static final String NAMESGR="./sourceFiles/names/greekNames/";
 	static final String DICOVEK="./sourceFiles/sourceDictionaries/repertoireDicovek/";
 	static final String W2V="./sourceFiles/sourceDictionaries/word2Vec/";
+	static final String GRDICT="./sourceFiles/sourceDictionaries/dict.tsv";
 	static final String OUTPUTDICT="./outputFiles/dictionaries/word2Vec/";
 	static final String OUTPUT="./outputFiles/";
 	CloseMatcher close;
 	private double gapPenality;
 	private HashMap<String, Set<String>> dictionary;
+	public HashMap<String, HashSet<String>>grFrDict;
 	public HashMap<String, Set<String>> distribDict;
 	public HashMap<String, Integer> srcFrequency;
 	public HashMap<String, Integer> trgFrequency;
@@ -50,6 +56,14 @@ public class AligningProcess{
 
 	public HashMap<String, Set<String>> getDictionary() {
 		return dictionary;
+	}
+	
+	public void setGrFr(HashMap<String, HashSet<String>> dictionary) {
+		this.grFrDict = dictionary;
+	}
+
+	public HashMap<String, HashSet<String>> getGrFr() {
+		return grFrDict;
 	}
 
 	public double getGapPenality() {
@@ -84,13 +98,32 @@ public class AligningProcess{
 		this.trgFrequency = frequency;
 	}
 
-	public void initCloseMatcher(){
+	public void initCloseMatcher() throws IOException{
 		close = new CloseMatcher();
 		try {
 			setDictionary(close.getDictionary());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		BufferedReader in = new BufferedReader(new FileReader(GRDICT));
+        String line;
+        grFrDict=new HashMap<String, HashSet<String>>();
+        while ((line = in.readLine()) != null) {
+            String columns[] = line.split("\t");
+            
+            if (!grFrDict.containsKey(columns[1])) {
+            	HashSet<String>tmpSet=new HashSet<String>();
+            	tmpSet.add(columns[0]);
+                grFrDict.put(columns[1], tmpSet);
+            }
+            else{
+            	HashSet<String>tmpSet=grFrDict.get(columns[1]);
+            	tmpSet.add(columns[0]);
+            	grFrDict.put(columns[1], tmpSet);
+            }
+
+        }
+        in.close();
 	}
 
 	public void proceedToGlobalAlignment() throws Exception{
@@ -196,9 +229,13 @@ public class AligningProcess{
 				
 				String fileBaseName=file.getName().substring(0, file.getName().indexOf("NomsCoupe"));
 				nouvelleListe=aligner.alignment(fileBaseName,NAMESFR, myTexts, getDictionary(), "sequencesFrancaises");
-				System.out.println(aligner.getSrcFrequency());
-				CreateFiles.createXMLFromNWRecordListByBook(OUTPUT+"xml/"+file.getName(), nouvelleListe);
+				File directory = new File(OUTPUT+"xml/Chant"+indexChant+"/");
+				if (!directory.exists()){
+					directory.mkdirs();
+				}
+				CreateFiles.createXMLFromNWRecordListByBook(OUTPUT+"xml/Chant"+indexChant+"/"+file.getName(), nouvelleListe);
 				if (doneOnce==false){
+					aligner.setGrFr(grFrDict);
 					nouvelleListeGrecque=aligner.alignment("Odyssee1000Chant"+indexChant,NAMESGR, myTexts, getDictionary(), "sequencesGrecques");
 					CreateFiles.createXMLFromNWRecordListByBook(PUNCT+"Odyssee1000Chant"+indexChant+".xml", nouvelleListeGrecque);	
 				}

@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ public class Aligner {
 	CloseMatcher close;
 	private double gapPenality;
 	private HashMap<String, Set<String>> dictionary;
+	public HashMap<String, HashSet<String>> grFrDict;
 	public HashMap<String, Set<String>> distribDict;
 	public HashMap<String, Integer> srcFrequency;
 	public HashMap<String, Integer> trgFrequency;
@@ -41,6 +43,10 @@ public class Aligner {
 		return dictionary;
 	}
 
+	public void setGrFr(HashMap<String, HashSet<String>> dictionary) {
+		this.grFrDict = dictionary;
+	}
+	
 	public double getGapPenality() {
 		return gapPenality;
 	}
@@ -88,7 +94,7 @@ public class Aligner {
 		setSrcFrequency(Frequency.frequency(nomsGr));
 		setTrgFrequency(Frequency.frequency(noms));
 		LinkedList<NWRecord> maListe=new LinkedList<NWRecord>();
-
+		nw.setGrFr(grFrDict);
 		maListe = nw.PerformAlignment(myTexts.getLemmaLines("sequencesPivotLemmes"), myTexts.getLemmaLines(sequences+"Lemmes"),
 				myTexts.getTextLines(sequences), myTexts.getTagLines(sequences+"Tags"), getDictionary(), getDistribDict(), getSrcFrequency(),getTrgFrequency());
 		

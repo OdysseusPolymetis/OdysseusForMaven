@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +34,6 @@ public class LemmaGreek {
 		File[] listeFilesChants=fileRoot.listFiles();
 		List<String>listNomsGrecsLemmaNForms=new ArrayList<String>();
 		HashSet<String>setNomsGrecsLemmaNForms=new HashSet<String>();
-		String blackList[]={ ""};
 
 		for (File file:listeFilesChants){
 			String numChant=file.getName().substring(file.getName().lastIndexOf("Chant")+5, file.getName().indexOf(".xml"));
@@ -115,12 +113,19 @@ public class LemmaGreek {
 					String result = tcKey.getString(lemma);
 					tags.put(result,replacement);
 				}
+				
+				listeIntegraleForm.add("SENT");
+				listeIntegraleLemma.add("SENT");
+				lemmes.add("SENT");
+				forms.add("SENT");
 			}
 			
-			lemmes.removeAll(Arrays.asList(blackList));
+			
+//			lemmes.removeAll(Arrays.asList(blackList));
 			listNomsGrecsLemmaNForms.addAll(lemmes);
 			setNomsGrecsLemmaNForms.addAll(lemmes);
 //			nomsGrecsLemmaNForms.addAll(forms);
+			
 			
 			for (int indexTrans=0;indexTrans<listeIntegraleLemma.size(); indexTrans++){
 				TransCoder tc = new TransCoder();
@@ -128,13 +133,17 @@ public class LemmaGreek {
 				tc.setConverter("UnicodeC");
 				String resultLemma = "";
 				String resultForm = "";
-				if (!listeIntegraleLemma.get(indexTrans).contains("comma")&&!listeIntegraleLemma.get(indexTrans).contains("punc")){
+				if (listeIntegraleLemma.get(indexTrans).contains("SENT")){
+					resultLemma=listeIntegraleLemma.get(indexTrans);
+					resultForm=listeIntegraleForm.get(indexTrans);
+				}
+				else if (!listeIntegraleLemma.get(indexTrans).contains("comma")&&!listeIntegraleLemma.get(indexTrans).contains("punc")){
 					resultLemma = tc.getString(listeIntegraleLemma.get(indexTrans));
 					resultForm = tc.getString(listeIntegraleForm.get(indexTrans));
 				}
 
 				else{
-					resultLemma="";
+					resultLemma=listeIntegraleLemma.get(indexTrans);
 					resultForm=listeIntegraleForm.get(indexTrans);
 				}
 				listeIntegraleLemma.set(indexTrans, resultLemma);
@@ -147,7 +156,11 @@ public class LemmaGreek {
 				tc.setConverter("UnicodeC");
 				String resultLemma="";
 				String resultForm="";
-				if (!lemmes.get(indexTrans).contains("comma")&&!lemmes.get(indexTrans).contains("punc")){
+				if (lemmes.get(indexTrans).contains("SENT")){
+					resultLemma=lemmes.get(indexTrans);
+					resultForm=forms.get(indexTrans);
+				}
+				else if (!lemmes.get(indexTrans).contains("comma")&&!lemmes.get(indexTrans).contains("punc")){
 					resultLemma = tc.getString(lemmes.get(indexTrans));
 					resultForm = tc.getString(forms.get(indexTrans));
 				}
@@ -170,8 +183,6 @@ public class LemmaGreek {
 			List<CharSequence> sequencesLemma = new ArrayList<CharSequence>();
 			sequencesLemma = namesMatcherLemma.getSequences();
 			
-			
-			
 			StringBuilder sbforms = new StringBuilder();
 			for (String nom:listeIntegraleForm){
 				sbforms.append(nom+" ");
@@ -181,7 +192,7 @@ public class LemmaGreek {
 			NamesPatternMatcher namesMatcherForm= new NamesPatternMatcher(NamesPatternMatcher.DEF_PATTERN, sbforms.toString(), namesForm);
 			List<CharSequence> sequencesForm = new ArrayList<CharSequence>();
 			sequencesForm = namesMatcherForm.getSequences();
-
+			
 			Element root = new Element("root");
 			Document doc = new Document(root);
 			
@@ -208,15 +219,15 @@ public class LemmaGreek {
 				lemmatisedSeq=lemmatisedSeq.replaceAll("\\s+'\\s*","' ");
 				lemmatisedSeq=lemmatisedSeq.replaceAll("\\s{2,}"," ");
 				lemmatisedSeq=lemmatisedSeq.replaceAll("[\\s,;:·'ʼ.-°]*°[\\s,;:·'ʼ.°-]*","° ");
-				ID.setAttribute("text", flexedSeq);
-				ID.setAttribute("lemma", lemmatisedSeq);
+				ID.setAttribute("text", flexedSeq.replaceAll("SENT ", ""));
+				ID.setAttribute("lemma", lemmatisedSeq.replaceAll("SENT ", ""));
 				StringBuilder sbTags=new StringBuilder();
 				for (String key:sequencesLemma.get(index).toString().split(" ")){
 					if (tags.containsKey(key)){
 						sbTags.append(tags.get(key)+" ");
 					}
 				}		
-				ID.setAttribute("tag", sbTags.toString().replaceAll("\\s{2,}"," "));
+				ID.setAttribute("tag", sbTags.toString().replaceAll("SENT ", "").replaceAll("\\s{2,}"," "));
 				root.addContent(ID);
 				counterID++;
 			}
@@ -231,7 +242,10 @@ public class LemmaGreek {
 				PrintWriter printWriterListNoms = new PrintWriter(fileListNoms);
 
 				for (String nom:listNomsGrecsLemmaNForms){
-					printWriterListNoms.println (nom);
+					if (!nom.contains("SENT")){
+						printWriterListNoms.println (nom);
+					}
+					
 				}
 				printWriterListNoms.close ();
 			}
@@ -241,20 +255,25 @@ public class LemmaGreek {
 				xmlOutput.output(doc, new FileWriter(fileOut));
 				File fileListNoms = new File(TARGETNAM+"Odyssee1000Chant"+numChant+".txt");
 				fileListNoms.getParentFile().mkdirs();
-				PrintWriter printWriterListNoms = new PrintWriter(fileListNoms);
+				FileWriter printWriterListNoms = new FileWriter(fileListNoms,false);
 
 				for (String nom:listNomsGrecsLemmaNForms){
-					printWriterListNoms.println (nom);
+					if (!nom.contains("SENT")){
+						printWriterListNoms.write (nom);
+					}
 				}
 				printWriterListNoms.close ();
 			}
+			System.out.println("Done : "+file.getName());
 		}
 		File fileSetNoms = new File(TARGETNAM+"GreekNames.txt");
 		fileSetNoms.getParentFile().mkdirs();
 		PrintWriter printWriterSetNoms = new PrintWriter(fileSetNoms);
 
 		for (String nom:setNomsGrecsLemmaNForms){
-			printWriterSetNoms.println (nom);
+			if (!nom.contains("SENT")){
+				printWriterSetNoms.println (nom);
+			}
 		}
 		printWriterSetNoms.close ();
 	}

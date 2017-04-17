@@ -23,7 +23,7 @@
 			<groupId>org.nd4j</groupId>
 			<artifactId>nd4j-native</artifactId>
 			<version>0.6.0</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>

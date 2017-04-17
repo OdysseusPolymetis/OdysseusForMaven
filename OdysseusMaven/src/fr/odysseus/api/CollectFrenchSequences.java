@@ -70,9 +70,9 @@ public class CollectFrenchSequences {
 					lemme=lemme.replaceAll("ù", "u");
 					lemme=lemme.replaceAll("é", "e");
 					lemme=lemme.replaceAll("ê", "e");
-					if (postag.contains("NAM")){
-						lemmes.add(lemme);	
-						namesCompleteSet.add(lemme);
+					if (postag.contains("SENT")|postag.contains("NAM")){
+						if (postag.contains("NAM"))namesCompleteSet.add(lemme);
+						lemmes.add(lemme);
 						forms.add(eWord.getAttributeValue("form"));
 					}
 					listeIntegraleLemma.add(lemme);		
@@ -151,15 +151,15 @@ public class CollectFrenchSequences {
 				String lemmatisedSeq=sequencesLemma.get(index).toString();
 				flexedSeq=flexedSeq.replaceAll("\\s{2,}"," ");
 				lemmatisedSeq=lemmatisedSeq.replaceAll("\\s{2,}"," ");
-				ID.setAttribute("text", flexedSeq);
-				ID.setAttribute("lemma", lemmatisedSeq);
+				ID.setAttribute("text", flexedSeq.replaceAll("SENT ", ""));
+				ID.setAttribute("lemma", lemmatisedSeq.replaceAll("SENT ", ""));
 				StringBuilder sbTags=new StringBuilder();
 				for (String key:sequencesLemma.get(index).toString().split(" ")){
 					if (tags.containsKey(key)){
 						sbTags.append(tags.get(key)+" ");
 					}
 				}		
-				ID.setAttribute("tag", sbTags.toString().replaceAll("\\s{2,}"," "));
+				ID.setAttribute("tag", sbTags.toString().replaceAll("SENT ", "").replaceAll("\\s{2,}"," "));
 				root.addContent(ID);
 				counterID++;
 			}
@@ -171,9 +171,11 @@ public class CollectFrenchSequences {
 			File fileListNoms = new File(TARGET+"/names/frenchNames/"+fileName+"Chant"+numChant+".txt");
 			fileListNoms.getParentFile().mkdirs();
 			PrintWriter printWriterListNoms = new PrintWriter(fileListNoms);
-
+			
 			for (String nom:listNomsGrecsLemmaNForms){
-				printWriterListNoms.println (nom);
+				if (!nom.equals("SENT")){
+					printWriterListNoms.println (nom);
+				}
 			}
 			printWriterListNoms.close ();
 
@@ -181,7 +183,7 @@ public class CollectFrenchSequences {
 			sequences.getParentFile().mkdirs();
 			PrintWriter printSequences = new PrintWriter(sequences);
 			for (CharSequence sequence:sequencesForm){
-				printSequences.println(sequence.toString());
+				printSequences.println(sequence.toString().replaceAll("SENT", ""));
 			}
 			printSequences.close ();
 
@@ -189,7 +191,7 @@ public class CollectFrenchSequences {
 			sequencesPrintLemma.getParentFile().mkdirs();
 			PrintWriter printLemmatizedSequences = new PrintWriter(sequencesPrintLemma);
 			for (CharSequence sequence:sequencesLemma){
-				printLemmatizedSequences.println(sequence.toString());
+				printLemmatizedSequences.println(sequence.toString().replaceAll("SENT", ""));
 			}
 			printLemmatizedSequences.close ();
 
@@ -198,7 +200,7 @@ public class CollectFrenchSequences {
 				pivotSequences.getParentFile().mkdirs();
 				PrintWriter printPivotSequences = new PrintWriter(pivotSequences);
 				for (CharSequence sequence:sequencesForm){
-					printPivotSequences.println(sequence.toString());
+					printPivotSequences.println(sequence.toString().replaceAll("SENT", ""));
 				}
 				printPivotSequences.close ();
 				XMLOutputter xmlPivot = new XMLOutputter();
@@ -207,11 +209,12 @@ public class CollectFrenchSequences {
 				filePivot.getParentFile().mkdirs();
 				xmlPivot.output(doc, new FileWriter(filePivot));
 			}
+			System.out.println("Done for : "+fileName);
 		}
 		File completeSet = new File(TARGET+"names/frenchNames/FrenchNames.txt");
 		completeSet.getParentFile().mkdirs();
 		FileWriter printCompleteSet = new FileWriter(completeSet, false);
-
+		namesCompleteSet.remove("SENT");
 		for (String nom:namesCompleteSet){
 			printCompleteSet.write (nom+"\n");
 		}
@@ -222,7 +225,7 @@ public class CollectFrenchSequences {
 		PrintWriter printW2V = new PrintWriter(w2V);
 
 		for (CharSequence nom:word2VecTraining){
-			printW2V.println (nom);
+			printW2V.println (nom.toString().replaceAll("SENT ", ""));
 		}
 		printW2V.close ();
 	}

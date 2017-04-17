@@ -93,10 +93,11 @@ public class FrenchTagger {
 		    {"NAMEanimal" , "NAM"},
 		    {"NAMEdemhum" , "NAM"},
 		    {"NAMEgod", "NAM"},
-		    {"EXCL" , "PUN"},
+//		    {"EXCL" , "PUN"},
 		    {"NUM" , "NUM"},
-		    {"PUN" , "PUN"},
-		    {"PUNsent" , "SENT"}};
+		    {"PUNsent" , "SENT"},
+		    {"PUNcl","PUN"},
+		    };
 		       
 
 	
@@ -104,99 +105,99 @@ public class FrenchTagger {
 	public HashMap<String, String[]> getTags() {
 		return tags;
 	}
-	public FrenchTagger() throws IOException{
-		System.out.println("Début du Tagging");
+//	public FrenchTagger() throws IOException{
+//		System.out.println("Début du Tagging");
+////
+//		System.setProperty("treetagger.home", "./lib/taggers/Treetagger/");
+//		MaxentTagger tagger =  new MaxentTagger("./lib/taggers/StanfordTagger/french.tagger");
+//		
 //
-		System.setProperty("treetagger.home", "./lib/taggers/Treetagger/");
-		MaxentTagger tagger =  new MaxentTagger("./lib/taggers/StanfordTagger/french.tagger");
-		
-
-		TreeTaggerWrapper<String>tt = new TreeTaggerWrapper<String>();
-		
-		HashMap <String, String>mapCorresp=new HashMap<String, String>();
-		for (String elem[]:corresp){
-			mapCorresp.put(elem[0], elem[1]);
-		}
-		
-		
-//		Path blackList = Paths.get(DICT+"blackList.txt");
-//		List<String>motsBlackList = Files.readAllLines(blackList);
-		List <Object>listAllFiles=new ArrayList<Object>();
-		Path start=Paths.get(SOURCE);	
-		Files.walk(start)
-			.filter( path -> path.toFile().isFile())
-			.filter( path -> path.toString().endsWith(".txt"))
-			.forEach(listAllFiles::add);
-
-		for (Object path:listAllFiles){
-			List<String[]>motsTags=new ArrayList<String[]>();
-			String fileName=path.toString().substring(path.toString().lastIndexOf("\\"),path.toString().lastIndexOf(".txt"));
-			String text=readFile(path.toString(), StandardCharsets.UTF_8);
-			Lemmatizers lemmatizers=new Lemmatizers();
-			text=text.replaceAll("'", " ' ");
-			text=text.replaceAll("’", " ' ");
-			text=text.replaceAll(",", " , ");
-			text=text.replaceAll("\\.", " . ");
-			text=text.replaceAll(";", " ; ");
-			text=text.replaceAll(":", " : ");
-			text=text.replaceAll("-", " - ");
-			text=text.replaceAll("\\s{2,}", " ");
-			
-			
-			
-			lemmatizers.getNames(text, motsTags, tt, tagger);
-			motsTags=lemmatizers.getTags();
-			
-			System.out.println("Stockage en XML du fichier "+fileName);
-			Element root = new Element("root");
-			Element book=new Element ("book"+fileName.substring(fileName.lastIndexOf("Chant")+5));
-			Document doc = new Document(root);
-			
-			List<List<String[]>> sentences = motsTags.stream()
-		            .collect(() -> {
-		                List<List<String[]>> list = new ArrayList<>();
-		                list.add(new ArrayList<>());
-		                return list;
-		            },
-		            (subList, s) -> {
-		                if (s[2].contains("SENT")) {
-		                	subList.add(new ArrayList<>());
-		                } 
-		                else {
-		                    subList.get(subList.size() - 1).add(s);
-		                }
-		            },
-		            (list1, list2) -> {
-		                list1.get(list1.size() - 1).addAll(list2.remove(0));
-		                list1.addAll(list2);
-		            });
-			
-			for (int counterSent=0;counterSent<sentences.size()-1;counterSent++){
-				Element sent=new Element("sentence");
-				Element punc=new Element("word");
-				punc.setAttribute("form", ".");
-				punc.setAttribute("lemma", ".");
-				punc.setAttribute("postag", "PUN");
-				for (String []word:sentences.get(counterSent)){
-					if (!word[0].matches("-[LRB]{3,}-")){
-						Element mot=new Element("word");
-						mot.setAttribute("form",word[0]);
-						mot.setAttribute("lemma",word[1]);
-						mot.setAttribute("postag",word[2]);
-						sent.addContent(mot);
-					}
-				}
-				sent.addContent(punc);
-				book.addContent(sent);
-			}
-			root.addContent(book);
-			XMLOutputter xmlOutput = new XMLOutputter();
-			xmlOutput.setFormat(Format.getPrettyFormat());
-			File fileOut = new File(OUT+fileName+".xml");
-			fileOut.getParentFile().mkdirs();
-			xmlOutput.output(doc, new FileWriter(fileOut));
-		}
-	}
+//		TreeTaggerWrapper<String>tt = new TreeTaggerWrapper<String>();
+//		
+//		HashMap <String, String>mapCorresp=new HashMap<String, String>();
+//		for (String elem[]:corresp){
+//			mapCorresp.put(elem[0], elem[1]);
+//		}
+//		
+//		
+////		Path blackList = Paths.get(DICT+"blackList.txt");
+////		List<String>motsBlackList = Files.readAllLines(blackList);
+//		List <Object>listAllFiles=new ArrayList<Object>();
+//		Path start=Paths.get(SOURCE);	
+//		Files.walk(start)
+//			.filter( path -> path.toFile().isFile())
+//			.filter( path -> path.toString().endsWith(".txt"))
+//			.forEach(listAllFiles::add);
+//
+//		for (Object path:listAllFiles){
+//			List<String[]>motsTags=new ArrayList<String[]>();
+//			String fileName=path.toString().substring(path.toString().lastIndexOf("\\"),path.toString().lastIndexOf(".txt"));
+//			String text=readFile(path.toString(), StandardCharsets.UTF_8);
+//			Lemmatizers lemmatizers=new Lemmatizers();
+//			text=text.replaceAll("'", " ' ");
+//			text=text.replaceAll("’", " ' ");
+//			text=text.replaceAll(",", " , ");
+//			text=text.replaceAll("\\.", " . ");
+//			text=text.replaceAll(";", " ; ");
+//			text=text.replaceAll(":", " : ");
+//			text=text.replaceAll("-", " - ");
+//			text=text.replaceAll("\\s{2,}", " ");
+//			
+//			
+//			
+//			lemmatizers.getNames(text, motsTags, tt, tagger);
+//			motsTags=lemmatizers.getTags();
+//			
+//			System.out.println("Stockage en XML du fichier "+fileName);
+//			Element root = new Element("root");
+//			Element book=new Element ("book"+fileName.substring(fileName.lastIndexOf("Chant")+5));
+//			Document doc = new Document(root);
+//			
+//			List<List<String[]>> sentences = motsTags.stream()
+//		            .collect(() -> {
+//		                List<List<String[]>> list = new ArrayList<>();
+//		                list.add(new ArrayList<>());
+//		                return list;
+//		            },
+//		            (subList, s) -> {
+//		                if (s[2].contains("SENT")) {
+//		                	subList.add(new ArrayList<>());
+//		                } 
+//		                else {
+//		                    subList.get(subList.size() - 1).add(s);
+//		                }
+//		            },
+//		            (list1, list2) -> {
+//		                list1.get(list1.size() - 1).addAll(list2.remove(0));
+//		                list1.addAll(list2);
+//		            });
+//			
+//			for (int counterSent=0;counterSent<sentences.size()-1;counterSent++){
+//				Element sent=new Element("sentence");
+//				Element punc=new Element("word");
+//				punc.setAttribute("form", ".");
+//				punc.setAttribute("lemma", ".");
+//				punc.setAttribute("postag", "PUN");
+//				for (String []word:sentences.get(counterSent)){
+//					if (!word[0].matches("-[LRB]{3,}-")){
+//						Element mot=new Element("word");
+//						mot.setAttribute("form",word[0]);
+//						mot.setAttribute("lemma",word[1]);
+//						mot.setAttribute("postag",word[2]);
+//						sent.addContent(mot);
+//					}
+//				}
+//				sent.addContent(punc);
+//				book.addContent(sent);
+//			}
+//			root.addContent(book);
+//			XMLOutputter xmlOutput = new XMLOutputter();
+//			xmlOutput.setFormat(Format.getPrettyFormat());
+//			File fileOut = new File(OUT+fileName+".xml");
+//			fileOut.getParentFile().mkdirs();
+//			xmlOutput.output(doc, new FileWriter(fileOut));
+//		}
+//	}
 	static String readFile(String path, Charset encoding) 
 			throws IOException 
 	{
@@ -229,12 +230,6 @@ public class FrenchTagger {
 					Tokenizer tok=new Tokenizer(text);
 					Occ occ=new Occ();
 					while ( tok.token(occ) ) {
-						if(occ.graph().toString().contains("'ah")){
-							System.out.println("XXXXXXXXXXXXXXXXXX");
-							System.out.println(occ.graph().toString());
-							System.out.println(occ.lem().toString());
-							System.out.println("XXXXXXXXXXXXXXXXXX");
-						}
 						String monOcc[]=new String[3];
 						monOcc[0]=occ.graph().toString();
 						monOcc[1]=occ.lem().toString();
@@ -249,7 +244,7 @@ public class FrenchTagger {
 						}
 						else{
 							if (mapCorresp.containsKey(occ.tag().toString())){
-								monOcc[2]=mapCorresp.get(occ.tag().toString());
+									monOcc[2]=mapCorresp.get(occ.tag().toString());
 							}
 							else{
 								monOcc[2]=occ.tag().toString();
@@ -261,7 +256,9 @@ public class FrenchTagger {
 							if(Arrays.asList(punctLemma).contains(occ.orth().toString())){
 								monOcc[1]=occ.graph().toString();
 							}
-							
+							if(occ.graph().toString().contains(":")){
+								monOcc[2]="SENT";
+							}
 							if(occ.lem().toString().length()<1){
 								monOcc[1]=occ.graph().toString();
 							}
@@ -296,9 +293,9 @@ public class FrenchTagger {
 					for (int counterSent=0;counterSent<sentences.size()-1;counterSent++){
 						Element sent=new Element("sentence");
 						Element punc=new Element("word");
-						punc.setAttribute("form", ".");
-						punc.setAttribute("lemma", ".");
-						punc.setAttribute("postag", "PUN");
+						punc.setAttribute("form", "SENT");
+						punc.setAttribute("lemma", "SENT");
+						punc.setAttribute("postag", "SENT");
 						for (String []word:sentences.get(counterSent)){
 							if (!word[0].matches("-[LRB]{3,}-")){
 								Element mot=new Element("word");

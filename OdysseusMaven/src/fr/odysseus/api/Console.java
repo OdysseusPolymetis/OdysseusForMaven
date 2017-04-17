@@ -54,12 +54,12 @@ public class Console {
 			align.proceedToGlobalAlignment();
 		}
 		
-//		System.out.println("Voulez-vous faire/refaire une comparaison statistique ? (y/n)");
-//		answer=sc.nextLine();
-//		if (answer.equals("y")){
+		System.out.println("Voulez-vous faire/refaire une comparaison statistique ? (y/n)");
+		answer=sc.nextLine();
+		if (answer.equals("y")){
 			StatisticalComparison calculs=new StatisticalComparison();
 			calculs.automaticComparison();
-//		}
+		}
 		
 			
 		long endTime = System.currentTimeMillis();
