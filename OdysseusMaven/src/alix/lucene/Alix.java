@@ -82,7 +82,6 @@ import org.apache.lucene.util.Version;
 import org.w3c.dom.Node;
 
 import net.sf.saxon.tinytree.TinyDocumentImpl;
-import net.sf.saxon.tinytree.TinyNodeImpl;
 
 /**
  * Alix entry-point
@@ -233,7 +232,8 @@ public class Alix {
 			Class<?>[] params=new Class[1];
 			params[0]=Version.class;
 			Constructor<?> constructor=cl.getDeclaredConstructor(params);
-			analyzer=(Analyzer) constructor.newInstance(null);
+			analyzer=(Analyzer) constructor.newInstance();
+//			analyzer=(Analyzer) constructor.newInstance(null);
 		}
 		catch (Exception e) {}
 		finally {

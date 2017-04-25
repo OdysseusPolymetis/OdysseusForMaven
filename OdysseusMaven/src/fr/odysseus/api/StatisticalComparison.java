@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
@@ -85,6 +84,7 @@ public class StatisticalComparison {
 	 * inserts the data in html output file
 	 * @param the list of roots from all the files in the xml folder
 	 */
+	@SuppressWarnings("unused")
 	public void insertHTML(HashMap<String, Element>roots) throws BadLocationException, IOException, JDOMException
 	{
 		HashSet<String> stopWords = new HashSet<String>(FileUtils.readLines(new File("./input/dict/stopWords.txt"))); /* listing all stopwords */
@@ -235,8 +235,8 @@ public class StatisticalComparison {
 
 				for (Document docToTest:autresDocs){
 					List<Element> elementsToCompare=expr.evaluate(docToTest);
-					List<Element> elementsToComparePrevious=new ArrayList();
-					List<Element> elementsToCompareNext=new ArrayList();
+					List<Element> elementsToComparePrevious=new ArrayList<Element>();
+					List<Element> elementsToCompareNext=new ArrayList<Element>();
 					if (exprPrevious!=null){
 						elementsToComparePrevious.addAll(exprPrevious.evaluate(docToTest));
 					}

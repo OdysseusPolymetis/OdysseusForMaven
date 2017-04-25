@@ -79,29 +79,24 @@ public class Aligner {
 		setDictionary(dictionary);
 		setDistribDict(getDistribDict());
 		Path pathTrg=Paths.get(path+fileName+".txt");
-		Path pathSrc=Paths.get(Console.NAMESFR+"Sommer1886_"+numChant+".txt");
+		Path pathSrc=Paths.get(Console.NAMESFR+"sommer1886_"+numChant+".txt");
 		List<String> noms = Files.readAllLines(pathTrg, StandardCharsets.UTF_8);
 		List<String> nomsGr = Files.readAllLines(pathSrc, StandardCharsets.UTF_8);
 		setSrcFrequency(Frequency.frequency(nomsGr));
 		setTrgFrequency(Frequency.frequency(noms));
-		LinkedList<NWRecord> maListe=new LinkedList<NWRecord>();
+		LinkedList<NWRecord> firstList=new LinkedList<NWRecord>();
 		nw.setGrFr(grFrDict);
-		maListe = nw.PerformAlignment(myTexts.getLemmaLines("sequencesPivotLemmes"), myTexts.getLemmaLines(sequences+"Lem"),
+		firstList = nw.PerformAlignment(myTexts.getLemmaLines("seqPiLem"), myTexts.getLemmaLines(sequences+"Lem"),
 				myTexts.getTextLines(sequences), myTexts.getTagLines(sequences+"Tag"), getDictionary(), getDistribDict(), getSrcFrequency(),getTrgFrequency());
 		
-
-
+		LinkedList<NWRecord> nouvelleListe = new LinkedList<NWRecord>();
+		nouvelleListe.addAll(firstList);
+//		ReorderingLists order=new ReorderingLists();
+		nouvelleListe=ReorderingLists.reorder(firstList, nouvelleListe);
 		long endTime = System.currentTimeMillis();
 		System.out.println("****************");
 		System.out.println("ALIGNEMENT : " + ((endTime - startTime) / 1000));
 		System.out.println("****************");
-		System.out.println("*********************************************************************************************");
-		System.out.println("REAGENCEMENT DES ALIGNEMENTS");
-		System.out.println("*********************************************************************************************");
-		LinkedList<NWRecord> nouvelleListe = new LinkedList<NWRecord>();
-		nouvelleListe.addAll(maListe);
-		ReorderingLists order=new ReorderingLists();
-		nouvelleListe=order.reorder(maListe, nouvelleListe);
 		return nouvelleListe;
 	}
 }

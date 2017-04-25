@@ -9,8 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,12 +106,12 @@ public class CreateFiles {
 	}
 	
 	
-	public static void createXMLFromNWRecordListByBook(String name, List<NWRecord>listeDeNWR){
+	public static void createXMLFromNWRecordListByBook(String name, LinkedList<NWRecord> nouvelleListe){
 			Element racine = new Element("file");
 			racine.setAttribute("name", name);
 			int counter=1;
-			for (int i=1;i<listeDeNWR.size();i++){
-				NWRecord record=listeDeNWR.get(i);
+			for (int i=1;i<nouvelleListe.size();i++){
+				NWRecord record=nouvelleListe.get(i);
 				Element ID = new Element("ID"+String.valueOf(counter));
 				
 					ID.setAttribute(new Attribute ("text", record.getTrg()));

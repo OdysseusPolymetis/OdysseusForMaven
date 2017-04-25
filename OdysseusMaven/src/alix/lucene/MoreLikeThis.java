@@ -20,7 +20,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.MultiFields;
@@ -52,7 +51,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -149,6 +147,7 @@ import java.util.Set;
  * - optimise: when no termvector support available - used maxNumTermsParsed to limit amount of tokenization
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public final class MoreLikeThis {
 
   /**
@@ -819,7 +818,8 @@ public final class MoreLikeThis {
    * @param vector List of terms and their frequencies for a doc/field
    * @throws IOException 
    */
-  private void print(Terms vector) throws IOException {
+  @SuppressWarnings("unused")
+private void print(Terms vector) throws IOException {
     if (vector == null) return;
     final TermsEnum termsEnum = vector.iterator();
     final CharsRefBuilder spare = new CharsRefBuilder();
@@ -831,7 +831,8 @@ public final class MoreLikeThis {
       spare.copyUTF8Bytes(text);
       map.put(spare.toString(), termsEnum.totalTermFreq());
     }
-    Map.Entry<String, Long>[] a =  map.entrySet().toArray(new Map.Entry[0]);
+    @SuppressWarnings("unchecked")
+	Map.Entry<String, Long>[] a =  map.entrySet().toArray(new Map.Entry[0]);
     Arrays.sort(a, new Comparator<Map.Entry<String, Long>>() {
       public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
           return  o2.getValue().compareTo(o1.getValue());
@@ -992,26 +993,16 @@ public final class MoreLikeThis {
     String word;
     String topField;
     float score;
-    float idf;
-    int docFreq;
-    int tf;
-
     ScoreTerm(String word, String topField, float score, float idf, int docFreq, int tf) {
       this.word = word;
       this.topField = topField;
       this.score = score;
-      this.idf = idf;
-      this.docFreq = docFreq;
-      this.tf = tf;
     }
 
     void update(String word, String topField, float score, float idf, int docFreq, int tf) {
       this.word = word;
       this.topField = topField;
       this.score = score;
-      this.idf = idf;
-      this.docFreq = docFreq;
-      this.tf = tf;
     }
   }
 

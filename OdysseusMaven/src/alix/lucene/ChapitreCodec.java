@@ -1,11 +1,9 @@
 package alix.lucene;
 
-import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.codecs.FilterCodec;
 import org.apache.lucene.codecs.PostingsFormat;
 import org.apache.lucene.codecs.lucene50.Lucene50StoredFieldsFormat.Mode;
 import org.apache.lucene.codecs.lucene54.Lucene54Codec;
-import org.apache.lucene.codecs.memory.MemoryPostingsFormat;
 import org.apache.lucene.codecs.perfield.PerFieldPostingsFormat;
 
 public class ChapitreCodec extends FilterCodec  {

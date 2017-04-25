@@ -5,9 +5,6 @@ import java.io.File;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.spell.SpellChecker;

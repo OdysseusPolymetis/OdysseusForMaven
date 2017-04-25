@@ -5,9 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
@@ -57,7 +54,8 @@ public class StemTrie
       new InputStreamReader( stream, StandardCharsets.UTF_8 )
     );
     buf.readLine(); // first line is labels and should give number of cells to find
-    int i = 0;
+    @SuppressWarnings("unused")
+	int i = 0;
     String[] cells;
     while ( (line=buf.readLine()) != null ) {
       line = line.trim( );

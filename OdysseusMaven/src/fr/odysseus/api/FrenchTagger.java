@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import org.annolab.tt4j.TreeTaggerWrapper;
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -22,8 +21,6 @@ import org.jdom2.output.XMLOutputter;
 
 import alix.fr.Occ;
 import alix.fr.Tokenizer;
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import fr.odysseus.utils.Lemmatizers;
 
 /**
  * tags all raw text in French, using openNLP, TreeTagger, Stanford Tagger, and small local blacklists or greenlists (provided with the program)

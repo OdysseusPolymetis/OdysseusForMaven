@@ -30,10 +30,6 @@ public class Tokenizer
   private int end; 
   /** Is it xml ? */
   boolean xml;
-  /** If we want a substring for last token found */
-  private int beginIndex;
-  /** If we want a substring for last token found */
-  private int endIndex;
   /** For the simple tokenizer */
   boolean sent;
   /** A buffer of tokens, populated for multi-words test */
@@ -43,7 +39,8 @@ public class Tokenizer
   /** Handle on root of compound dictionary */
   private Stem locroot = Lexik.LOC.getRoot();
   /** Handle on root of rules dictionary */
-  private Stem rulesroot = Lexik.RULES.getRoot();
+  @SuppressWarnings("unused")
+private Stem rulesroot = Lexik.RULES.getRoot();
   /** French, « vois-tu » hyphen is breakable before these words, exc: arc-en-ciel */
   public static final HashSet<String> HYPHEN_POST = new HashSet<String>();
   static {
@@ -565,7 +562,6 @@ public class Tokenizer
       
       if ( Char.isLetter( c )) {
         if ( first ) {
-          beginIndex = pos;
           first = false;
         }
         if ( sent ) {
@@ -588,7 +584,6 @@ public class Tokenizer
       }
       if ( t.length() == 0 ) continue;
       pointer = pos;
-      endIndex = pos;
       return true;
     }
     return false;
@@ -637,7 +632,8 @@ public class Tokenizer
    * Bugs
    * — François I er
    */
-  public static void main( String[] args) 
+  @SuppressWarnings("unused")
+public static void main( String[] args) 
   {
     /*
     String mots = " le la les des de du d' ";

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import fr.odysseus.dataModels.NWRecord;
 
 public class ReorderingLists {
-	public LinkedList<NWRecord>reorder(LinkedList<NWRecord> prevList,LinkedList<NWRecord> newList){
+	public static LinkedList<NWRecord>reorder(LinkedList<NWRecord> prevList,LinkedList<NWRecord> newList){
 		for (int j = 0; j < prevList.size(); j++) {
 			if (newList.get(j).getSrc() == "^" && newList.get(j).getTrg() == "^") {
 				prevList.remove(newList.get(j));

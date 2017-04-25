@@ -4,8 +4,6 @@ package alix.fr;
 import java.io.IOException;
 
 import alix.util.Roller;
-import alix.util.Term;
-import alix.util.TermDic;
 
 /**
  * A sliding window of tokens
@@ -134,7 +132,7 @@ public class OccSlider extends Roller {
       + " ils ne vont jamais."
     ;
     int right = 5;
-    OccSlider win = new OccSlider(2, right);
-    Tokenizer toks = new Tokenizer(text);
+    new OccSlider(2, right);
+    new Tokenizer(text);
   }
 }

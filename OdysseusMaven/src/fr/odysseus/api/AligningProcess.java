@@ -2,7 +2,6 @@ package fr.odysseus.api;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -131,17 +130,18 @@ public class AligningProcess{
 		
 
 		HashSet <String> setMotsTexte=new HashSet<String>();
-		for (int compteurFichiers = 0; compteurFichiers < directories.length; compteurFichiers++) {
+//		for (int compteurFichiers = 0; compteurFichiers < directories.length; compteurFichiers++) {
+		for (String book:directories){
 //			int indexChant = compteurFichiers + 1;
-			String indexChant="";
-			if (compteurFichiers<9){
-				indexChant="0"+(compteurFichiers+1);
-			}
-			else{
-				indexChant=""+(compteurFichiers+1);
-			}
-			File dir = new File(Console.SEQUENCESFR+"chant"+ indexChant);
-			
+//			String indexChant=fileName.substring(fileName.indexOf("chant")+5);
+//			if (compteurFichiers<9){
+//				indexChant="0"+(compteurFichiers+1);
+//			}
+//			else{
+//				indexChant=""+(compteurFichiers+1);
+//			}
+//			File dir = new File(Console.SEQUENCESFR+"chant"+ indexChant);
+			File dir = new File(Console.SEQUENCESFR+book);
 			
 			File[] filesParChant = dir.listFiles(new FilenameFilter() {
 			    public boolean accept(File dir, String name) {
@@ -150,8 +150,8 @@ public class AligningProcess{
 			});
 			
 			for (File file : filesParChant) {
-				if (!file.getName().contains("Odyssee")){
-					Path path = Paths.get( Console.SEQUENCESFR+"chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".txt");
+				if (!file.getName().contains("odyssee")){
+					Path path = Paths.get( Console.SEQUENCESFR+book+ "/" + FilenameUtils.getBaseName(file.getName()) + ".txt");
 					
 					String text = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 					
@@ -169,16 +169,17 @@ public class AligningProcess{
 		setDistribDict(vec.wordToVec(setMotsTexte, Console.W2V+"RepertoireW2V.txt", Console.W2V+"WordToVek.txt"));
 
 		CreateFiles.saveDistribDictToCSV(getDistribDict(), Console.OUTPUTDICT);
-		for (int compteurFichiers = 0; compteurFichiers < directories.length; compteurFichiers++) {
-			String indexChant="";
-			if (compteurFichiers<9){
-				indexChant="0"+(compteurFichiers+1);
-			}
-			else{
-				indexChant=""+(compteurFichiers+1);
-			}
-			File dir = new File(Console.SEQUENCESFR+"chant"+ indexChant);
-			
+		for (String book:directories){
+			String indexChant=book.substring(book.indexOf("chant")+5);
+//			String indexChant="";
+//			if (compteurFichiers<9){
+//				indexChant="0"+(compteurFichiers+1);
+//			}
+//			else{
+//				indexChant=""+(compteurFichiers+1);
+//			}
+//			File dir = new File(Console.SEQUENCESFR+"chant"+ indexChant);
+			File dir = new File(Console.SEQUENCESFR+book);
 			File[] filesParChant = dir.listFiles(new FilenameFilter() {
 			    public boolean accept(File dir, String name) {
 			        return name.toLowerCase().endsWith(".xml");
@@ -188,17 +189,17 @@ public class AligningProcess{
 			for (File file : filesParChant) {
 				ResourceCollection myTexts = ResourceCollection.newInstance();
 				
-					myTexts.addText("seqFr", Console.SEQUENCESFR+"chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
-					myTexts.addText("seqLat", Console.SEQUENCESLAT+"chant" + indexChant + "/" + "odysseelat1000_"+ indexChant + ".xml");
-					myTexts.addAtt("seqFrLem", "lemma", Console.SEQUENCESFR+"chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
-					myTexts.addAtt("seqLatLem", "lemma", Console.SEQUENCESLAT+"chant" + indexChant + "/" + "odysseelat1000_"+ indexChant + ".xml");
-					myTexts.addAtt("seqFrTag", "tag", Console.SEQUENCESFR+"chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
-					myTexts.addAtt("seqLatTag", "tag", Console.SEQUENCESLAT+"chant" + indexChant + "/" + "odysseelat1000_"+ indexChant + ".xml");
-					myTexts.addText("seqGr", Console.SEQUENCESGR+"chant" + indexChant + "/" +"odyssee1000_"+ indexChant + ".xml");
-					myTexts.addAtt("seqGrLem", "lemma", Console.SEQUENCESGR+"chant" + indexChant + "/" +"odyssee1000_"+ indexChant + ".xml");
-					myTexts.addAtt("seqGrTag", "tag", Console.SEQUENCESGR+"chant" + indexChant + "/" +"odyssee1000_"+ indexChant + ".xml");
-					myTexts.addAtt("seqPiLem","lemma", Console.PIVOT+"chant" + indexChant + "/" + "sommer1886_" + indexChant + ".xml");
-					myTexts.addText("seqPi", Console.PIVOT+"chant" + indexChant + "/" + "sommer1886_" + indexChant + ".xml");
+					myTexts.addText("seqFr", Console.SEQUENCESFR+book+ "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addText("seqLat", Console.SEQUENCESLAT+book+ "/" + "odysseelat1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqFrLem", "lemma", Console.SEQUENCESFR+book+ "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addAtt("seqLatLem", "lemma", Console.SEQUENCESLAT+book+ "/" + "odysseelat1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqFrTag", "tag", Console.SEQUENCESFR+book+ "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addAtt("seqLatTag", "tag", Console.SEQUENCESLAT+book+ "/" + "odysseelat1000_"+ indexChant + ".xml");
+					myTexts.addText("seqGr", Console.SEQUENCESGR+book+ "/" +"odyssee1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqGrLem", "lemma", Console.SEQUENCESGR+book+ "/" +"odyssee1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqGrTag", "tag", Console.SEQUENCESGR+book+ "/" +"odyssee1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqPiLem","lemma", Console.PIVOT+book+ "/" + "sommer1886_" + indexChant + ".xml");
+					myTexts.addText("seqPi", Console.PIVOT+book+ "/" + "sommer1886_" + indexChant + ".xml");
 				
 				
 				String nomFichier = StringUtils.substringBefore(file.getName(), ".xml");
@@ -214,8 +215,8 @@ public class AligningProcess{
 				aligner.setDictionary(getDictionary());
 				aligner.setTrgFrequency(getTrgFrequency());
 				
-				String fileBaseName=file.getName().substring(0, file.getName().indexOf("."));
-				nouvelleListe=aligner.alignment(fileBaseName,Console.NAMESFR, myTexts, getDictionary(), "seqFr");
+//				String fileBaseName=file.getName().substring(0, file.getName().indexOf("."));
+				nouvelleListe=aligner.alignment(nomFichier,Console.NAMESFR, myTexts, getDictionary(), "seqFr");
 				File directory = new File(Console.OUTPUT+"xml/chant"+indexChant+"/");
 				if (!directory.exists()){
 					directory.mkdirs();
