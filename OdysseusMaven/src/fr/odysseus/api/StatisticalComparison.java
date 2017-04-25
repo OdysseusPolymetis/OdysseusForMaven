@@ -3,12 +3,14 @@ package fr.odysseus.api;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,12 +18,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.swing.text.BadLocationException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -34,16 +34,13 @@ import org.simmetrics.metrics.GeneralizedJaccard;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
-import fr.odysseus.utils.LevenshteinDistance;
-import fr.odysseus.utils.ListageRepertoire;
-
 /**
  * @author Marianne Reboul
  */
 
 public class StatisticalComparison {
 
-	File repertoireSource[]; /* directory for source xml aligned files */
+	HashMap<String, File> repertoireSource; /* directory for source xml aligned files */
 
 	/**
 	 * @return the root element of each file
@@ -65,46 +62,55 @@ public class StatisticalComparison {
 	 */
 	public void automaticComparison() throws IOException, BadLocationException, JDOMException{
 
-		repertoireSource=ListageRepertoire.listeRepertoire(new File("./outputFiles/xml/")); /* creating source directory with all roots */
-		LinkedList<Element>listeDesRacines=new LinkedList<Element>();
-
-		for( int i = 0; i < repertoireSource.length; i++ ) {
-			Element racine=setRoot(repertoireSource[i]);
-			listeDesRacines.add(racine);
+		File mainDir=new File("./outputFiles/xml/");
+		String ext[]={"xml"};
+		repertoireSource=new HashMap<String,File>();
+		Collection<File>tmpColl=FileUtils.listFiles(mainDir, ext, true); /* creating source directory with all roots */
+//		repertoireSource=tmpColl.toArray(new File[tmpColl.size()]);
+		for (File file:tmpColl){
+			repertoireSource.put(file.getName(), file);
 		}
-		System.out.println(listeDesRacines.size());
-		insertHTML(listeDesRacines); /* generating html */
+
+//		LinkedList<Element>listeDesRacines=new LinkedList<Element>();
+		HashMap<String, Element>mapRoots=new HashMap<String, Element>();
+
+		for( String name:repertoireSource.keySet() ) {
+			Element racine=setRoot(repertoireSource.get(name));
+			mapRoots.put(name, racine);
+		}
+		insertHTML(mapRoots); /* generating html */
 	}
 
 	/**
 	 * inserts the data in html output file
 	 * @param the list of roots from all the files in the xml folder
 	 */
-	public void insertHTML(LinkedList<Element>racines) throws BadLocationException, IOException, JDOMException
+	public void insertHTML(HashMap<String, Element>roots) throws BadLocationException, IOException, JDOMException
 	{
 		HashSet<String> stopWords = new HashSet<String>(FileUtils.readLines(new File("./sourceFiles/sourceDictionaries/stopWords.txt"))); /* listing all stopwords */
 
 		GeneralizedJaccard<String>jaccard=new GeneralizedJaccard<>();
-		LevenshteinDistance distance=new LevenshteinDistance();
-		
-		for (int i=0; i<racines.size();i++){
-			
-			long startTimeXPath = System.currentTimeMillis();
-			
+		//		LevenshteinDistance distance=new LevenshteinDistance();
+
+		for (String name:roots.keySet()){
+
 			int brightred=0;
 			int brightgreen=0;
 			int averagesyntax=0;
 			int totalNbOfWords=0;
-			String nomFichierEnCours=racines.get(i).getAttributeValue("name");
-			String nomCommun=nomFichierEnCours.substring(nomFichierEnCours.indexOf("Chant"));
+			String nomFichierEnCours=roots.get(name).getAttributeValue("name");
+			String nomCommun=nomFichierEnCours.substring(nomFichierEnCours.lastIndexOf("Chant"));
 
-			File dir=new File("./outputFiles/xml/");
-			/* making sure we only take the .xml extensions into account */
-			File[] filesEnCours = dir.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith(nomCommun);
-				}
+			HashSet<File>tmpOthFi=new HashSet<File>();
+			Files.walk(Paths.get("./outputFiles/xml/"))
+			.filter(Files::isRegularFile)
+			.forEach((f)->{
+				String file = f.toString();
+				if( file.endsWith(nomCommun))
+					tmpOthFi.add(new File(file));               
 			});
+
+			File[] filesEnCours=tmpOthFi.toArray(new File[tmpOthFi.size()]);
 			int nombreDeFichiersAComparer=filesEnCours.length;
 
 			System.out.println(nomFichierEnCours);
@@ -116,41 +122,38 @@ public class StatisticalComparison {
 			XPathExpression<Element> exprNext= null;
 			XPathExpression<Element> exprNextBefore= null;
 			List<Document>autresDocs=new ArrayList<Document>();
-			for (int counterAutresDocs=0; counterAutresDocs<repertoireSource.length;counterAutresDocs++){	  
-				if (counterAutresDocs!=i&&repertoireSource[counterAutresDocs].getName().contains(nomCommun)){
-					File autreDoc=repertoireSource[counterAutresDocs];
+//			System.out.println("nom principal : "+name);
+			for (String nameOther:roots.keySet()){	  
+				if (nameOther!=name&&repertoireSource.get(nameOther).getName().contains(nomCommun)){
+					File autreDoc=repertoireSource.get(nameOther);
 					SAXBuilder jdomBuild = new SAXBuilder();
 					Document jdomDoc  = jdomBuild.build(autreDoc);
 					autresDocs.add(jdomDoc);
+//					System.out.println("devrait être différent de nom principal : "+nameOther);
 				}	 
+				
 			}
-			
-			long endTimeXPath = System.currentTimeMillis();
-			System.out.println("****************");
-			System.out.println("XPATH : " +((endTimeXPath-startTimeXPath)/1000) );
-			System.out.println("****************");
 
-			List<Element>listeElementsActuels=racines.get(i).getChildren(); /* words and lemmas of the file currently studied */
+			List<Element>listeElementsActuels=roots.get(name).getChildren(); /* words and lemmas of the file currently studied */
 
 			XPathFactory xFactory = XPathFactory.instance();
 
 			new HashMap<Integer, List<String>>();
-			List<Element>listIDs=racines.get(i).getChildren(); /* all words and lemmas from all the other files except the one studied */
+			List<Element>listIDs=roots.get(name).getChildren(); /* all words and lemmas from all the other files except the one studied */
 			int counterID=1;
 
 			List<String>ids=new ArrayList<String>();
 
-			long startTimeIDs = System.currentTimeMillis();
 			for (Element ID:listIDs){
-//				long startTimeRep = System.currentTimeMillis();
-				
+				//				long startTimeRep = System.currentTimeMillis();
+
 				List<String>idsInHTMLFormat=new ArrayList<String>();
 				LinkedHashMap<String[], String[]>tableauDeCorrespondances=new LinkedHashMap<String[], String[]>();
 
 				List<Element>total=new ArrayList<Element>();
 				StringBuilder stringbuild=new StringBuilder();
 
-				String chantActuel=nomFichierEnCours.substring(nomFichierEnCours.indexOf("Chant"), nomFichierEnCours.indexOf("Chant")+7);
+				String chantActuel=nomFichierEnCours.substring(nomFichierEnCours.lastIndexOf("Chant"), nomFichierEnCours.lastIndexOf("Chant")+7);
 				SAXBuilder sxb=new SAXBuilder();
 				Document documentSource=sxb.build(
 						new File("./sourceFiles/sequences/greekPunct/Odyssee1000"+chantActuel+".xml")); /* File to compare Greek syntax */
@@ -160,16 +163,10 @@ public class StatisticalComparison {
 				String tagActuel[]=listeElementsActuels.get(counterID-1).getAttributeValue("tag").split(" "); /* all postags from French */
 				List<String>listeTagSource=new ArrayList<String>(Arrays.asList(tagSource));
 				List<String>listeTagTarget=new ArrayList<String>(Arrays.asList(tagActuel));
+				HashSet<String>toRem=new HashSet<String>(Arrays.asList("PUN", "Indef", "DET:ART","DET:POS","PRP:det"));
 				listeTagSource.remove("PUN");
-				listeTagTarget.remove("PUN");
-				listeTagSource.remove("Indef");
-				listeTagTarget.remove("Indef");
-				listeTagTarget.remove("DET:ART");
-				listeTagTarget.remove("DET:POS");
-				listeTagTarget.remove("PRP:det");
+				listeTagTarget.removeAll(toRem);
 
-				/* This part is not very efficient : 
-				 * TODO either modify data or find a quicker and more efficient way */
 				Collections.replaceAll(listeTagSource, "VER:impf", "VER");
 				Collections.replaceAll(listeTagSource, "VER:simp", "VER");
 				Collections.replaceAll(listeTagSource, "VER:futu", "VER");
@@ -181,15 +178,8 @@ public class StatisticalComparison {
 				Collections.replaceAll(listeTagTarget, "VER:pres", "VER");
 				Collections.replaceAll(listeTagTarget, "VER:infi", "VER");
 
-//				long endTimeRep = System.currentTimeMillis();
-//				System.out.println("****************");
-//				System.out.println("ReplacementTags : " +((endTimeRep-startTimeRep)/100) );
-//				System.out.println("****************");
-				
 				int percentDist=0;
 
-//				long startTimeJaccard = System.currentTimeMillis();
-				
 				Multiset <String>vecteurSource=HashMultiset.create(listeTagSource); /* multisets for Generalized Jaccard */
 				Multiset <String>vecteurTarget=HashMultiset.create(listeTagTarget);
 
@@ -226,26 +216,20 @@ public class StatisticalComparison {
 				if (percentDist>1){
 					averagesyntax++;
 				}
-				
-//				long endTimeJaccard = System.currentTimeMillis();
-//				System.out.println("****************");
-//				System.out.println("Jaccard : " +((endTimeJaccard-startTimeJaccard)/100) );
-//				System.out.println("****************");
 
 				/* evaluate expression for all lemmas from previous or next alignment for counting */
-				
-				
+
 				expr = xFactory.compile("/file/ID"+(counterID)+"[@lemma]", Filters.element());
 				if (counterID>1){
 					exprPreviousBefore=xFactory.compile("/file/ID"+(counterID-2)+"[@lemma]", Filters.element());
 				}
-				else if (counterID>0){
+				if (counterID>0){
 					exprPrevious=xFactory.compile("/file/ID"+(counterID-1)+"[@lemma]", Filters.element());
 				}
-				if (counterID<listIDs.size()+1){
+				if (counterID<listIDs.size()-1){
 					exprNextBefore=xFactory.compile("/file/ID"+(counterID+2)+"[@lemma]", Filters.element());
 				}
-				else if (counterID<listIDs.size()){
+				if (counterID<listIDs.size()){
 					exprNext=xFactory.compile("/file/ID"+(counterID+1)+"[@lemma]", Filters.element());
 				}
 
@@ -256,19 +240,19 @@ public class StatisticalComparison {
 					if (exprPrevious!=null){
 						elementsToComparePrevious.addAll(exprPrevious.evaluate(docToTest));
 					}
-					
-					if (exprPreviousBefore!=null){
-						elementsToComparePrevious.addAll(exprPreviousBefore.evaluate(docToTest));
-					}
-					
+
+//					if (exprPreviousBefore!=null){
+//						elementsToComparePrevious.addAll(exprPreviousBefore.evaluate(docToTest));
+//					}
+
 					if (exprNext!=null){
 						elementsToCompareNext.addAll(exprNext.evaluate(docToTest));
 					}
-					
-					if (exprNextBefore!=null){
-						elementsToCompareNext.addAll(exprNextBefore.evaluate(docToTest));
-					}
-					
+
+//					if (exprNextBefore!=null){
+//						elementsToCompareNext.addAll(exprNextBefore.evaluate(docToTest));
+//					}
+
 					total.addAll(elementsToCompareNext);
 					total.addAll(elementsToComparePrevious);
 					total.addAll(elementsToCompare);
@@ -288,23 +272,20 @@ public class StatisticalComparison {
 				othersAndLeven[0]=stringbuild.toString();
 				othersAndLeven[1]=String.valueOf(percentDist);
 				tableauDeCorrespondances.put(lemmaAndForm, othersAndLeven);
-				String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
+				String sourceFileName=("./outputFiles/html/"+roots.get(name).getAttributeValue("name").toLowerCase());
 				String fileName="";
 				if (sourceFileName.contains("odyssee")){
 					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf(".xml"));
 				}
 				else {
-					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
+					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("chant")+5,sourceFileName.indexOf("noms"));
 				}
-				
 
-//				System.out.println("les lemmes : "+lemmaAndForm[0]);
-//				System.out.println("les formes : "+lemmaAndForm[1]);
-				
-//				long startTimeIDsCount = System.currentTimeMillis();
-				
+				//				System.out.println("les lemmes : "+lemmaAndForm[0]);
+				//				System.out.println("les formes : "+lemmaAndForm[1]);
+
 				for (Entry<String[], String[]>entry:tableauDeCorrespondances.entrySet()){
-					
+
 					entry.getKey()[1]=entry.getKey()[1].replaceAll("\\s{2,}", " ");
 					entry.getKey()[0]=entry.getKey()[0].replaceAll("\\s{2,}", " ");
 					String tableauMotsEnAnalyseLemmas[]=entry.getKey()[0].split("\\s");
@@ -318,7 +299,7 @@ public class StatisticalComparison {
 					}
 
 					StringBuilder sbForListHTML=new StringBuilder();
-					
+
 					for(int l=0;l<tableauMotsEnAnalyseForms.length;l++){
 						String form=tableauMotsEnAnalyseForms[l];
 						String lemma=tableauMotsEnAnalyseLemmas[l];
@@ -326,29 +307,26 @@ public class StatisticalComparison {
 						int brightGreenWord=0;
 
 						if (lemma!=""){
-							
-							distance=new LevenshteinDistance();
+
 							int count=0;
 							int countArrondi=0;
 							String wordsChainToCompare[]=chaineMotsTarget.toString().split(" ");
 
 							/* comparing word of current file to other words in same alignment ID in other files
 							 * they may match (find()) or have a sufficiently low levenshtein distance to be considered as the same word */
-							
-							
-							
-							for (String word:wordsChainToCompare){
-								
-								Pattern p=Pattern.compile(lemma,Pattern.LITERAL|Pattern.CASE_INSENSITIVE);
-								Matcher m=p.matcher(word);
-								int levDist=distance.computeLevenshteinDistance(word, lemma);
 
-								if (m.find()&&!stopWords.contains(lemma.toLowerCase())&&word.length()>1){
+							for (String word:wordsChainToCompare){
+
+								int levDist=StringUtils.getLevenshteinDistance(word, lemma);
+
+								if (word.equals(lemma)|lemma.equals(word)|lemma.toLowerCase().equals(word)|word.toLowerCase().equals(lemma)){
 									count++;
 								}
-								else if (levDist<3&&word.length()>4&&!stopWords.contains(lemma.toLowerCase())){
+
+								else if (levDist<2&&word.length()>4&&!stopWords.contains(lemma.toLowerCase())){
 									count++;
 								}
+
 							}
 
 							/* counting occurences and making the counting relative (5 categories) */
@@ -361,7 +339,7 @@ public class StatisticalComparison {
 								}
 								else if (countScore<1) {
 									countArrondi=countScore+2;
-									
+
 								}
 								else{
 									countArrondi=countScore+1;
@@ -393,6 +371,14 @@ public class StatisticalComparison {
 								buildHtml.append("</mark>");
 								wordsonebyone.add(buildHtml.toString());
 							}
+							else if (countArrondi==2){
+								buildHtml.append("<mark class=\"freq");
+								buildHtml.append(countArrondi);
+								buildHtml.append(" plag\">");
+								buildHtml.append(form);
+								buildHtml.append("</mark>");
+								wordsonebyone.add(buildHtml.toString());
+							}
 							else {
 								buildHtml.append("<mark class=\"freq");
 								buildHtml.append(countArrondi);
@@ -401,25 +387,20 @@ public class StatisticalComparison {
 								buildHtml.append("</mark>");
 								wordsonebyone.add(buildHtml.toString());
 							}
-							
+
 						}
 						brightred+=brightRedWord;
 						brightgreen+=brightGreenWord;
 					}
-					
+
 					totalNbOfWords+=tableauMotsEnAnalyseForms.length;
-					
+
 					for (String word:wordsonebyone){
 						sbForListHTML.append(word+ " ");
 					}
 					idsInHTMLFormat.add(sbForListHTML.toString());
 				}
-				
-//				long endTimeIDsCount = System.currentTimeMillis();
-//				System.out.println("****************");
-//				System.out.println("IDsCount : " +((endTimeIDsCount-startTimeIDsCount)/100) );
-//				System.out.println("****************");
-				
+
 				StringBuilder division=new StringBuilder();
 
 				/* converting to html */
@@ -432,25 +413,20 @@ public class StatisticalComparison {
 				ids.add(division.toString());
 				counterID++;
 			} 
-			
-			long endTimeIDs = System.currentTimeMillis();
-			System.out.println("****************");
-			System.out.println("ID analysis : " +((endTimeIDs-startTimeIDs)/1000) );
-			System.out.println("****************");
-			
+
 			brightgreen=(brightgreen*100)/totalNbOfWords;
 			brightred=(brightred*100)/totalNbOfWords;
 			averagesyntax=(averagesyntax*100)/listeElementsActuels.size();
 
-			String sourceFileName=("./outputFiles/html/"+racines.get(i).getAttributeValue("name").toLowerCase());
+			String sourceFileName=("./outputFiles/html/"+roots.get(name).getAttributeValue("name").toLowerCase());
 			String fileName="";
 			if (sourceFileName.contains("odyssee")){
 				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf(".xml"));
 			}
 			else {
-				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf("noms"));
+				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("chant")+5,sourceFileName.indexOf("noms"));
 			}
-			
+
 			String fileNamePath=fileName.replaceAll("_0", "_");
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream("./outputFiles/html/"+fileNamePath+".html"), "UTF-8"));
@@ -465,3 +441,4 @@ public class StatisticalComparison {
 		}
 	}
 }
+

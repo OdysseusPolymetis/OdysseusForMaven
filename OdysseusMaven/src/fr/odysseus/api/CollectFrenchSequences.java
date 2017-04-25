@@ -70,8 +70,8 @@ public class CollectFrenchSequences {
 					lemme=lemme.replaceAll("ù", "u");
 					lemme=lemme.replaceAll("é", "e");
 					lemme=lemme.replaceAll("ê", "e");
-					if (postag.contains("SENT")|postag.contains("NAM")){
-						if (postag.contains("NAM"))namesCompleteSet.add(lemme);
+					if (postag.contains("NAM")){
+						namesCompleteSet.add(lemme);
 						lemmes.add(lemme);
 						forms.add(eWord.getAttributeValue("form"));
 					}
@@ -183,7 +183,7 @@ public class CollectFrenchSequences {
 			sequences.getParentFile().mkdirs();
 			PrintWriter printSequences = new PrintWriter(sequences);
 			for (CharSequence sequence:sequencesForm){
-				printSequences.println(sequence.toString().replaceAll("SENT", ""));
+				printSequences.println(sequence.toString());
 			}
 			printSequences.close ();
 
@@ -200,7 +200,7 @@ public class CollectFrenchSequences {
 				pivotSequences.getParentFile().mkdirs();
 				PrintWriter printPivotSequences = new PrintWriter(pivotSequences);
 				for (CharSequence sequence:sequencesForm){
-					printPivotSequences.println(sequence.toString().replaceAll("SENT", ""));
+					printPivotSequences.println(sequence.toString());
 				}
 				printPivotSequences.close ();
 				XMLOutputter xmlPivot = new XMLOutputter();
@@ -214,7 +214,7 @@ public class CollectFrenchSequences {
 		File completeSet = new File(TARGET+"names/frenchNames/FrenchNames.txt");
 		completeSet.getParentFile().mkdirs();
 		FileWriter printCompleteSet = new FileWriter(completeSet, false);
-		namesCompleteSet.remove("SENT");
+//		namesCompleteSet.remove("SENT");
 		for (String nom:namesCompleteSet){
 			printCompleteSet.write (nom+"\n");
 		}
@@ -225,7 +225,7 @@ public class CollectFrenchSequences {
 		PrintWriter printW2V = new PrintWriter(w2V);
 
 		for (CharSequence nom:word2VecTraining){
-			printW2V.println (nom.toString().replaceAll("SENT ", ""));
+			printW2V.println (nom.toString());
 		}
 		printW2V.close ();
 	}

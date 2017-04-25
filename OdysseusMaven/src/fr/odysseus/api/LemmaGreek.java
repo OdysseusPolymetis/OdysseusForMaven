@@ -114,10 +114,10 @@ public class LemmaGreek {
 					tags.put(result,replacement);
 				}
 				
-				listeIntegraleForm.add("SENT");
-				listeIntegraleLemma.add("SENT");
-				lemmes.add("SENT");
-				forms.add("SENT");
+//				listeIntegraleForm.add("SENT");
+//				listeIntegraleLemma.add("SENT");
+//				lemmes.add("SENT");
+//				forms.add("SENT");
 			}
 			
 			

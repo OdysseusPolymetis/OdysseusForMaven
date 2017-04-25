@@ -34,14 +34,14 @@ public class FrenchTagger {
 	HashMap <String, String[]>tags;
 	final static String DICT="./sourceFiles/sourceDictionaries/";
 	static String greenList[]={"Minerve","Saturne","Agamemnon","Eurymaque","Atrée","Oreste", "Egisthe", "Polybe","Neptune","Ethiopien","Nestor","Ilion","Polyphème", 
-			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","cyclope", "cyclopes","Calypso", "Muse", "Mante", "Ope", "Ithaquois", 
+			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","cyclope", "cyclopes","Calypso", "Muse", "Mante","Mentes", "Ope", "Ithaquois", 
 			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie","éthiopien", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
 			"Sparte", "grecs", "Atlas", "Thon","Alcippé", "Océan", "zéphyr", "Iphthimé", "Halosydné", "Sunion","Pergame","Ethiopiens","Mermeride",
 			"Havre", "phénicien","Phénicien", "Phéniciens","Phrygiens","Phrygien", "Nègres","Nègre","Panachéens","Laertes","Egiste","argiens","argien","argienne","argiennes",
 			"Argus",
 			"Argos","Harpyes","Harpye","Harpies","Harpie","Mycène","Mentor","Vulcain","Spartiate","Spartiates","Myrmidons","Myrmidon","Pléiades",
 			"Amphitryon","Œdipe","Oedipe","Sirènes","Sirène","Crétois","Furies","Furie","Égyptien","Égyptiens","Élide","Géants","Géant","troyen","troyens",
-			"Troyen","Troyens","Grâces","Cassandre","Hypérion","Naïades","Corbeau","Ciel","Doriens","Muses"};
+			"Troyen","Troyens","Grâces","Cassandre","Hypérion","Naïades","Corbeau","Ciel","Doriens","Muses","Mimas","Péan","Aurore","aurore"};
 	static String bugAlix[]={"Indignez"};
 	static String punctLemma[]={",",";",":","!","?",".","(",")","\"","'","/"};
 	
@@ -293,8 +293,8 @@ public class FrenchTagger {
 					for (int counterSent=0;counterSent<sentences.size()-1;counterSent++){
 						Element sent=new Element("sentence");
 						Element punc=new Element("word");
-						punc.setAttribute("form", "SENT");
-						punc.setAttribute("lemma", "SENT");
+						punc.setAttribute("form", ".");
+						punc.setAttribute("lemma", ".");
 						punc.setAttribute("postag", "SENT");
 						for (String []word:sentences.get(counterSent)){
 							if (!word[0].matches("-[LRB]{3,}-")){
