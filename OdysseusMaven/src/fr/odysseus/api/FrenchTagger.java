@@ -29,10 +29,10 @@ import fr.odysseus.utils.Lemmatizers;
  * tags all raw text in French, using openNLP, TreeTagger, Stanford Tagger, and small local blacklists or greenlists (provided with the program)
  */
 public class FrenchTagger {
-	final static String SOURCE="./sourceFiles/plainTxtByBook/";
-	final static String OUT="./sourceFiles/xml/frenchXML/";
+	final static String SOURCE="./input/books/";
+	final static String OUT="./input/xml/frxml/";
 	HashMap <String, String[]>tags;
-	final static String DICT="./sourceFiles/sourceDictionaries/";
+	final static String DICT="./input/dict/";
 	static String greenList[]={"Minerve","Saturne","Agamemnon","Eurymaque","Atrée","Oreste", "Egisthe", "Polybe","Neptune","Ethiopien","Nestor","Ilion","Polyphème", 
 			"Ops","Grecs","Achéens","Cronos","Soleil","soleil", "Olympien","olympien","Cyclope","Cyclopes","cyclope", "cyclopes","Calypso", "Muse", "Mante","Mentes", "Ope", "Ithaquois", 
 			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie","éthiopien", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
@@ -268,7 +268,7 @@ public class FrenchTagger {
 					
 					System.out.println("Stockage en XML du fichier "+fileName);
 					Element root = new Element("root");
-					Element book=new Element ("book"+fileName.substring(fileName.lastIndexOf("Chant")+5));
+					Element book=new Element ("book"+fileName.substring(fileName.lastIndexOf("_")+1));
 					Document doc = new Document(root);
 					
 					List<List<String[]>> sentences = motsTags.stream()

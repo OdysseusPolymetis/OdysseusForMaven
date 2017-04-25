@@ -23,9 +23,9 @@ import fr.odysseus.utils.NamesPatternMatcher;
  */
 public class LemmaGreek {
 
-	final static String SOURCE="./sourceFiles/xml/GreekXML/";
-	final static String TARGETSEQ="./sourceFiles/sequences/greekSequences/";
-	final static String TARGETNAM="./sourceFiles/names/greekNames/";
+	final static String SOURCE="./input/xml/grxml/";
+	final static String TARGETSEQ="./input/seq/grSeq/";
+	final static String TARGETNAM="./input/names/grname/";
 	public LemmaGreek() throws Exception{
 
 		System.out.println("Début du tagging grec");
@@ -36,7 +36,7 @@ public class LemmaGreek {
 		HashSet<String>setNomsGrecsLemmaNForms=new HashSet<String>();
 
 		for (File file:listeFilesChants){
-			String numChant=file.getName().substring(file.getName().lastIndexOf("Chant")+5, file.getName().indexOf(".xml"));
+			String numChant=file.getName().substring(file.getName().lastIndexOf("_")+1, file.getName().indexOf(".xml"));
 			File fichierXML=new File(SOURCE+file.getName());
 			SAXBuilder builder = new SAXBuilder();
 			Document document;
@@ -233,11 +233,11 @@ public class LemmaGreek {
 			}
 			XMLOutputter xmlOutput = new XMLOutputter();
 			xmlOutput.setFormat(Format.getPrettyFormat());
-			if (Integer.parseInt(numChant)<10){
-				File fileOut = new File(TARGETSEQ+"Chant0"+numChant+"/Odyssee1000Chant0"+numChant+"NomsCoupe.xml");
+//			if (Integer.parseInt(numChant)<10){
+				File fileOut = new File(TARGETSEQ+"chant"+numChant+"/odyssee1000_"+numChant+".xml");
 				fileOut.getParentFile().mkdirs();
 				xmlOutput.output(doc, new FileWriter(fileOut));
-				File fileListNoms = new File(TARGETNAM+"Odyssee1000Chant0"+numChant+".txt");
+				File fileListNoms = new File(TARGETNAM+"odyssee1000_"+numChant+".txt");
 				fileListNoms.getParentFile().mkdirs();
 				PrintWriter printWriterListNoms = new PrintWriter(fileListNoms);
 
@@ -248,22 +248,22 @@ public class LemmaGreek {
 					
 				}
 				printWriterListNoms.close ();
-			}
-			else{
-				File fileOut = new File(TARGETSEQ+"Chant"+numChant+"/Odyssee1000Chant"+numChant+"NomsCoupe.xml");
-				fileOut.getParentFile().mkdirs();
-				xmlOutput.output(doc, new FileWriter(fileOut));
-				File fileListNoms = new File(TARGETNAM+"Odyssee1000Chant"+numChant+".txt");
-				fileListNoms.getParentFile().mkdirs();
-				FileWriter printWriterListNoms = new FileWriter(fileListNoms,false);
-
-				for (String nom:listNomsGrecsLemmaNForms){
-					if (!nom.contains("SENT")){
-						printWriterListNoms.write (nom);
-					}
-				}
-				printWriterListNoms.close ();
-			}
+//			}
+//			else{
+//				File fileOut = new File(TARGETSEQ+"chant"+numChant+"/odyssee1000_"+numChant+".xml");
+//				fileOut.getParentFile().mkdirs();
+//				xmlOutput.output(doc, new FileWriter(fileOut));
+//				File fileListNoms = new File(TARGETNAM+"odyssee1000_"+numChant+".txt");
+//				fileListNoms.getParentFile().mkdirs();
+//				FileWriter printWriterListNoms = new FileWriter(fileListNoms,false);
+//
+//				for (String nom:listNomsGrecsLemmaNForms){
+//					if (!nom.contains("SENT")){
+//						printWriterListNoms.write (nom);
+//					}
+//				}
+//				printWriterListNoms.close ();
+//			}
 			System.out.println("Done : "+file.getName());
 		}
 		File fileSetNoms = new File(TARGETNAM+"GreekNames.txt");

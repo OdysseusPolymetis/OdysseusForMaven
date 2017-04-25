@@ -22,11 +22,11 @@ import fr.odysseus.utils.NamesPatternMatcher;
  * gets all the attributes and rearrange them in suitable xml sequences for alignement
  */
 public class CollectFrenchSequences {
-	final static String SOURCE="./sourceFiles/xml/frenchXML/";
-	final static String TARGET="./sourceFiles/";
-	final static String DICOVEK="./sourceFiles/sourceDictionaries/repertoireDicovek/";
-	final static String W2V="./sourceFiles/sourceDictionaries/word2Vec/";
-	final static String PIVOT="./sourceFiles/sequences/pivot/";
+	final static String SOURCE="./input/xml/frxml/";
+	final static String TARGET="./input/";
+	final static String DICOVEK="./input/dict/dicovek/";
+	final static String W2V="./input/dict/wtov/";
+	final static String PIVOT="./input/seq/pivot/";
 	public CollectFrenchSequences() throws Exception{
 		System.out.println("Début du ramassage des tags et du séquençage");
 		File fileRoot=new File(SOURCE);
@@ -38,15 +38,13 @@ public class CollectFrenchSequences {
 		List<CharSequence>word2VecTraining=new ArrayList<>();
 
 		for (File file:listeFilesChants){
-			String fileName=file.getName().substring(0,file.getName().lastIndexOf("Chant"));
-			String numChant=file.getName().substring(file.getName().lastIndexOf("Chant")+5, file.getName().indexOf(".xml"));
+			String fileName=file.getName().substring(0,file.getName().lastIndexOf("_"));
+			String numChant=file.getName().substring(file.getName().lastIndexOf("_")+1, file.getName().indexOf(".xml"));
 			File fichierXML=new File(SOURCE+file.getName());
 			SAXBuilder builder = new SAXBuilder();
-			Document document;
-			document = builder.build(fichierXML);
+			Document document= builder.build(fichierXML);
 
 			Element rootNode = document.getRootElement();
-
 			Element book=rootNode.getChild("book"+numChant);
 			List<Element> listeSentences = book.getChildren("sentence");
 
@@ -165,10 +163,10 @@ public class CollectFrenchSequences {
 			}
 			XMLOutputter xmlOutput = new XMLOutputter();
 			xmlOutput.setFormat(Format.getPrettyFormat());
-			File fileOut = new File(TARGET+"/sequences/frenchSequences/Chant"+numChant+"/"+fileName+"Chant"+numChant+"NomsCoupe.xml");
+			File fileOut = new File(TARGET+"/seq/frSeq/chant"+numChant+"/"+fileName.toLowerCase()+"_"+numChant+".xml");
 			fileOut.getParentFile().mkdirs();
 			xmlOutput.output(doc, new FileWriter(fileOut));
-			File fileListNoms = new File(TARGET+"/names/frenchNames/"+fileName+"Chant"+numChant+".txt");
+			File fileListNoms = new File(TARGET+"/names/frname/"+fileName.toLowerCase()+"_"+numChant+".txt");
 			fileListNoms.getParentFile().mkdirs();
 			PrintWriter printWriterListNoms = new PrintWriter(fileListNoms);
 			
@@ -179,7 +177,7 @@ public class CollectFrenchSequences {
 			}
 			printWriterListNoms.close ();
 
-			File sequences = new File(TARGET+"/sequences/frenchSequences/Chant"+numChant+"/"+fileName+"Chant"+numChant+"NomsCoupe.txt");
+			File sequences = new File(TARGET+"/seq/frSeq/chant"+numChant+"/"+fileName.toLowerCase()+"_"+numChant+".txt");
 			sequences.getParentFile().mkdirs();
 			PrintWriter printSequences = new PrintWriter(sequences);
 			for (CharSequence sequence:sequencesForm){
@@ -187,7 +185,7 @@ public class CollectFrenchSequences {
 			}
 			printSequences.close ();
 
-			File sequencesPrintLemma = new File(DICOVEK+"Chant"+numChant+"/"+fileName+"Chant"+numChant+"Lemma.txt");
+			File sequencesPrintLemma = new File(DICOVEK+"chant"+numChant+"/"+fileName+"_"+numChant+"Lemma.txt");
 			sequencesPrintLemma.getParentFile().mkdirs();
 			PrintWriter printLemmatizedSequences = new PrintWriter(sequencesPrintLemma);
 			for (CharSequence sequence:sequencesLemma){
@@ -195,8 +193,8 @@ public class CollectFrenchSequences {
 			}
 			printLemmatizedSequences.close ();
 
-			if (fileName.contains("Sommer")){
-				File pivotSequences = new File(PIVOT+"Chant"+numChant+"/"+fileName+"Chant"+numChant+"NomsCoupe.txt");
+			if (fileName.contains("sommer")){
+				File pivotSequences = new File(PIVOT+"chant"+numChant+"/"+fileName.toLowerCase()+"_"+numChant+".txt");
 				pivotSequences.getParentFile().mkdirs();
 				PrintWriter printPivotSequences = new PrintWriter(pivotSequences);
 				for (CharSequence sequence:sequencesForm){
@@ -205,13 +203,13 @@ public class CollectFrenchSequences {
 				printPivotSequences.close ();
 				XMLOutputter xmlPivot = new XMLOutputter();
 				xmlPivot.setFormat(Format.getPrettyFormat());
-				File filePivot = new File(PIVOT+"Chant"+numChant+"/"+fileName+"Chant"+numChant+"NomsCoupe.xml");
+				File filePivot = new File(PIVOT+"chant"+numChant+"/"+fileName.toLowerCase()+"_"+numChant+".xml");
 				filePivot.getParentFile().mkdirs();
 				xmlPivot.output(doc, new FileWriter(filePivot));
 			}
 			System.out.println("Done for : "+fileName);
 		}
-		File completeSet = new File(TARGET+"names/frenchNames/FrenchNames.txt");
+		File completeSet = new File(TARGET+"names/frname/FrenchNames.txt");
 		completeSet.getParentFile().mkdirs();
 		FileWriter printCompleteSet = new FileWriter(completeSet, false);
 //		namesCompleteSet.remove("SENT");

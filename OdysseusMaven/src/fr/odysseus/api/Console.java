@@ -8,7 +8,21 @@ import java.util.Scanner;
  */
 public class Console {
 	
-	final static String SOURCE="./sourceFiles/plainTxt";
+	final static String SOURCE="./input/txts";
+	static final String SEQUENCESFR="./input/seq/frSeq/";
+	static final String SEQUENCESGR="./input/seq/grSeq/";
+	static final String SEQUENCESLAT="./input/seq/latSeq/";
+	static final String PUNCT="./input/seq/grPct/";
+	static final String PIVOT="./input/seq/pivot/";
+	public static final String NAMESFR="./input/names/frname/";
+	public static final String NAMESGR="./input/names/grname/";
+	static final String DICOVEK="./input/dict/dicovek/";
+	static final String W2V="./input/dict/wtov/";
+	static final String GRDICT="./input/dict/dict.tsv";
+	static final String OUTPUTDICT="./output/dict/wtov/";
+	static final String OUTPUT="./output/";
+	static final String OUTPUTXML="./output/xml/";
+	static final String OUTPUTHTML="./output/html/";
 	public static void main(String[] args) throws Exception {
 
 		long startTime = System.currentTimeMillis();

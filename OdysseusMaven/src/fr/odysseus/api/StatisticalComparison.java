@@ -62,7 +62,7 @@ public class StatisticalComparison {
 	 */
 	public void automaticComparison() throws IOException, BadLocationException, JDOMException{
 
-		File mainDir=new File("./outputFiles/xml/");
+		File mainDir=new File(Console.OUTPUTXML);
 		String ext[]={"xml"};
 		repertoireSource=new HashMap<String,File>();
 		Collection<File>tmpColl=FileUtils.listFiles(mainDir, ext, true); /* creating source directory with all roots */
@@ -87,7 +87,7 @@ public class StatisticalComparison {
 	 */
 	public void insertHTML(HashMap<String, Element>roots) throws BadLocationException, IOException, JDOMException
 	{
-		HashSet<String> stopWords = new HashSet<String>(FileUtils.readLines(new File("./sourceFiles/sourceDictionaries/stopWords.txt"))); /* listing all stopwords */
+		HashSet<String> stopWords = new HashSet<String>(FileUtils.readLines(new File("./input/dict/stopWords.txt"))); /* listing all stopwords */
 
 		GeneralizedJaccard<String>jaccard=new GeneralizedJaccard<>();
 		//		LevenshteinDistance distance=new LevenshteinDistance();
@@ -99,10 +99,10 @@ public class StatisticalComparison {
 			int averagesyntax=0;
 			int totalNbOfWords=0;
 			String nomFichierEnCours=roots.get(name).getAttributeValue("name");
-			String nomCommun=nomFichierEnCours.substring(nomFichierEnCours.lastIndexOf("Chant"));
+			String nomCommun=nomFichierEnCours.substring(nomFichierEnCours.lastIndexOf("_"));
 
 			HashSet<File>tmpOthFi=new HashSet<File>();
-			Files.walk(Paths.get("./outputFiles/xml/"))
+			Files.walk(Paths.get(Console.OUTPUTXML))
 			.filter(Files::isRegularFile)
 			.forEach((f)->{
 				String file = f.toString();
@@ -153,10 +153,10 @@ public class StatisticalComparison {
 				List<Element>total=new ArrayList<Element>();
 				StringBuilder stringbuild=new StringBuilder();
 
-				String chantActuel=nomFichierEnCours.substring(nomFichierEnCours.lastIndexOf("Chant"), nomFichierEnCours.lastIndexOf("Chant")+7);
+				String chantActuel=nomFichierEnCours.substring(nomFichierEnCours.lastIndexOf("_")+1, nomFichierEnCours.lastIndexOf("_")+3);
 				SAXBuilder sxb=new SAXBuilder();
 				Document documentSource=sxb.build(
-						new File("./sourceFiles/sequences/greekPunct/Odyssee1000"+chantActuel+".xml")); /* File to compare Greek syntax */
+						new File(Console.PUNCT+"odyssee1000_"+chantActuel+".xml")); /* File to compare Greek syntax */
 				Element racineSource=documentSource.getRootElement();
 				Element IDSource=racineSource.getChild("ID"+counterID);
 				String []tagSource=IDSource.getAttributeValue("tag").split(" "); /* all postags from Greek */
@@ -272,13 +272,13 @@ public class StatisticalComparison {
 				othersAndLeven[0]=stringbuild.toString();
 				othersAndLeven[1]=String.valueOf(percentDist);
 				tableauDeCorrespondances.put(lemmaAndForm, othersAndLeven);
-				String sourceFileName=("./outputFiles/html/"+roots.get(name).getAttributeValue("name").toLowerCase());
+				String sourceFileName=(Console.OUTPUTHTML+roots.get(name).getAttributeValue("name").toLowerCase());
 				String fileName="";
 				if (sourceFileName.contains("odyssee")){
-					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf(".xml"));
+					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("_"))+"_"+sourceFileName.substring(sourceFileName.indexOf("_")+1,sourceFileName.indexOf(".xml"));
 				}
 				else {
-					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("chant")+5,sourceFileName.indexOf("noms"));
+					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("_"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("_")+1,sourceFileName.indexOf(".xml"));
 				}
 
 				//				System.out.println("les lemmes : "+lemmaAndForm[0]);
@@ -418,18 +418,18 @@ public class StatisticalComparison {
 			brightred=(brightred*100)/totalNbOfWords;
 			averagesyntax=(averagesyntax*100)/listeElementsActuels.size();
 
-			String sourceFileName=("./outputFiles/html/"+roots.get(name).getAttributeValue("name").toLowerCase());
+			String sourceFileName=(Console.OUTPUTHTML+roots.get(name).getAttributeValue("name").toLowerCase());
 			String fileName="";
 			if (sourceFileName.contains("odyssee")){
-				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.indexOf("chant")+5,sourceFileName.indexOf(".xml"));
+				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("_"))+"_"+sourceFileName.substring(sourceFileName.indexOf("_")+1,sourceFileName.indexOf(".xml"));
 			}
 			else {
-				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("chant"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("chant")+5,sourceFileName.indexOf("noms"));
+				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("_"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("_")+1,sourceFileName.indexOf(".xml"));
 			}
 
 			String fileNamePath=fileName.replaceAll("_0", "_");
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream("./outputFiles/html/"+fileNamePath+".html"), "UTF-8"));
+					new FileOutputStream(Console.OUTPUTHTML+fileNamePath+".html"), "UTF-8"));
 			writer.write("<section id=\""+fileName+"\" class=\"parallel\" title=\"Statistiques générales : \nHaute Fréquence : "+brightgreen+" ;\nBasse Fréquence : "
 					+brightred+" ;\nProximité Syntaxique : "+averagesyntax+"\">");
 

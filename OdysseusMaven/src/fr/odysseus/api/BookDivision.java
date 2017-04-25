@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  */
 public class BookDivision {
 
-	final static String OUT="./sourceFiles/plainTxtByBook/";
+	final static String OUT="./input/books/";
 	public void frenchBookDivision(File[] repertoire) throws Exception {
 		
 		for (File file:repertoire){
@@ -47,27 +47,27 @@ public class BookDivision {
 			}  
 			
 			for (String titleChant:numText.keySet()){
-				String nomDeBaseDuFichier=file.getName().substring(0, file.getName().indexOf(".txt"));
+				String nomDeBaseDuFichier=file.getName().substring(0, file.getName().indexOf(".txt")).toLowerCase();
 				String numChant=titleChant.substring(5);
 				int intNum=Integer.valueOf(numChant);
 				Writer writer;
 				if (Integer.valueOf(numChant)<10){
-					Path pathToFile = Paths.get(OUT+"Chant0"+(intNum)+"/");
-					File filePerBook =new File(OUT+"Chant0"+(intNum)+"/"+nomDeBaseDuFichier+"Chant0"+(intNum)+".txt");
+					Path pathToFile = Paths.get(OUT+"chant0"+(intNum)+"/");
+					File filePerBook =new File(OUT+"chant0"+(intNum)+"/"+nomDeBaseDuFichier+"_0"+(intNum)+".txt");
 					if (!filePerBook.getParentFile().isDirectory()){
 						Files.createDirectories(pathToFile);
 					}
 					writer = new BufferedWriter(new OutputStreamWriter(
-						    new FileOutputStream(OUT+"Chant0"+(intNum)+"/"+nomDeBaseDuFichier+"Chant0"+(intNum)+".txt"), "UTF-8"));
+						    new FileOutputStream(OUT+"Chant0"+(intNum)+"/"+nomDeBaseDuFichier+"_0"+(intNum)+".txt"), "UTF-8"));
 				}
 				else{
-					Path pathToFile = Paths.get(OUT+"Chant"+(intNum)+"/");
-					File filePerBook =new File(OUT+"Chant"+(intNum)+"/"+nomDeBaseDuFichier+"Chant"+(intNum)+".txt");
+					Path pathToFile = Paths.get(OUT+"chant"+(intNum)+"/");
+					File filePerBook =new File(OUT+"chant"+(intNum)+"/"+nomDeBaseDuFichier+"_"+(intNum)+".txt");
 					if (!filePerBook.getParentFile().isDirectory()){
 						Files.createDirectories(pathToFile);
 					}
 					writer = new BufferedWriter(new OutputStreamWriter(
-						    new FileOutputStream(OUT+"Chant"+(intNum)+"/"+nomDeBaseDuFichier+"Chant"+(intNum)+".txt"), "UTF-8"));
+						    new FileOutputStream(OUT+"chant"+(intNum)+"/"+nomDeBaseDuFichier+"_"+(intNum)+".txt"), "UTF-8"));
 				}
 				String chant=numText.get(titleChant);
 				chant=chant.replaceAll("[*]", "");

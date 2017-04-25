@@ -29,19 +29,6 @@ import fr.odysseus.utils.dictionary.CloseMatcher;
 
 public class AligningProcess{
 
-	public static final String SOURCE_HOME=".";
-	static final String SEQUENCESFR="./sourceFiles/sequences/frenchSequences/";
-	static final String SEQUENCESGR="./sourceFiles/sequences/greekSequences/";
-	static final String SEQUENCESLAT="./sourceFiles/sequences/latinSequences/";
-	static final String PUNCT="./sourceFiles/sequences/greekPunct/";
-	static final String PIVOT="./sourceFiles/sequences/pivot/";
-	static final String NAMESFR="./sourceFiles/names/frenchNames/";
-	static final String NAMESGR="./sourceFiles/names/greekNames/";
-	static final String DICOVEK="./sourceFiles/sourceDictionaries/repertoireDicovek/";
-	static final String W2V="./sourceFiles/sourceDictionaries/word2Vec/";
-	static final String GRDICT="./sourceFiles/sourceDictionaries/dict.tsv";
-	static final String OUTPUTDICT="./outputFiles/dictionaries/word2Vec/";
-	static final String OUTPUT="./outputFiles/";
 	CloseMatcher close;
 	private double gapPenality;
 	private HashMap<String, Set<String>> dictionary;
@@ -105,7 +92,7 @@ public class AligningProcess{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		BufferedReader in = new BufferedReader(new FileReader(GRDICT));
+		BufferedReader in = new BufferedReader(new FileReader(Console.GRDICT));
         String line;
         grFrDict=new HashMap<String, HashSet<String>>();
         while ((line = in.readLine()) != null) {
@@ -134,7 +121,7 @@ public class AligningProcess{
 	}
 
 	public void parcoursFichiers() throws Exception{
-		File fileTest = new File(SEQUENCESFR);
+		File fileTest = new File(Console.SEQUENCESFR);
 		String[] directories = fileTest.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File current, String name) {
@@ -153,7 +140,7 @@ public class AligningProcess{
 			else{
 				indexChant=""+(compteurFichiers+1);
 			}
-			File dir = new File(SEQUENCESFR+"Chant"+ indexChant);
+			File dir = new File(Console.SEQUENCESFR+"chant"+ indexChant);
 			
 			
 			File[] filesParChant = dir.listFiles(new FilenameFilter() {
@@ -164,7 +151,7 @@ public class AligningProcess{
 			
 			for (File file : filesParChant) {
 				if (!file.getName().contains("Odyssee")){
-					Path path = Paths.get( SEQUENCESFR+"Chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".txt");
+					Path path = Paths.get( Console.SEQUENCESFR+"chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".txt");
 					
 					String text = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 					
@@ -179,9 +166,9 @@ public class AligningProcess{
 
 		
 		WordToVec vec=new WordToVec();
-		setDistribDict(vec.wordToVec(setMotsTexte, W2V+"RepertoireW2V.txt", W2V+"WordToVek.txt"));
+		setDistribDict(vec.wordToVec(setMotsTexte, Console.W2V+"RepertoireW2V.txt", Console.W2V+"WordToVek.txt"));
 
-		CreateFiles.saveDistribDictToCSV(getDistribDict(), OUTPUTDICT);
+		CreateFiles.saveDistribDictToCSV(getDistribDict(), Console.OUTPUTDICT);
 		for (int compteurFichiers = 0; compteurFichiers < directories.length; compteurFichiers++) {
 			String indexChant="";
 			if (compteurFichiers<9){
@@ -190,7 +177,7 @@ public class AligningProcess{
 			else{
 				indexChant=""+(compteurFichiers+1);
 			}
-			File dir = new File(SEQUENCESFR+"Chant"+ indexChant);
+			File dir = new File(Console.SEQUENCESFR+"chant"+ indexChant);
 			
 			File[] filesParChant = dir.listFiles(new FilenameFilter() {
 			    public boolean accept(File dir, String name) {
@@ -201,20 +188,20 @@ public class AligningProcess{
 			for (File file : filesParChant) {
 				ResourceCollection myTexts = ResourceCollection.newInstance();
 				
-					myTexts.addText("sequencesFrancaises", SEQUENCESFR+"Chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
-					myTexts.addText("sequencesLatines", SEQUENCESLAT+"Chant" + indexChant + "/" + "OdysseeLat1000Chant"+ indexChant + "NomsCoupe.xml");
-					myTexts.addAtt("sequencesFrancaisesLemmes", "lemma", SEQUENCESFR+"Chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
-					myTexts.addAtt("sequencesLatinesLemmes", "lemma", SEQUENCESLAT+"Chant" + indexChant + "/" + "OdysseeLat1000Chant"+ indexChant + "NomsCoupe.xml");
-					myTexts.addAtt("sequencesFrancaisesTags", "tag", SEQUENCESFR+"Chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
-					myTexts.addAtt("sequencesLatinesTags", "tag", SEQUENCESLAT+"Chant" + indexChant + "/" + "OdysseeLat1000Chant"+ indexChant + "NomsCoupe.xml");
-					myTexts.addText("sequencesGrecques", SEQUENCESGR+"Chant" + indexChant + "/" +"Odyssee1000Chant"+ indexChant + "NomsCoupe.xml");
-					myTexts.addAtt("sequencesGrecquesLemmes", "lemma", SEQUENCESGR+"Chant" + indexChant + "/" +"Odyssee1000Chant"+ indexChant + "NomsCoupe.xml");
-					myTexts.addAtt("sequencesGrecquesTags", "tag", SEQUENCESGR+"Chant" + indexChant + "/" +"Odyssee1000Chant"+ indexChant + "NomsCoupe.xml");
-					myTexts.addAtt("sequencesPivotLemmes","lemma", PIVOT+"Chant" + indexChant + "/" + "Sommer1886Chant" + indexChant + "NomsCoupe.xml");
-					myTexts.addText("sequencesPivot", PIVOT+"Chant" + indexChant + "/" + "Sommer1886Chant" + indexChant + "NomsCoupe.xml");
+					myTexts.addText("seqFr", Console.SEQUENCESFR+"chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addText("seqLat", Console.SEQUENCESLAT+"chant" + indexChant + "/" + "odysseelat1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqFrLem", "lemma", Console.SEQUENCESFR+"chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addAtt("seqLatLem", "lemma", Console.SEQUENCESLAT+"chant" + indexChant + "/" + "odysseelat1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqFrTag", "tag", Console.SEQUENCESFR+"chant" + indexChant + "/" + FilenameUtils.getBaseName(file.getName()) + ".xml");
+					myTexts.addAtt("seqLatTag", "tag", Console.SEQUENCESLAT+"chant" + indexChant + "/" + "odysseelat1000_"+ indexChant + ".xml");
+					myTexts.addText("seqGr", Console.SEQUENCESGR+"chant" + indexChant + "/" +"odyssee1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqGrLem", "lemma", Console.SEQUENCESGR+"chant" + indexChant + "/" +"odyssee1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqGrTag", "tag", Console.SEQUENCESGR+"chant" + indexChant + "/" +"odyssee1000_"+ indexChant + ".xml");
+					myTexts.addAtt("seqPiLem","lemma", Console.PIVOT+"chant" + indexChant + "/" + "sommer1886_" + indexChant + ".xml");
+					myTexts.addText("seqPi", Console.PIVOT+"chant" + indexChant + "/" + "sommer1886_" + indexChant + ".xml");
 				
 				
-				String nomFichier = StringUtils.substringBefore(file.getName(), "Noms");
+				String nomFichier = StringUtils.substringBefore(file.getName(), ".xml");
 				System.out.println("*********************************************************************************************");
 				System.out.println("********************PREMIER ALIGNEMENT POUR LE FICHIER " + nomFichier + "************************");
 				System.out.println("*********************************************************************************************");
@@ -227,17 +214,17 @@ public class AligningProcess{
 				aligner.setDictionary(getDictionary());
 				aligner.setTrgFrequency(getTrgFrequency());
 				
-				String fileBaseName=file.getName().substring(0, file.getName().indexOf("NomsCoupe"));
-				nouvelleListe=aligner.alignment(fileBaseName,NAMESFR, myTexts, getDictionary(), "sequencesFrancaises");
-				File directory = new File(OUTPUT+"xml/Chant"+indexChant+"/");
+				String fileBaseName=file.getName().substring(0, file.getName().indexOf("."));
+				nouvelleListe=aligner.alignment(fileBaseName,Console.NAMESFR, myTexts, getDictionary(), "seqFr");
+				File directory = new File(Console.OUTPUT+"xml/chant"+indexChant+"/");
 				if (!directory.exists()){
 					directory.mkdirs();
 				}
-				CreateFiles.createXMLFromNWRecordListByBook(OUTPUT+"xml/Chant"+indexChant+"/"+file.getName(), nouvelleListe);
+				CreateFiles.createXMLFromNWRecordListByBook(Console.OUTPUT+"xml/chant"+indexChant+"/"+file.getName(), nouvelleListe);
 				if (doneOnce==false){
 					aligner.setGrFr(grFrDict);
-					nouvelleListeGrecque=aligner.alignment("Odyssee1000Chant"+indexChant,NAMESGR, myTexts, getDictionary(), "sequencesGrecques");
-					CreateFiles.createXMLFromNWRecordListByBook(PUNCT+"Odyssee1000Chant"+indexChant+".xml", nouvelleListeGrecque);	
+					nouvelleListeGrecque=aligner.alignment("odyssee1000_"+indexChant,Console.NAMESGR, myTexts, getDictionary(), "seqGr");
+					CreateFiles.createXMLFromNWRecordListByBook(Console.PUNCT+"odyssee1000_"+indexChant+".xml", nouvelleListeGrecque);	
 				}
 				doneOnce=true;
 			}

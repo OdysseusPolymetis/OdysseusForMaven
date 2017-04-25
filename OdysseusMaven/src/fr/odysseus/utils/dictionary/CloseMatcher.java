@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Set;
 import org.simmetrics.metrics.Levenshtein;
 import edu.unc.epidoc.transcoder.TransCoder;
+import fr.odysseus.api.Console;
 /**
  * @author Angelo Del Grosso
  * @author Marianne Reboul
  */
 public class CloseMatcher {
-	static final String NAMES="./sourceFiles/names/";
 	
 	String correc[][]={{"Arcésios","Ἀρκεισιάδης"},{"Argus","Ἀργειφόντης"},{"Argiens","Grecs"},{"Aurore","Ἠώς","soleil"},{"Diane","Ἄρτεμις"},{"dieu_qui_ébranle_la_terre","Ἐννοσίγαιος"},
 	{"dieu_puissant_qui_ébranle_la_terre","Neptune"},{"Eumee","Εὔμαιος","Συβώτης"},{"Euryclée","Εὐρύκλεια"},{"gisthe","Égysthe","Egyste"},{"Harpyes","Ἅρπυιαι"},
@@ -92,8 +92,8 @@ public class CloseMatcher {
 		return numMatches;
 	}
 	public HashMap<String, Set<String>> getDictionary() throws Exception {
-		Path pathFrench=Paths.get(NAMES+"frenchNames/FrenchNames.txt");
-		Path pathGreek=Paths.get(NAMES+"greekNames/GreekNames.txt");
+		Path pathFrench=Paths.get(Console.NAMESFR+"FrenchNames.txt");
+		Path pathGreek=Paths.get(Console.NAMESGR+"GreekNames.txt");
 		List<String> french=Files.readAllLines(pathFrench);
 		List<String> greek=Files.readAllLines(pathGreek);
     for (String word:french){

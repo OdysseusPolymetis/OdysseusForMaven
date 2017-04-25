@@ -10,23 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import fr.odysseus.api.Console;
 import fr.odysseus.dataModels.NWRecord;
 import fr.odysseus.dataModels.ResourceCollection;
 import fr.odysseus.utils.dictionary.CloseMatcher;
 
 public class Aligner {
 
-	public static final String SOURCE_HOME=".";
-	static final String SEQUENCESFR="./sourceFiles/sequences/frenchSequences/";
-	static final String SEQUENCESGR="./sourceFiles/sequences/greekPunct/";
-	static final String SEQUENCESLAT="./sourceFiles/sequences/latinSequences/";
-	static final String PUNCT="./sourceFiles/sequences/greekPunct/";
-	static final String PIVOT="./sourceFiles/sequences/pivot/";
-	static final String NAMESFR="./sourceFiles/names/frenchNames/";
-	static final String DICOVEK="./sourceFiles/sourceDictionaries/repertoireDicovek/";
-	static final String W2V="./sourceFiles/sourceDictionaries/word2Vec/";
-	static final String OUTPUTDICT="./outputFiles/dictionaries/word2Vec/";
-	static final String OUTPUT="./outputFiles/";
+//	static final String NAMESFR="./input/names/frname/";
 	CloseMatcher close;
 	private double gapPenality;
 	private HashMap<String, Set<String>> dictionary;
@@ -82,21 +73,21 @@ public class Aligner {
 
 	public LinkedList<NWRecord> alignment(String fileName,String path, ResourceCollection myTexts, HashMap<String, Set<String>> dictionary, String sequences) throws Exception {
 		NeedlemanWunsch nw= new NeedlemanWunsch();
-		String numChant=fileName.substring(fileName.indexOf("Chant")+5);
+		String numChant=fileName.substring(fileName.indexOf("_")+1);
 		long startTime = System.currentTimeMillis();
 		this.setGapPenality(0.0);
 		setDictionary(dictionary);
 		setDistribDict(getDistribDict());
 		Path pathTrg=Paths.get(path+fileName+".txt");
-		Path pathSrc=Paths.get(NAMESFR+"Sommer1886Chant"+numChant+".txt");
+		Path pathSrc=Paths.get(Console.NAMESFR+"Sommer1886_"+numChant+".txt");
 		List<String> noms = Files.readAllLines(pathTrg, StandardCharsets.UTF_8);
 		List<String> nomsGr = Files.readAllLines(pathSrc, StandardCharsets.UTF_8);
 		setSrcFrequency(Frequency.frequency(nomsGr));
 		setTrgFrequency(Frequency.frequency(noms));
 		LinkedList<NWRecord> maListe=new LinkedList<NWRecord>();
 		nw.setGrFr(grFrDict);
-		maListe = nw.PerformAlignment(myTexts.getLemmaLines("sequencesPivotLemmes"), myTexts.getLemmaLines(sequences+"Lemmes"),
-				myTexts.getTextLines(sequences), myTexts.getTagLines(sequences+"Tags"), getDictionary(), getDistribDict(), getSrcFrequency(),getTrgFrequency());
+		maListe = nw.PerformAlignment(myTexts.getLemmaLines("sequencesPivotLemmes"), myTexts.getLemmaLines(sequences+"Lem"),
+				myTexts.getTextLines(sequences), myTexts.getTagLines(sequences+"Tag"), getDictionary(), getDistribDict(), getSrcFrequency(),getTrgFrequency());
 		
 
 

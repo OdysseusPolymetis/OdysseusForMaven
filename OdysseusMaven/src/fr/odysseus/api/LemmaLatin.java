@@ -23,9 +23,9 @@ import fr.odysseus.utils.NamesPatternMatcher;
  * gets all the attributes from Latin xml source files and rearrange them in suitable xml sequences for alignement
  */
 public class LemmaLatin {
-	final static String SOURCE="./sourceFiles/xml/LatinXML/";
-	final static String TARGET="./sourceFiles/sequences/latinSequences/";
-	final static String NAMES="./sourceFiles/names/latinNames/";
+	final static String SOURCE="./input/xml/latxml/";
+	final static String TARGET="./input/seq/latSeq/";
+	final static String NAMES="./input/names/latname/";
 	public LemmaLatin() throws Exception{
 
 		File fileRoot=new File(SOURCE);
@@ -35,7 +35,7 @@ public class LemmaLatin {
 
 		for (File file:listeFilesChants){
 			System.out.println(file.getName());
-			String numChant=file.getName().substring(file.getName().lastIndexOf("Chant")+5, file.getName().indexOf(".xml"));
+			String numChant=file.getName().substring(file.getName().lastIndexOf("_")+1, file.getName().indexOf(".xml"));
 			File fichierXML=new File(SOURCE+file.getName());
 			SAXBuilder builder = new SAXBuilder();
 			Document document;
@@ -150,16 +150,16 @@ public class LemmaLatin {
 			}
 			XMLOutputter xmlOutput = new XMLOutputter();
 			xmlOutput.setFormat(Format.getPrettyFormat());
-			if (Integer.parseInt(numChant)<10){
-				File fileOut = new File(TARGET+"/Chant0"+numChant+"/OdysseeLat1000Chant0"+numChant+"NomsCoupe.xml");
+//			if (Integer.parseInt(numChant)<10){
+				File fileOut = new File(TARGET+"/chant"+numChant+"/odysseelat1000_"+numChant+".xml");
 				fileOut.getParentFile().mkdirs();
 				xmlOutput.output(doc, new FileWriter(fileOut));
-			}
-			else{
-				File fileOut = new File(TARGET+"/Chant"+numChant+"/OdysseeLat1000Chant"+numChant+"NomsCoupe.xml");
-				fileOut.getParentFile().mkdirs();
-				xmlOutput.output(doc, new FileWriter(fileOut));
-			}
+//			}
+//			else{
+//				File fileOut = new File(TARGET+"/chant"+numChant+"/odysseelat1000Chant"+numChant+"NomsCoupe.xml");
+//				fileOut.getParentFile().mkdirs();
+//				xmlOutput.output(doc, new FileWriter(fileOut));
+//			}
 		}
 		File fileNoms = new File(NAMES+"/latinNames.txt");
 		fileNoms.getParentFile().mkdirs();
