@@ -47,11 +47,11 @@ public class LemmaGreek {
 			Element book=rootNode.getChild("book"+numChant);
 			List<Element> listeSentences = book.getChildren("sentence");
 
-			List<String> lemmes =new ArrayList<String>();
-			List<String> forms =new ArrayList <String>();
+			List<String> lemNames =new ArrayList<String>();
+			List<String> formNames =new ArrayList <String>();
 			Map<String, String> tags =new HashMap<String, String>();
-			List<String> listeIntegraleLemma = new ArrayList<String>();
-			List<String> listeIntegraleForm = new ArrayList<String>();
+			List<String> lems = new ArrayList<String>();
+			List<String> forms = new ArrayList<String>();
 			for (Element eSentence : listeSentences) {
 
 				List<Element> listeWords = eSentence.getChildren("word");
@@ -59,35 +59,18 @@ public class LemmaGreek {
 				for (Element eWord : listeWords){
 
 					String lemma = eWord.getAttributeValue("lemma");
-//					System.out.println(lemma);
-//					lemma=lemma.replace("h(=os", "*h(=os");
-//					lemma=lemma.replace(")hw/s", "*)hw/s");
-//					lemma=lemma.replace("**", "*");
-//					lemma=lemma.replaceAll("1", "");
-//					lemma=lemma.replace("+/", "/");
-//					lemma=lemma.replace("|", "");
-//					lemma=lemma.replace("/+", "/");
-//					lemma=lemma.replace("comma","");
-//					lemma=lemma.replace("period","");
-//					lemma=lemma.replace("punc","");
 
 					if (lemma.startsWith("*")){
-						lemmes.add(lemma);	
+						lemNames.add(lemma);	
 					}
 					
-					listeIntegraleLemma.add(lemma);		
+					lems.add(lemma);		
 
 					String form = eWord.getAttributeValue("form");
-//					System.out.println(form);
-//					System.out.println("************************");
-//					form=form.replaceAll("1", "");
-//					form=form.replace("+/", "/");
-//					form=form.replace("|", "");
-//					form=form.replace("/+", "/");
 					if (form.startsWith("*")){
-						forms.add(form);	
+						formNames.add(form);	
 					}
-					listeIntegraleForm.add(form);	
+					forms.add(form);	
 					
 					String tag= eWord.getAttributeValue("postag");
 					
@@ -106,134 +89,120 @@ public class LemmaGreek {
 					if (abbreviate.startsWith("m"))replacement="NUM";
 					if (abbreviate.startsWith("i"))replacement="INT";
 					if (abbreviate.startsWith("e"))replacement="INT";
-					if (abbreviate.startsWith("u"))replacement="";
+					if (abbreviate.startsWith("u"))replacement="PUN";
 					TransCoder tcKey=new TransCoder();
 					tcKey.setParser("BetaCode");
 					tcKey.setConverter("UnicodeC");
 					String result = tcKey.getString(lemma);
 					tags.put(result,replacement);
 				}
-				
-//				listeIntegraleForm.add("SENT");
-//				listeIntegraleLemma.add("SENT");
-//				lemmes.add("SENT");
-//				forms.add("SENT");
 			}
 			
-			
-//			lemmes.removeAll(Arrays.asList(blackList));
-			listNomsGrecsLemmaNForms.addAll(lemmes);
-			setNomsGrecsLemmaNForms.addAll(lemmes);
-//			nomsGrecsLemmaNForms.addAll(forms);
+			listNomsGrecsLemmaNForms.addAll(lemNames);
+			setNomsGrecsLemmaNForms.addAll(lemNames);
 			
 			
-			for (int indexTrans=0;indexTrans<listeIntegraleLemma.size(); indexTrans++){
+			for (int indexTrans=0;indexTrans<lems.size(); indexTrans++){
 				TransCoder tc = new TransCoder();
 				tc.setParser("BetaCode");
 				tc.setConverter("UnicodeC");
 				String resultLemma = "";
 				String resultForm = "";
-				if (listeIntegraleLemma.get(indexTrans).contains("SENT")){
-					resultLemma=listeIntegraleLemma.get(indexTrans);
-					resultForm=listeIntegraleForm.get(indexTrans);
+				if (lems.get(indexTrans).contains("SENT")){
+					resultLemma=lems.get(indexTrans);
+					resultForm=forms.get(indexTrans);
 				}
-				else if (!listeIntegraleLemma.get(indexTrans).contains("comma")&&!listeIntegraleLemma.get(indexTrans).contains("punc")){
-					resultLemma = tc.getString(listeIntegraleLemma.get(indexTrans));
-					resultForm = tc.getString(listeIntegraleForm.get(indexTrans));
+				else if (lems.get(indexTrans).length()<1&&forms.get(indexTrans).length()>0){
+					resultLemma = forms.get(indexTrans);
+					resultForm = forms.get(indexTrans);
 				}
-
-				else{
-					resultLemma=listeIntegraleLemma.get(indexTrans);
-					resultForm=listeIntegraleForm.get(indexTrans);
+				else if (lems.get(indexTrans).contains("comma")){
+					resultLemma = ",";
+					resultForm = ",";
 				}
-				listeIntegraleLemma.set(indexTrans, resultLemma);
-				listeIntegraleForm.set(indexTrans, resultForm);
+				else {
+					resultLemma = tc.getString(lems.get(indexTrans));
+					resultForm = tc.getString(forms.get(indexTrans));
+				}
+				lems.set(indexTrans, resultLemma);
+				forms.set(indexTrans, resultForm);
 			}
 			
-			for (int indexTrans=0;indexTrans<lemmes.size(); indexTrans++){
+			for (int indexTrans=0;indexTrans<lemNames.size(); indexTrans++){
 				TransCoder tc = new TransCoder();
 				tc.setParser("BetaCode");
 				tc.setConverter("UnicodeC");
 				String resultLemma="";
 				String resultForm="";
-				if (lemmes.get(indexTrans).contains("SENT")){
-					resultLemma=lemmes.get(indexTrans);
-					resultForm=forms.get(indexTrans);
+				if (lemNames.get(indexTrans).contains("SENT")){
+					resultLemma=lemNames.get(indexTrans);
+					resultForm=formNames.get(indexTrans);
 				}
-				else if (!lemmes.get(indexTrans).contains("comma")&&!lemmes.get(indexTrans).contains("punc")){
-					resultLemma = tc.getString(lemmes.get(indexTrans));
-					resultForm = tc.getString(forms.get(indexTrans));
-				}
-				else{
-					resultLemma=lemmes.get(indexTrans);
-					resultForm=forms.get(indexTrans);
+				else if (!lemNames.get(indexTrans).contains("comma")&&!lemNames.get(indexTrans).contains("punc")){
+					resultLemma = tc.getString(lemNames.get(indexTrans));
+					resultForm = tc.getString(formNames.get(indexTrans));
 				}
 				
-				lemmes.set(indexTrans, resultLemma);
-				forms.set(indexTrans, resultForm);
+				else{
+					resultLemma=lemNames.get(indexTrans);
+					resultForm=formNames.get(indexTrans);
+				}
+				lemNames.set(indexTrans, resultLemma);
+				formNames.set(indexTrans, resultForm);
 			}
 			
 			StringBuilder sblemmes = new StringBuilder();
-			for (String nom:listeIntegraleLemma){
+			for (String nom:lems){
 				sblemmes.append(nom+" ");
 			}
 
-			String namesLemma[]=lemmes.toArray(new String [lemmes.size()]);
+			String namesLemma[]=lemNames.toArray(new String [lemNames.size()]);
 			NamesPatternMatcher namesMatcherLemma= new NamesPatternMatcher(NamesPatternMatcher.DEF_PATTERN, sblemmes.toString(), namesLemma);
-			List<CharSequence> sequencesLemma = new ArrayList<CharSequence>();
-			sequencesLemma = namesMatcherLemma.getSequences();
+			List<CharSequence> seqLem = new ArrayList<CharSequence>();
+			seqLem = namesMatcherLemma.getSequences();
 			
 			StringBuilder sbforms = new StringBuilder();
-			for (String nom:listeIntegraleForm){
+			for (String nom:forms){
 				sbforms.append(nom+" ");
 			}
 			
-			String namesForm[]=forms.toArray(new String [forms.size()]);
+			String namesForm[]=formNames.toArray(new String [formNames.size()]);
 			NamesPatternMatcher namesMatcherForm= new NamesPatternMatcher(NamesPatternMatcher.DEF_PATTERN, sbforms.toString(), namesForm);
-			List<CharSequence> sequencesForm = new ArrayList<CharSequence>();
-			sequencesForm = namesMatcherForm.getSequences();
+			List<CharSequence> seqform = new ArrayList<CharSequence>();
+			seqform = namesMatcherForm.getSequences();
 			
 			Element root = new Element("root");
 			Document doc = new Document(root);
 			
 			int counterID=1;
 			
-			for (int index=0; index<sequencesLemma.size(); index++){
+			for (int index=0; index<seqLem.size(); index++){
 				Element ID=new Element("ID"+counterID);
-				String flexedSeq=sequencesForm.get(index).toString();
-				String lemmatisedSeq=sequencesLemma.get(index).toString();
-				flexedSeq=flexedSeq.replaceAll(" , ",", ");
-				flexedSeq=flexedSeq.replace(" · "," ");
-				flexedSeq=flexedSeq.replaceAll(" \\. ",". ");
-				flexedSeq=flexedSeq.replaceAll("\\s+;\\s*","; ");
-				flexedSeq=flexedSeq.replaceAll("\\s+-\\s*","- ");
-				flexedSeq=flexedSeq.replaceAll("\\s+ʼ\\s*","' ");
-				flexedSeq=flexedSeq.replaceAll("\\s+'\\s*","' ");
-				flexedSeq=flexedSeq.replaceAll(" : ",": ");
-				flexedSeq=flexedSeq.replaceAll("[\\s,;:'ʼ.-°]*°[\\s,;:'ʼ.°-]*","° ");
-				lemmatisedSeq=lemmatisedSeq.replaceAll(" , ",", ");
-				lemmatisedSeq=lemmatisedSeq.replace(" · "," ");
-				lemmatisedSeq=lemmatisedSeq.replaceAll(" \\. ",". ");
-				lemmatisedSeq=lemmatisedSeq.replaceAll(" ; ","; ");
-				lemmatisedSeq=lemmatisedSeq.replaceAll(" : ",": ");
-				lemmatisedSeq=lemmatisedSeq.replaceAll("\\s+'\\s*","' ");
-				lemmatisedSeq=lemmatisedSeq.replaceAll("\\s{2,}"," ");
-				lemmatisedSeq=lemmatisedSeq.replaceAll("[\\s,;:·'ʼ.-°]*°[\\s,;:·'ʼ.°-]*","° ");
-				ID.setAttribute("text", flexedSeq.replaceAll("SENT ", ""));
-				ID.setAttribute("lemma", lemmatisedSeq.replaceAll("SENT ", ""));
+				ID.setAttribute("text", seqform.get(index).toString().replaceAll("\\s{2,}"," "));
+				ID.setAttribute("lemma", seqLem.get(index).toString().replaceAll("\\s{2,}"," "));
+				
+				
 				StringBuilder sbTags=new StringBuilder();
-				for (String key:sequencesLemma.get(index).toString().split(" ")){
+				for (String key:seqLem.get(index).toString().split(" ")){
 					if (tags.containsKey(key)){
 						sbTags.append(tags.get(key)+" ");
 					}
+					else if (key.length()>0){
+						sbTags.append("PUN ");
+					}
 				}		
-				ID.setAttribute("tag", sbTags.toString().replaceAll("SENT ", "").replaceAll("\\s{2,}"," "));
+				ID.setAttribute("tag", sbTags.toString().replaceAll("SENT ", "PUN ").replaceAll("\\s{2,}"," "));
+				if (ID.getAttributeValue("tag").split(" ").length!=ID.getAttributeValue("lemma").split(" ").length){
+					System.out.println(ID.getAttributeValue("tag"));
+					System.out.println(ID.getAttributeValue("tag").split(" ").length);
+					System.out.println(ID.getAttributeValue("lemma"));
+					System.out.println(ID.getAttributeValue("lemma").split(" ").length);
+				}
 				root.addContent(ID);
 				counterID++;
 			}
 			XMLOutputter xmlOutput = new XMLOutputter();
 			xmlOutput.setFormat(Format.getPrettyFormat());
-//			if (Integer.parseInt(numChant)<10){
 				File fileOut = new File(TARGETSEQ+"chant"+numChant+"/odyssee1000_"+numChant+".xml");
 				fileOut.getParentFile().mkdirs();
 				xmlOutput.output(doc, new FileWriter(fileOut));
@@ -248,22 +217,7 @@ public class LemmaGreek {
 					
 				}
 				printWriterListNoms.close ();
-//			}
-//			else{
-//				File fileOut = new File(TARGETSEQ+"chant"+numChant+"/odyssee1000_"+numChant+".xml");
-//				fileOut.getParentFile().mkdirs();
-//				xmlOutput.output(doc, new FileWriter(fileOut));
-//				File fileListNoms = new File(TARGETNAM+"odyssee1000_"+numChant+".txt");
-//				fileListNoms.getParentFile().mkdirs();
-//				FileWriter printWriterListNoms = new FileWriter(fileListNoms,false);
-//
-//				for (String nom:listNomsGrecsLemmaNForms){
-//					if (!nom.contains("SENT")){
-//						printWriterListNoms.write (nom);
-//					}
-//				}
-//				printWriterListNoms.close ();
-//			}
+
 			System.out.println("Done : "+file.getName());
 		}
 		File fileSetNoms = new File(TARGETNAM+"GreekNames.txt");

@@ -26,10 +26,12 @@ public class LemmaLatin {
 	final static String SOURCE="./input/xml/latxml/";
 	final static String TARGET="./input/seq/latSeq/";
 	final static String NAMES="./input/names/latname/";
+	final static String TARGETNAM="./input/names/latname/";
 	public LemmaLatin() throws Exception{
 
 		File fileRoot=new File(SOURCE);
 		File[] listeFilesChants=fileRoot.listFiles();
+		List<String>listNomsGrecsLemmaNForms=new ArrayList<String>();
 		Set<String>nomsGrecs=new HashSet<String>();
 		String blackList[]={ ""};
 
@@ -48,30 +50,30 @@ public class LemmaLatin {
 			
 			List<Element> listeSentences = book.getChildren("sentence");
 			
-			List<String> nomsLemmatises =new ArrayList<String>();
-			List<String> nomsFlechis =new ArrayList<String>();
+			List<String> lemNames =new ArrayList<String>();
+			List<String> formNames =new ArrayList<String>();
 			Map<String, String> tags =new HashMap<String, String>();
-			List<String> listeTousLemmes = new ArrayList<String>();
-			List<String> listeToutesFormes = new ArrayList<String>();
+			List<String> lems = new ArrayList<String>();
+			List<String> forms = new ArrayList<String>();
 			for (Element eSentence : listeSentences) {
 
 				List<Element> listeWords = eSentence.getChildren("word");
 
 				for (Element eWord : listeWords){
 					
-					String motLemmatise = eWord.getAttributeValue("lemma");
-					String motFlechi=eWord.getAttributeValue("form");
+					String lemma = eWord.getAttributeValue("lemma");
+					String form=eWord.getAttributeValue("form");
 					
-					if (motLemmatise.startsWith("*")){
-						nomsLemmatises.add(motLemmatise);	
+					if (lemma.startsWith("*")){
+						lemNames.add(lemma);	
 					}
 					
-					if (motFlechi.startsWith("*")){
-						nomsFlechis.add(motFlechi);	
+					if (form.startsWith("*")){
+						formNames.add(form);	
 					}
 					
-					listeTousLemmes.add(motLemmatise);		
-					listeToutesFormes.add(motFlechi);
+					lems.add(lemma);		
+					forms.add(form);
 					String tag= eWord.getAttributeValue("postag");
 
 					String abbreviate=tag.substring(0, 1);
@@ -89,77 +91,104 @@ public class LemmaLatin {
 					if (abbreviate.startsWith("M"))replacement="NUM";
 					if (abbreviate.startsWith("I"))replacement="INT";
 					if (abbreviate.startsWith("E"))replacement="INT";
-					if (abbreviate.startsWith("U"))replacement="";
-					tags.put(motLemmatise,replacement);
+					if (abbreviate.startsWith("U"))replacement="SENT";
+					tags.put(lemma,replacement);
 				}
 			}
-			
-			nomsGrecs.addAll(nomsLemmatises);	
-			nomsLemmatises.removeAll(Arrays.asList(blackList));
+			listNomsGrecsLemmaNForms.addAll(lemNames);
+			nomsGrecs.addAll(lemNames);	
+			lemNames.removeAll(Arrays.asList(blackList));
 			StringBuilder sbLemmes = new StringBuilder();
-			for (String lemme:listeTousLemmes){
+			for (String lemme:lems){
 				sbLemmes.append(lemme+" ");
 			}
 			
 			StringBuilder sbForms = new StringBuilder();
-			for (String form:listeToutesFormes){
+			for (String form:forms){
 				sbForms.append(form+" ");
 			}
 
-			String tableauNomsLemmatises[]=nomsLemmatises.toArray(new String [nomsLemmatises.size()]);
-			String tableauNomsFlechis[]=nomsFlechis.toArray(new String [nomsFlechis.size()]);
-			NamesPatternMatcher namesMatcher= new NamesPatternMatcher(NamesPatternMatcher.DEF_PATTERN, sbLemmes.toString(), tableauNomsLemmatises);
-			List<CharSequence> sequencesTexteADecouper = new ArrayList<CharSequence>();
-			sequencesTexteADecouper = namesMatcher.getSequences();
-			NamesPatternMatcher namesMatcherForms= new NamesPatternMatcher(NamesPatternMatcher.DEF_PATTERN, sbForms.toString(), tableauNomsFlechis);
-			List<CharSequence> texteFlechiADecouper = new ArrayList<CharSequence>();
-			texteFlechiADecouper = namesMatcherForms.getSequences();
+			String arLemNames[]=lemNames.toArray(new String [lemNames.size()]);
+			String arFormNames[]=formNames.toArray(new String [formNames.size()]);
+			NamesPatternMatcher namesMatcher= new NamesPatternMatcher(NamesPatternMatcher.DEF_PATTERN, sbLemmes.toString(), arLemNames);
+			List<CharSequence> seqLems = new ArrayList<CharSequence>();
+			seqLems = namesMatcher.getSequences();
+			NamesPatternMatcher namesMatcherForms= new NamesPatternMatcher(NamesPatternMatcher.DEF_PATTERN, sbForms.toString(), arFormNames);
+			List<CharSequence> seqForms = new ArrayList<CharSequence>();
+			seqForms = namesMatcherForms.getSequences();
 
 			StringBuilder sbTexteLemma=new StringBuilder();
-			for (int index=0; index<sequencesTexteADecouper.size(); index++){
-				sequencesTexteADecouper=regroup("*Phoebus", "*Apollo", sequencesTexteADecouper, index);
-				String source = sequencesTexteADecouper.get(index).toString();
+			for (int index=0; index<seqLems.size(); index++){
+				seqLems=regroup("*Phoebus", "*Apollo", seqLems, index);
+				String source = seqLems.get(index).toString();
 				sbTexteLemma.append(source+"//n");
 			}
 			
 			StringBuilder sbTexteFlechi=new StringBuilder();
-			for (int index=0; index<texteFlechiADecouper.size(); index++){
-				texteFlechiADecouper=regroup("*Phoebus", "*Apollo", texteFlechiADecouper, index);
-				String source = texteFlechiADecouper.get(index).toString();
+			for (int index=0; index<seqForms.size(); index++){
+				seqForms=regroup("*Phoebus", "*Apollo", seqForms, index);
+				String source = seqForms.get(index).toString();
 				sbTexteFlechi.append(source+"//n");
 			}
-
+			String lemmas=sbTexteLemma.toString().replaceAll("\\.", " . ");
+			String flechi=sbTexteFlechi.toString().replaceAll("\\.", " . ");
+			flechi=flechi.replaceAll(",", " , ");
+			lemmas=lemmas.replaceAll(",", " , ");
+			flechi=flechi.replaceAll(";", " ; ");
+			lemmas=lemmas.replaceAll(";", " ; ");
+			flechi=flechi.replaceAll(":", " : ");
+			lemmas=lemmas.replaceAll(":", " : ");
+			flechi=flechi.replaceAll("\\?", " ? ");
+			lemmas=lemmas.replaceAll("\\?", " ? ");
+			flechi=flechi.replaceAll("\\]", "");
+			lemmas=lemmas.replaceAll("\\]", "");
+			flechi=flechi.replaceAll("\\[", "");
+			lemmas=lemmas.replaceAll("\\[", "");
+			flechi=flechi.replaceAll("\\s{2,}", " ");
+			lemmas=lemmas.replaceAll("\\s{2,}", " ");
 			Element root = new Element("root");
 			Document doc = new Document(root);
 			int counterID=1;
 			int indexLemmaForm=0;
-			for (String IDString:sbTexteLemma.toString().split("//n")){
+			for (String IDString:lemmas.split("//n")){
 				Element ID=new Element("ID"+counterID);
-				ID.setAttribute("text", sbTexteFlechi.toString().split("//n")[indexLemmaForm].replace("*", ""));
+				ID.setAttribute("text", flechi.split("//n")[indexLemmaForm].replace("*", ""));
 				ID.setAttribute("lemma", IDString.replace("*", ""));
 				StringBuilder sbTags=new StringBuilder();
-				for (String key:IDString.split(" ")){
+				for (String key:IDString.split(" ")){			
 					if (tags.containsKey(key)){
 						sbTags.append(tags.get(key)+" ");
 					}
-				}		
-				ID.setAttribute("tag", sbTags.toString().replaceAll("  ", " "));
+					else if (key.length()>0) {
+						sbTags.append("PUN ");
+					}
+				}	
+				ID.setAttribute("tag", sbTags.toString().replaceAll("SENT ", "PUN ").replaceAll("\\s{2,}"," "));
+				
+//				if (ID.getAttributeValue("text").split(" ").length!=ID.getAttributeValue("tag").split(" ").length){
+//					System.out.println("longueur src : "+ID.getAttributeValue("text").split(" ").length);
+//					System.out.println("longueur tags : "+ID.getAttributeValue("tag").split(" ").length);
+//				}
 				root.addContent(ID);
 				counterID++;
 				indexLemmaForm++;
 			}
 			XMLOutputter xmlOutput = new XMLOutputter();
 			xmlOutput.setFormat(Format.getPrettyFormat());
-//			if (Integer.parseInt(numChant)<10){
 				File fileOut = new File(TARGET+"/chant"+numChant+"/odysseelat1000_"+numChant+".xml");
 				fileOut.getParentFile().mkdirs();
 				xmlOutput.output(doc, new FileWriter(fileOut));
-//			}
-//			else{
-//				File fileOut = new File(TARGET+"/chant"+numChant+"/odysseelat1000Chant"+numChant+"NomsCoupe.xml");
-//				fileOut.getParentFile().mkdirs();
-//				xmlOutput.output(doc, new FileWriter(fileOut));
-//			}
+				File fileListNoms = new File(TARGETNAM+"odysseelat1000_"+numChant+".txt");
+				fileListNoms.getParentFile().mkdirs();
+				PrintWriter printWriterListNoms = new PrintWriter(fileListNoms);
+
+				for (String nom:listNomsGrecsLemmaNForms){
+					if (!nom.contains("SENT")){
+						printWriterListNoms.println (nom);
+					}
+					
+				}
+				printWriterListNoms.close ();
 		}
 		File fileNoms = new File(NAMES+"/latinNames.txt");
 		fileNoms.getParentFile().mkdirs();

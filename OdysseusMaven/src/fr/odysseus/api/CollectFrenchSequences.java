@@ -68,6 +68,7 @@ public class CollectFrenchSequences {
 					lemme=lemme.replaceAll("ù", "u");
 					lemme=lemme.replaceAll("é", "e");
 					lemme=lemme.replaceAll("ê", "e");
+					lemme=lemme.replaceAll(" ", "-");
 					if (postag.contains("NAM")){
 						namesCompleteSet.add(lemme);
 						lemmes.add(lemme);
@@ -77,6 +78,10 @@ public class CollectFrenchSequences {
 					listeIntegraleForm.add(eWord.getAttributeValue("form"));	
 					tags.put(lemme,postag);
 				}
+//				if (listeIntegraleForm.size()!=listeIntegraleLemma.size()){
+//					System.out.println(listeIntegraleForm.size());
+//					System.out.println(listeIntegraleLemma.size());
+//				}
 			}
 
 			lemmes.removeAll(Arrays.asList(blackList));
@@ -84,19 +89,19 @@ public class CollectFrenchSequences {
 			setNomsGrecsLemmaNForms.addAll(lemmes);
 
 			for (int indexTrans=0;indexTrans<listeIntegraleLemma.size(); indexTrans++){
-				String resultLemma = "";
-				String resultForm = "";
-				if (!listeIntegraleLemma.get(indexTrans).matches("comma")&&!listeIntegraleLemma.get(indexTrans).matches("punc")){
-					resultLemma = listeIntegraleLemma.get(indexTrans);
-					resultForm = listeIntegraleForm.get(indexTrans);
-				}
+//				String resultLemma = "";
+//				String resultForm = "";
+//				if (!listeIntegraleLemma.get(indexTrans).matches("comma")&&!listeIntegraleLemma.get(indexTrans).matches("punc")){
+//					resultLemma = listeIntegraleLemma.get(indexTrans);
+//					resultForm = listeIntegraleForm.get(indexTrans);
+//				}
 
-				else{
-					resultLemma="";
-					resultForm=listeIntegraleForm.get(indexTrans);
-				}
-				listeIntegraleLemma.set(indexTrans, resultLemma);
-				listeIntegraleForm.set(indexTrans, resultForm);
+//				else{
+//					resultLemma="";
+//					resultForm=listeIntegraleForm.get(indexTrans);
+//				}
+//				listeIntegraleLemma.set(indexTrans, resultLemma);
+//				listeIntegraleForm.set(indexTrans, resultForm);
 			}
 
 			for (int indexTrans=0;indexTrans<lemmes.size(); indexTrans++){
@@ -147,6 +152,10 @@ public class CollectFrenchSequences {
 				Element ID=new Element("ID"+counterID);
 				String flexedSeq=sequencesForm.get(index).toString();
 				String lemmatisedSeq=sequencesLemma.get(index).toString();
+				if (sequencesForm.get(index).toString().split(" ").length!=sequencesLemma.get(index).toString().split(" ").length){
+					System.out.println("lemma : "+sequencesLemma.get(index).toString());
+					System.out.println("form : "+sequencesForm.get(index).toString());
+				}
 				flexedSeq=flexedSeq.replaceAll("\\s{2,}"," ");
 				lemmatisedSeq=lemmatisedSeq.replaceAll("\\s{2,}"," ");
 				ID.setAttribute("text", flexedSeq.replaceAll("SENT ", ""));
@@ -157,7 +166,11 @@ public class CollectFrenchSequences {
 						sbTags.append(tags.get(key)+" ");
 					}
 				}		
-				ID.setAttribute("tag", sbTags.toString().replaceAll("SENT ", "").replaceAll("\\s{2,}"," "));
+				ID.setAttribute("tag", sbTags.toString().replaceAll("SENT ", "PUN ").replaceAll("\\s{2,}"," "));
+				if (ID.getAttributeValue("tag").split(" ").length!=ID.getAttributeValue("lemma").split(" ").length&&ID.getAttributeValue("lemma").split(" ").length!=ID.getAttributeValue("tag").split(" ").length){
+					System.out.println("lemma : "+ID.getAttributeValue("lemma"));
+					System.out.println("tag : "+ID.getAttributeValue("tag"));
+				}
 				root.addContent(ID);
 				counterID++;
 			}

@@ -113,12 +113,38 @@ public class CreateFiles {
 			for (int i=1;i<nouvelleListe.size();i++){
 				NWRecord record=nouvelleListe.get(i);
 				Element ID = new Element("ID"+String.valueOf(counter));
+				String allLemmas[]=record.getLemma().split(" ");
+				String allForms[]=record.getTrg().split(" ");
+				String allTags[]=record.getTag().split(" ");
+//				System.out.println("ID : "+counter);
+//				System.out.println(allLemmas.length);
+//				System.out.println(allForms.length);
+//				System.out.println(allTags.length);
+//				int indexTag=0;
+					for (int index=0;index<allForms.length;index++){
+						
+						Element word=new Element("word");
+						word.setAttribute(new Attribute("text", allForms[index]));
+//						System.out.println(allForms[index]);
+						word.setAttribute(new Attribute("lemma", allLemmas[index]));
+//						System.out.println(allLemmas[index]);
+//						if (allLemmas[index].equals("/")){
+//							word.setAttribute(new Attribute("tag", "/"));
+//							indexTag--;
+//						}
+//						else {
+							word.setAttribute(new Attribute("tag",allTags[index]));
+//						}
+//						System.out.println(word.getAttributeValue("tag"));
+						ID.addContent(word);
+//						indexTag++;
+					}
 				
-					ID.setAttribute(new Attribute ("text", record.getTrg()));
-					ID.setAttribute(new Attribute ("lemma", record.getLemma()));
+//					ID.setAttribute(new Attribute ("text", record.getTrg()));
+//					ID.setAttribute(new Attribute ("lemma", record.getLemma()));
 				
 				
-				ID.setAttribute(new Attribute("tag",record.getTag()));
+//				ID.setAttribute(new Attribute("tag",record.getTag()));
 				racine.addContent(ID);
 				counter++;
 			}

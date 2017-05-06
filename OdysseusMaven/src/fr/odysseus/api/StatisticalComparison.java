@@ -33,6 +33,8 @@ import org.simmetrics.metrics.GeneralizedJaccard;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
+import fr.odysseus.utils.Accents;
+
 /**
  * @author Marianne Reboul
  */
@@ -65,12 +67,12 @@ public class StatisticalComparison {
 		String ext[]={"xml"};
 		repertoireSource=new HashMap<String,File>();
 		Collection<File>tmpColl=FileUtils.listFiles(mainDir, ext, true); /* creating source directory with all roots */
-//		repertoireSource=tmpColl.toArray(new File[tmpColl.size()]);
+		//		repertoireSource=tmpColl.toArray(new File[tmpColl.size()]);
 		for (File file:tmpColl){
 			repertoireSource.put(file.getName(), file);
 		}
 
-//		LinkedList<Element>listeDesRacines=new LinkedList<Element>();
+		//		LinkedList<Element>listeDesRacines=new LinkedList<Element>();
 		HashMap<String, Element>mapRoots=new HashMap<String, Element>();
 
 		for( String name:repertoireSource.keySet() ) {
@@ -122,16 +124,15 @@ public class StatisticalComparison {
 			XPathExpression<Element> exprNext= null;
 			XPathExpression<Element> exprNextBefore= null;
 			List<Document>autresDocs=new ArrayList<Document>();
-//			System.out.println("nom principal : "+name);
+			//			System.out.println("nom principal : "+name);
 			for (String nameOther:roots.keySet()){	  
-				if (nameOther!=name&&repertoireSource.get(nameOther).getName().contains(nomCommun)){
+				if (nameOther!=name&&repertoireSource.get(nameOther).getName().contains(nomCommun)&&!nameOther.contains("odyssee")){
 					File autreDoc=repertoireSource.get(nameOther);
 					SAXBuilder jdomBuild = new SAXBuilder();
 					Document jdomDoc  = jdomBuild.build(autreDoc);
 					autresDocs.add(jdomDoc);
-//					System.out.println("devrait être différent de nom principal : "+nameOther);
+					//					System.out.println("devrait être différent de nom principal : "+nameOther);
 				}	 
-				
 			}
 
 			List<Element>listeElementsActuels=roots.get(name).getChildren(); /* words and lemmas of the file currently studied */
@@ -145,7 +146,6 @@ public class StatisticalComparison {
 			List<String>ids=new ArrayList<String>();
 
 			for (Element ID:listIDs){
-				//				long startTimeRep = System.currentTimeMillis();
 
 				List<String>idsInHTMLFormat=new ArrayList<String>();
 				LinkedHashMap<String[], String[]>tableauDeCorrespondances=new LinkedHashMap<String[], String[]>();
@@ -154,11 +154,14 @@ public class StatisticalComparison {
 				StringBuilder stringbuild=new StringBuilder();
 
 				String chantActuel=nomFichierEnCours.substring(nomFichierEnCours.lastIndexOf("_")+1, nomFichierEnCours.lastIndexOf("_")+3);
+				//				System.out.println(chantActuel);
 				SAXBuilder sxb=new SAXBuilder();
 				Document documentSource=sxb.build(
 						new File(Console.PUNCT+"odyssee1000_"+chantActuel+".xml")); /* File to compare Greek syntax */
 				Element racineSource=documentSource.getRootElement();
+
 				Element IDSource=racineSource.getChild("ID"+counterID);
+				//				System.out.println(IDSource.getAttributes());
 				String []tagSource=IDSource.getAttributeValue("tag").split(" "); /* all postags from Greek */
 				String tagActuel[]=listeElementsActuels.get(counterID-1).getAttributeValue("tag").split(" "); /* all postags from French */
 				List<String>listeTagSource=new ArrayList<String>(Arrays.asList(tagSource));
@@ -241,17 +244,17 @@ public class StatisticalComparison {
 						elementsToComparePrevious.addAll(exprPrevious.evaluate(docToTest));
 					}
 
-//					if (exprPreviousBefore!=null){
-//						elementsToComparePrevious.addAll(exprPreviousBefore.evaluate(docToTest));
-//					}
+										if (exprPreviousBefore!=null){
+											elementsToComparePrevious.addAll(exprPreviousBefore.evaluate(docToTest));
+										}
 
 					if (exprNext!=null){
 						elementsToCompareNext.addAll(exprNext.evaluate(docToTest));
 					}
 
-//					if (exprNextBefore!=null){
-//						elementsToCompareNext.addAll(exprNextBefore.evaluate(docToTest));
-//					}
+										if (exprNextBefore!=null){
+											elementsToCompareNext.addAll(exprNextBefore.evaluate(docToTest));
+										}
 
 					total.addAll(elementsToCompareNext);
 					total.addAll(elementsToComparePrevious);
@@ -281,8 +284,8 @@ public class StatisticalComparison {
 					fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("_"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("_")+1,sourceFileName.indexOf(".xml"));
 				}
 
-				//				System.out.println("les lemmes : "+lemmaAndForm[0]);
-				//				System.out.println("les formes : "+lemmaAndForm[1]);
+				//								System.out.println("les lemmes : "+lemmaAndForm[0]);
+				//								System.out.println("les formes : "+lemmaAndForm[1]);
 
 				for (Entry<String[], String[]>entry:tableauDeCorrespondances.entrySet()){
 
@@ -319,11 +322,12 @@ public class StatisticalComparison {
 
 								int levDist=StringUtils.getLevenshteinDistance(word, lemma);
 
-								if (word.equals(lemma)|lemma.equals(word)|lemma.toLowerCase().equals(word)|word.toLowerCase().equals(lemma)){
+								if (word.equals(lemma)|lemma.equals(word)|lemma.toLowerCase().equals(word)|word.toLowerCase().equals(lemma)
+										&&!stopWords.contains(Accents.removeDiacriticalMarks(lemma.toLowerCase()))){
 									count++;
 								}
 
-								else if (levDist<2&&word.length()>4&&!stopWords.contains(lemma.toLowerCase())){
+								else if (levDist<2&&word.length()>4&&!stopWords.contains(Accents.removeDiacriticalMarks(lemma.toLowerCase()))){
 									count++;
 								}
 
@@ -345,7 +349,7 @@ public class StatisticalComparison {
 									countArrondi=countScore+1;
 								}
 							}
-							else if(count==0&&lemma.length()>3&&!stopWords.contains(lemma)){
+							else if(count==0&&lemma.length()>3&&!stopWords.contains(Accents.removeDiacriticalMarks(lemma.toLowerCase()))){
 								countArrondi=1;
 								brightRedWord++;
 							}
@@ -355,39 +359,48 @@ public class StatisticalComparison {
 							form=form.replaceAll("blk", "");
 							form=form.replaceAll("_N", "");
 							StringBuilder buildHtml=new StringBuilder();
-							if (countArrondi==6|countArrondi==5){
+							if (fileName.contains("odyssee")){
 								buildHtml.append("<mark class=\"freq");
-								buildHtml.append(countArrondi);
+								buildHtml.append("0");
 								buildHtml.append(" high\">");
 								buildHtml.append(form);
 								buildHtml.append("</mark>");
 								wordsonebyone.add(buildHtml.toString());
 							}
-							else if (countArrondi==1){
-								buildHtml.append("<mark class=\"freq");
-								buildHtml.append(countArrondi);
-								buildHtml.append(" low\">");
-								buildHtml.append(form);
-								buildHtml.append("</mark>");
-								wordsonebyone.add(buildHtml.toString());
+							else{
+								if (countArrondi==6|countArrondi==5){
+									buildHtml.append("<mark class=\"freq");
+									buildHtml.append(countArrondi);
+									buildHtml.append(" high\">");
+									buildHtml.append(form);
+									buildHtml.append("</mark>");
+									wordsonebyone.add(buildHtml.toString());
+								}
+								else if (countArrondi==1){
+									buildHtml.append("<mark class=\"freq");
+									buildHtml.append(countArrondi);
+									buildHtml.append(" low\">");
+									buildHtml.append(form);
+									buildHtml.append("</mark>");
+									wordsonebyone.add(buildHtml.toString());
+								}
+								else if (countArrondi==2){
+									buildHtml.append("<mark class=\"freq");
+									buildHtml.append(countArrondi);
+									buildHtml.append(" plag\">");
+									buildHtml.append(form);
+									buildHtml.append("</mark>");
+									wordsonebyone.add(buildHtml.toString());
+								}
+								else {
+									buildHtml.append("<mark class=\"freq");
+									buildHtml.append(countArrondi);
+									buildHtml.append("\">");
+									buildHtml.append(form);
+									buildHtml.append("</mark>");
+									wordsonebyone.add(buildHtml.toString());
+								}
 							}
-							else if (countArrondi==2){
-								buildHtml.append("<mark class=\"freq");
-								buildHtml.append(countArrondi);
-								buildHtml.append(" plag\">");
-								buildHtml.append(form);
-								buildHtml.append("</mark>");
-								wordsonebyone.add(buildHtml.toString());
-							}
-							else {
-								buildHtml.append("<mark class=\"freq");
-								buildHtml.append(countArrondi);
-								buildHtml.append("\">");
-								buildHtml.append(form);
-								buildHtml.append("</mark>");
-								wordsonebyone.add(buildHtml.toString());
-							}
-
 						}
 						brightred+=brightRedWord;
 						brightgreen+=brightGreenWord;
@@ -420,12 +433,12 @@ public class StatisticalComparison {
 
 			String sourceFileName=(Console.OUTPUTHTML+roots.get(name).getAttributeValue("name").toLowerCase());
 			String fileName="";
-			if (sourceFileName.contains("odyssee")){
-				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("_"))+"_"+sourceFileName.substring(sourceFileName.indexOf("_")+1,sourceFileName.indexOf(".xml"));
-			}
-			else {
-				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("_"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("_")+1,sourceFileName.indexOf(".xml"));
-			}
+			//			if (sourceFileName.contains("odyssee")){
+			fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("_"))+"_"+sourceFileName.substring(sourceFileName.indexOf("_")+1,sourceFileName.indexOf(".xml"));
+			//			}
+			//			else {
+			//				fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.lastIndexOf("_"))+"_"+sourceFileName.substring(sourceFileName.lastIndexOf("_")+1,sourceFileName.indexOf(".xml"));
+			//			}
 
 			String fileNamePath=fileName.replaceAll("_0", "_");
 			Writer writer = new BufferedWriter(new OutputStreamWriter(

@@ -16,6 +16,7 @@ public class Console {
 	static final String PIVOT="./input/seq/pivot/";
 	public static final String NAMESFR="./input/names/frname/";
 	public static final String NAMESGR="./input/names/grname/";
+	public static final String NAMESLAT="./input/names/latname/";
 	static final String DICOVEK="./input/dict/dicovek/";
 	static final String W2V="./input/dict/wtov/";
 	static final String GRDICT="./input/dict/dict.tsv";
@@ -71,7 +72,7 @@ public class Console {
 		System.out.println("Voulez-vous faire/refaire une comparaison statistique ? (y/n)");
 		answer=sc.nextLine();
 		if (answer.equals("y")){
-			StatisticalComparison calculs=new StatisticalComparison();
+			Count calculs=new Count();
 			calculs.automaticComparison();
 		}
 		

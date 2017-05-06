@@ -76,6 +76,8 @@ public class FrenchTagger {
 		    {"PROinter" , "PRO"},
 		    {"PROposs" , "PRO"},
 		    {"CONJ" , "KON"},
+		    {"CONJsubord" , "KON"},
+		    {"CONJcoord" , "KON"},
 		    {"NAME" , "NAM"},
 		    {"NAMEpers" , "NAM"},
 		    {"NAMEpersm" , "NAM"},
@@ -260,6 +262,7 @@ public class FrenchTagger {
 								monOcc[1]=occ.graph().toString();
 							}
 						}
+						
 						motsTags.add(monOcc);
 					}
 					
@@ -300,7 +303,9 @@ public class FrenchTagger {
 								mot.setAttribute("lemma",word[1]);
 								mot.setAttribute("postag",word[2]);
 								sent.addContent(mot);
+								
 							}
+							
 						}
 						sent.addContent(punc);
 						book.addContent(sent);
