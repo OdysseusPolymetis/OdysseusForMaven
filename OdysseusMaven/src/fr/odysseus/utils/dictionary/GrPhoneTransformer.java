@@ -12,31 +12,30 @@ final public class GrPhoneTransformer {
 	public GrPhoneTransformer() {
 		rules = initialize();
 	}
-	public String transform(String world){
+	public String transform(String word){
 		Set<Entry<String,String>> mapEntries = rules.entrySet();
 		for(Entry<String,String> e : mapEntries){
-			//System.err.println(e.getKey());
-			world = world.replaceAll(e.getKey(), e.getValue());
+			word = word.replaceAll(e.getKey(), e.getValue());
 		}
-		world = postprocessing(world);
-		return world;
+		word = postprocessing(word);
+		return word;
 	}
-	private String postprocessing(String world) {
+	private String postprocessing(String word) {
 		// TODO Auto-generated method stub
 		boolean cond;
-		cond = "".equals(world)
-				|| "zeus".equals(world)
-				|| world.endsWith("a")
-				|| world.endsWith("e")
-				|| world.endsWith("i")
-				|| world.endsWith("o")
-				|| world.endsWith("u")
-				|| world.endsWith("r")
-				|| world.endsWith("S");
+		cond = "".equals(word)
+				|| "zeus".equals(word)
+				|| word.endsWith("a")
+				|| word.endsWith("e")
+				|| word.endsWith("i")
+				|| word.endsWith("o")
+				|| word.endsWith("u")
+				|| word.endsWith("r")
+				|| word.endsWith("S");
 		if(!cond)
-			return world.substring(0, world.length()-1) ;
+			return word.substring(0, word.length()-1) ;
 		else
-			return world;
+			return word;
 	}
 	private Map<String, String> initialize() {
 		Map<String, String> temp = new LinkedHashMap<String, String>();
@@ -44,8 +43,10 @@ final public class GrPhoneTransformer {
 		temp.put("ἄ", "a");
 		temp.put("ἀ", "a");
 		temp.put("ά", "a");
+		temp.put("ά", "a");
 		temp.put("ὰ", "a");
 		temp.put("ἂ", "a");
+		temp.put("ᾶ", "a");
 		temp.put("Ἀ","A");
 		temp.put("Ἄ","A");
 		temp.put("β", "b");
@@ -59,6 +60,7 @@ final public class GrPhoneTransformer {
 		temp.put("έ", "e");
 		temp.put("ἕ", "e");
 		temp.put("Ἑ", "He");
+		temp.put("ζ", "z");
 		temp.put("φ", "ph");
 		temp.put("γ", "g");
 		temp.put("ι", "i");
@@ -66,6 +68,7 @@ final public class GrPhoneTransformer {
 		temp.put("ἴ", "i");
 		temp.put("ί", "i");
 		temp.put("Ἴ", "I");
+		temp.put("ϰ", "c");
 		temp.put("λ", "l");
 		temp.put("μ", "m");
 		temp.put("ν", "n");
@@ -123,37 +126,39 @@ final public class GrPhoneTransformer {
 		temp.put("Ὠ", "O");
 		temp.put("Φ", "Ph");
 		temp.put("ή\\b", "e");
-		temp.put("w", "o"); // controllare perchè su originale c'è un p!= u'w(\\s2 ': #salvaSIMS else: p='wS'
+		temp.put("χ", "ch");
+		temp.put("w", "o"); 
 		temp.put("ω", "o");
 		temp.put("ώ", "o");
 		temp.put("ῶ", "o");
 		temp.put("ὣ", "o");
-		temp.put("g(?=[gkcx])", "n");
-//		temp.put("q","t");
-		temp.put("\\*ca","Xa"); // per lo Xanto
-		temp.put("(^c)|(\\*c)","S");
-		temp.put("c","c"); //#x in grafia dotta#
-		temp.put("k","ch"); //#k in grafia dotta#
-		temp.put("x(?=[aei])","ch");
-		temp.put("x(?![aei])","qu");
-		temp.put("\\*y","Ps"); //#funzionale solo prima di 'pulizia'
-		temp.put("^y","s");
-		temp.put("y","y"); //#ps in grafia dotta#
-		temp.put("ai","e");
-		temp.put("ei(?=[aeiou])","e");
-		temp.put("ei","i");
-//		temp.put("oi(?=e)","o");
-//		temp.put("oi","e"); //#in rari casi, i : es. κοιμητήριον cimitero
-		temp.put("au(?=[aeiou])|aύ(?=[aeiou])","av");
-		temp.put("eu(?=[aeiou])","ev");
-		temp.put("ui","i");
-		temp.put("(?<![aeou])u","i"); //#!ATTENZIONE alla posizione di questa regola
-		temp.put("ou","u");
-//		temp.put("(^pt)|(\\*pt)","t");
-//		temp.put("pt","tt");
-		temp.put("ti(?=[aeiu])","zi");
+		temp.put("έ", "e");
+		temp.put("ί", "i");
+//		temp.put("g(?=[gkcx])", "n");
+//		temp.put("\\*ca","Xa");
+//		temp.put("(^c)|(\\*c)","S");
+//		temp.put("c","c");
+//		temp.put("k","ch");
+//		temp.put("x(?=[aei])","ch");
+//		temp.put("x(?![aei])","qu");
+//		temp.put("\\*y","Ps"); 
+//		temp.put("^y","s");
+//		temp.put("y","y"); 
+//		temp.put("ai","e");
+//		temp.put("ei(?=[aeiou])","e");
+//		temp.put("ei","i");
+////		temp.put("oi(?=e)","o");
+////		temp.put("oi","e"); 
+//		temp.put("au(?=[aeiou])|aύ(?=[aeiou])","av");
+//		temp.put("eu(?=[aeiou])","ev");
+//		temp.put("ui","i");
+//		temp.put("(?<![aeou])u","i"); 
+//		temp.put("ou","u");
+////		temp.put("(^pt)|(\\*pt)","t");
+////		temp.put("pt","tt");
+//		temp.put("ti(?=[aeiu])","zi");
 		temp.put(";","?");
-		temp.put("\\*",""); //#sempre ultima
+		temp.put("\\*",""); 
 		return temp;
 	}
 }
