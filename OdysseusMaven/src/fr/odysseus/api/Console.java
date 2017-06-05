@@ -70,11 +70,11 @@ public class Console {
 		}
 		
 		System.out.println("Voulez-vous faire/refaire une comparaison statistique ? (y/n)");
-		answer=sc.nextLine();
-		if (answer.equals("y")){
+//		answer=sc.nextLine();
+//		if (answer.equals("y")){
 			Count calculs=new Count();
 			calculs.automaticComparison();
-		}
+//		}
 		
 			
 		long endTime = System.currentTimeMillis();

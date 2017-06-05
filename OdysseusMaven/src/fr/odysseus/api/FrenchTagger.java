@@ -35,7 +35,7 @@ public class FrenchTagger {
 			"Ithacquois","Illos", "Laërte", "Sœurs", "Témésé", "Athéné", "Ethiopie","éthiopien", "Grégeois", "Grégeoise","Grégeoises", "Mente", "Antinois",
 			"Sparte", "grecs", "Atlas", "Thon","Alcippé", "Océan", "zéphyr", "Iphthimé", "Halosydné", "Sunion","Pergame","Ethiopiens","Mermeride",
 			"Havre", "phénicien","Phénicien", "Phéniciens","Phrygiens","Phrygien", "Nègres","Nègre","Panachéens","Laertes","Egiste","argiens","argien","argienne","argiennes",
-			"Argus",
+			"Argus","Arête","Née","thébain","thébaine","thébains","thébaines","Thébains","Thébaines","Thébain","Thébaine",
 			"Argos","Harpyes","Harpye","Harpies","Harpie","Mycène","Mentor","Vulcain","Spartiate","Spartiates","Myrmidons","Myrmidon","Pléiades",
 			"Amphitryon","Œdipe","Oedipe","Sirènes","Sirène","Crétois","Furies","Furie","Égyptien","Égyptiens","Élide","Géants","Géant","troyen","troyens",
 			"Troyen","Troyens","Grâces","Cassandre","Hypérion","Naïades","Corbeau","Ciel","Doriens","Muses","Mimas","Péan","Aurore","aurore"};

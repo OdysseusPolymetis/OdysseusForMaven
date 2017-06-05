@@ -95,7 +95,7 @@ public class Count {
 		for (String name:roots.keySet()){
 			int brightred=0;
 			int brightgreen=0;
-			int averagesyntax=0;
+			float averagesyntax=0;
 			int totalNbOfWords=0;
 			String nomFichierEnCours=roots.get(name).getAttributeValue("name");
 			String nomCommun=nomFichierEnCours.substring(nomFichierEnCours.lastIndexOf("_"));
@@ -143,7 +143,7 @@ public class Count {
 			SAXBuilder sxb=new SAXBuilder();
 			Document documentSource=sxb.build(
 					new File(Console.PUNCT+"odyssee1000_"+chantActuel+".xml")); /* File to compare Greek syntax */
-			
+			List<Float>dists=new ArrayList<Float>();
 			for (Element idMain:idsMain){
 				XPathFactory xFactory = XPathFactory.instance();
 				XPathExpression<Element> expr = xFactory.compile("/file/"+idMain.getName()+"/word[@tag]", Filters.element());
@@ -178,43 +178,46 @@ public class Count {
 
 
 
-				int percentDist=0;
+				int globalDist=0;
+				float percentDist=0;
 
 				Multiset <String>vecteurSource=HashMultiset.create(tagsGr); /* multisets for Generalized Jaccard */
 				Multiset <String>vecteurTarget=HashMultiset.create(tagsFr);
 
 				float similarity=jaccard.compare(vecteurSource,vecteurTarget);
 
+				percentDist=similarity*100;
+				
 				if (similarity>0.2&&similarity<0.4){
-					percentDist=1;
+					globalDist=1;
 				}
 				else if (similarity>0.4&&similarity<0.6){
-					percentDist=2;
+					globalDist=2;
 				}
 				else if (similarity>0.6&&similarity<0.7){
-					percentDist=3;
+					globalDist=3;
 				}
 				else if (similarity>0.7&&similarity<0.8){
-					percentDist=4;
+					globalDist=4;
 				}
 				else if (similarity>0.8){
-					percentDist=5;
+					globalDist=5;
 				}
 
 				/* decrease if source length and target length too different */
-				if (Math.abs(tagsFr.size()-tagsGr.size())>15&&percentDist>3){
-					percentDist=percentDist-3;
+				if (Math.abs(tagsFr.size()-tagsGr.size())>15&&globalDist>3){
+					globalDist=globalDist-3;
 				}
 
-				else if (Math.abs(tagsFr.size()-tagsGr.size())>10&&percentDist>2){
-					percentDist=percentDist-2;
+				else if (Math.abs(tagsFr.size()-tagsGr.size())>10&&globalDist>2){
+					globalDist=globalDist-2;
 				}
 
-				else if (Math.abs(tagsFr.size()-tagsGr.size())>5&&percentDist>1){
-					percentDist--;
+				else if (Math.abs(tagsFr.size()-tagsGr.size())>5&&globalDist>1){
+					globalDist--;
 				}
-				if (percentDist>1){
-					averagesyntax++;
+				if (globalDist>1){
+					globalDist++;
 				}
 
 				List<String>wordsonebyone=new ArrayList<String>();
@@ -343,7 +346,7 @@ public class Count {
 					}
 
 					if (count>0){
-						int countScore=(((count+1)*5)/nombreDeFichiersAComparer);
+						int countScore=((count*5)/nombreDeFichiersAComparer);
 						if(countScore>5){
 							countArrondi=5;
 							brightGreenWord++;
@@ -363,12 +366,13 @@ public class Count {
 					else{
 						countArrondi=0;
 					}
-					if (!auth.isEmpty()){
+					if (!auth.isEmpty()&& count<4){
 						plag.put(countArrondi, auth);
 					}
 
 					form=form.replaceAll("blk", "");
 					form=form.replaceAll("_N", "");
+					form=form.replaceAll("\\/", "<br>");
 					StringBuilder buildHtml=new StringBuilder();
 					String authPlag="";
 					if (plag.containsKey(countArrondi)){
@@ -396,7 +400,14 @@ public class Count {
 							wordsonebyone.add(buildHtml.toString());
 						}
 						else if (countArrondi==2){
-							buildHtml.append("<mark class=\"freq"+countArrondi+" plag\"><a title=\""+authPlag+"\">"+form+"</a></mark>");
+							if (plag.containsKey(countArrondi)){
+								if (plag.get(countArrondi).size()<4&&plag.get(countArrondi).size()>0){
+									buildHtml.append("<mark class=\"freq2 plag\"><a title=\""+authPlag+"\">"+form+"</a></mark>");
+								}
+							}
+							else{
+								buildHtml.append("<mark class=\"freq0 plag\">"+form+"</mark>");
+							}
 							wordsonebyone.add(buildHtml.toString());
 						}
 						else {
@@ -413,13 +424,14 @@ public class Count {
 				idsInHTMLFormat.add(sbForListHTML.toString());
 				StringBuilder division=new StringBuilder();
 				String counterID=idMain.getName().replaceAll("ID", "");
-				division.append("\n<div class=\"chunk syn"+percentDist+"\" id=\""+fileName+"-"+counterID+"\"><b>"+counterID+" </b>");
+				division.append("\n<div class=\"chunk syn"+globalDist+"\" id=\""+fileName+"-"+counterID+"\"><b>"+counterID+" </b>");
 
 				for (String id:idsInHTMLFormat){
 					division.append(id+" ");
 				}
 				division.append("</div>");
 				ids.add(division.toString());
+				dists.add(percentDist);
 			}
 
 			for (String author:plagAuth){
@@ -430,14 +442,18 @@ public class Count {
 			
 			brightgreen=(brightgreen*100)/totalNbOfWords;
 			brightred=(brightred*100)/totalNbOfWords;
-			averagesyntax=(averagesyntax*100)/idsMain.size();
+			float totalDists=0;
+			for (float dist:dists){
+				totalDists+=dist;
+			}
+			averagesyntax=Math.round(totalDists/dists.size());
 			fileName=sourceFileName.substring(sourceFileName.lastIndexOf("/")+1, sourceFileName.indexOf("_"))+"_"+sourceFileName.substring(sourceFileName.indexOf("_")+1,sourceFileName.indexOf(".xml"));
 
 			String fileNamePath=fileName.replaceAll("_0", "_");
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(Console.OUTPUTHTML+fileNamePath+".html"), "UTF-8"));
-			writer.write("<section id=\""+fileName+"\" class=\"parallel\" title=\"Haute Fréquence : "+brightgreen+" ;\nBasse Fréquence : "
-					+brightred+" ;\nProximité Syntaxique : "+averagesyntax+" ;\nReprises basse fréquence : ");
+			writer.write("<section id=\""+fileName+"\" class=\"parallel\" title=\"Haute Fréquence : "+brightgreen+"% ;\nBasse Fréquence : "
+					+brightred+"% ;\nProximité Syntaxique : "+averagesyntax+"% ;\nReprises basse fréquence : ");
 			for (String auth:top5.keySet()){
 				writer.write(auth+":"+top5.get(auth)+"% ");
 			}
