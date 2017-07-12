@@ -9,9 +9,9 @@
 Such changes are still in the ToDos list but will be done very soon.
 
   You can add your own translation of Homer's <i>Odyssey</i> in the language of your choice in <b>plain text</b> format.
-  The output is a folder of aligned XMLs built for our alignment visualization tool in JavaScript, <b><a href="https://github.com/OdysseusPolymetis/paralogos">Paralogos</a></b> (also available on github).
+  The output is a folder of aligned XMLs built for our alignment visualization tool in JavaScript, <b><a href="https://github.com/OdysseusPolymetis/paralogos">Paralogos</a></b>, but as some of our texts are still copyrighted, you may want to write an email to marianne.reboul@gmail.com to get access individually.
 
-  Here are some expected results <a href="https://odysseuspolymetis.github.io/paralogos/">here</a>.
+  The online interface is available <a href="https://odysseuspolymetis.github.io/paralogos/">here</a>.
 
 ###### Articles on the topic
 <a href="http://dh2016.adho.org/abstracts/370">DH2016</a>
