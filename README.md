@@ -14,4 +14,6 @@ Such changes are still in the ToDos list but will be done very soon.
   The online interface is available <a href="https://odysseuspolymetis.github.io/paralogos/">here</a>.
 
 ###### Articles on the topic
-<a href="http://dh2016.adho.org/abstracts/370">DH2016</a>
+
+In French : <a href="http://dh2016.adho.org/abstracts/370">DH2016</a>
+In English : <a href="http://www.digitalhumanities.org/dhq/vol/11/2/000297/000297.html">DHQ</a>
